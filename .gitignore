@@ -6,7 +6,7 @@
 [Bb]uilds/
 UserSettings/
 Assets/LocalAssets*
-Asset/StoreAssets
+Assets/StoreAssets*
 
 # Visual Studio & Rider
 .vs/
