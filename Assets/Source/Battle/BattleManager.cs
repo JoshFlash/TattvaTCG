@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 
 public class BattleManager
 {
@@ -38,9 +38,9 @@ public class BattleManager
         ProgressPhase();
     }
 
-    private async Task EndRound()
+    private async UniTask EndRound()
     {
-        await Task.Yield();
+        await UniTask.Yield();
         SwapInitiative();
         StartRound();
     }
@@ -48,10 +48,10 @@ public class BattleManager
     private void ProgressPhase()
     {
         ++currentPhase;
-        CommencePhase();
+        CommencePhase().Forget();
     }
 
-    private async void CommencePhase()
+    private async UniTask CommencePhase()
     {
         await HandleStartOfPhase();
         await HandlePlayerTurnInitiative();
@@ -67,29 +67,29 @@ public class BattleManager
         }
     }
     
-    private async Task HandleStartOfPhase()
+    private async UniTask HandleStartOfPhase()
     {
         ChangeTurn();
-        await Task.Yield();
+        await UniTask.Yield();
     }
     
-    private async Task HandlePlayerTurnInitiative()
+    private async UniTask HandlePlayerTurnInitiative()
     {
         while (initiativePlayer.IsTurnActive)
         {
-            await Task.Yield();
+            await UniTask.Yield();
         }
         
     }
     
-    private async Task HandlePlayerTurnReactive()
+    private async UniTask HandlePlayerTurnReactive()
     {
-        await Task.Yield();
+        await UniTask.Yield();
     }
 
-    private async Task HandleEndOfPhase()
+    private async UniTask HandleEndOfPhase()
     {
-        await Task.Yield();
+        await UniTask.Yield();
     }
 
 }
