@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-// using TweenKey;
-// using TweenKey.Interpolation;
+using TweenKey;
+using TweenKey.Interpolation;
 using UnityEngine;
 
 namespace Scenes
@@ -26,7 +26,7 @@ namespace Scenes
 
         private void TestTweenKey()
         {
-            /*transform.TweenLoopByRotation(Quaternion.AngleAxis(45, transform.up), 4f, Loop.Continue, null, Easing.Linear);
+            transform.TweenLoopByRotation(Quaternion.AngleAxis(45, transform.up), 4f, Loop.Continue, null, Easing.Linear);
 
             var sequence = new Sequence<Vector3>(curve, LerpFunctions.Vector3, OffsetFunctions.Vector3, f => transform.localScale * f, 60);
             sequence.Append(sequence.Reverse());
@@ -37,7 +37,7 @@ namespace Scenes
             void MoveUp()
             {
                 transform.TweenLoopMove(transform.position + 15 * Vector3.right, 2.5f);
-            }*/
+            }
         }
 
     }

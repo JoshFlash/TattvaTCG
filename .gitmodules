@@ -1,0 +1,3 @@
+[submodule "Assets/TweenKey"]
+	path = Assets/TweenKey
+	url = https://github.com/JoshFlash/TweenKey.git
