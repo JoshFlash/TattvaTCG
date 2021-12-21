@@ -1,18 +1,38 @@
-using UnityEngine;public interface ICharacter
+using System;
+using UnityEngine;
+using UnityEngine.Events;
+
+public interface ICharacter
 {
     void TakeDamage(float damage);
 }
 
 public abstract class Character : MonoBehaviour, ICharacter
 {
-    [SerializeField] private CharacterStats stats = default;
+    [SerializeField] protected CharacterStats stats = default;
     
-    public System.Action<float> OnHealthReduced = delegate {};
+    protected UnityEvent<float> OnHealthChanged = new ();
     
-    private float health = 40f;
+    protected float health = 10f;
+
+    protected void Awake()
+    {
+        health = stats.MaxHealth;
+    }
+
     public void TakeDamage(float damage)
     {
         health -= damage;
-        OnHealthReduced.Invoke(health);
+        OnHealthChanged.Invoke(health);
+    }
+
+    public void Heal(float healing)
+    {
+        health += healing;
+        if (health > stats.MaxHealth)
+        {
+            health = stats.MaxHealth;
+        }
+        OnHealthChanged.Invoke(health);
     }
 }

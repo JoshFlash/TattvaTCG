@@ -19,13 +19,26 @@ public class PlayerController : MonoBehaviour
     {
         if (!Player.IsTurnActive)
             return;
-        
-        if (Input.GetMouseButtonUp(0))
+
+        var right = Input.GetMouseButtonUp(1);
+        var left = Input.GetMouseButtonUp(0);
+        if (right || left)
         {
             Ray ray = Camera.ScreenPointToRay(Input.mousePosition); 
             if (Physics.Raycast(ray, out var hit)) 
             {
-                Debug.Log("Clicked collider of " + hit.transform.name);
+                if (hit.transform.TryGetComponent<Character>(out var character))
+                {
+                    if (left)
+                    {
+                        var spell = new DamageSpell { Damage = 5 };
+                        spell.Cast(character);
+                    }
+                    else
+                    {
+                        character.Heal(5);
+                    }
+                }
             }
         }
     }
