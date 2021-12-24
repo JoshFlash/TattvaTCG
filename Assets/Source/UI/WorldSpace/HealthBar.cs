@@ -1,10 +1,15 @@
 using System;
+using TweenKey;
+using TweenKey.Interpolation;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class HealthBar : Slider
 {
+    [SerializeField] private float barFillSpeed = 2f;
+    
     private Transform currentCameraTransform = default;
+    private Tween<float> healthTween = default;
 
     public void SetCamera(Camera cam = null)
     {
@@ -48,6 +53,22 @@ public class HealthBar : Slider
 
     public void SetCurrentHealth(float currentHealth)
     {
-        value = currentHealth;
+        TweenToHealth(currentHealth);
+    }
+
+    private void TweenToHealth(float currentHealth)
+    {
+        var tween = TweenCreator.Create((v) => value = v, value, currentHealth, 1 / barFillSpeed,
+            LerpFunctions.Float, OffsetFunctions.Float, Easing.Cubic.Out);
+        
+        if (healthTween is null || healthTween.isExpired)
+        {
+            healthTween = tween;
+            TweenRunner.RunTween(healthTween);
+        }
+        else
+        {
+            healthTween.Supersede(tween);
+        }
     }
 }
