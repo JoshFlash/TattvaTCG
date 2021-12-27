@@ -1,25 +1,23 @@
 using System;
 
-public class Phase : IEquatable<Phase>
+public class Phase : IEquatable<Phase>, IComparable<Phase>
 {
-    private const int TOTAL_PHASES = 5;
-    
     private readonly int priority = 0;
-    
-    public Phase(int priority)
-    {
-        this.priority = priority % TOTAL_PHASES;
-    }
+    private readonly int totalPhases = 0;
 
-    public static readonly Phase Prep = new (0);
-    public static readonly Phase Burst = new (1);
-    public static readonly Phase Spell = new (2);
-    public static readonly Phase Ability = new (3);
-    public static readonly Phase Recovery = new (4);
+    public Phase(int priority, int totalPhases)
+    {
+        this.priority = priority % totalPhases;
+    }
 
     public static Phase operator ++(Phase phase)
     {
-        return new Phase(phase.priority + 1);
+        return new Phase(phase.priority + 1, phase.totalPhases);
+    }
+
+    public Phase Next()
+    {
+        return new Phase(priority + 1, totalPhases);
     }
 
     public bool Equals(Phase other)
@@ -40,5 +38,12 @@ public class Phase : IEquatable<Phase>
     public override int GetHashCode()
     {
         return priority;
+    }
+
+    public int CompareTo(Phase other)
+    {
+        if (ReferenceEquals(this, other)) return 0;
+        if (ReferenceEquals(null, other)) return 1;
+        return priority.CompareTo(other.priority);
     }
 }

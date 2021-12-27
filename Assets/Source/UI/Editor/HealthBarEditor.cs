@@ -12,6 +12,7 @@ public class HealthBarEditor : UnityEditor.UI.SliderEditor
     private SerializedProperty wholeNumbers;
     private SerializedProperty value;
     private SerializedProperty onValueChanged;
+    private SerializedProperty barFillSpeed;
 
     private string[] excludedProperties = new[] { "" };
 
@@ -25,6 +26,7 @@ public class HealthBarEditor : UnityEditor.UI.SliderEditor
         value = serializedObject.FindProperty("m_Value");
         onValueChanged = serializedObject.FindProperty("m_OnValueChanged");
         fillRect = serializedObject.FindProperty("m_FillRect");
+        barFillSpeed = serializedObject.FindProperty("barFillSpeed");
     }
 
     public override void OnInspectorGUI()
@@ -32,6 +34,7 @@ public class HealthBarEditor : UnityEditor.UI.SliderEditor
         serializedObject.Update();
 
         EditorGUILayout.PropertyField(fillRect);
+        EditorGUILayout.PropertyField(barFillSpeed);
         
         if (fillRect.objectReferenceValue != null)
         {
