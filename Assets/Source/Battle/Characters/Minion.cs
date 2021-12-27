@@ -4,6 +4,7 @@ using UnityEngine;
 public class Minion : Character
 {
     [SerializeField] private HealthBar healthBar = default;
+    [SerializeField] private Transform modelParent = default;
 
     private void Start()
     {

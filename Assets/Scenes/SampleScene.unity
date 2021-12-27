@@ -3511,6 +3511,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 164668403, guid: ad45db531b4595243a181d09621acda7, type: 3}
+      propertyPath: m_Value
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6275276319183690767, guid: ad45db531b4595243a181d09621acda7, type: 3}
       propertyPath: m_Name
       value: Minion
@@ -3557,6 +3561,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6512318187891341450, guid: ad45db531b4595243a181d09621acda7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8891444411118980855, guid: ad45db531b4595243a181d09621acda7, type: 3}
+      propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8891444411118980855, guid: ad45db531b4595243a181d09621acda7, type: 3}
