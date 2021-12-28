@@ -1,13 +1,14 @@
 using System;
 
-public class Phase : IEquatable<Phase>, IComparable<Phase>
+public class Phase : IEquatable<Phase>
 {
-    private readonly int priority = 0;
-    private readonly int totalPhases = 0;
+    private readonly int priority;
+    private readonly int totalPhases;
 
     public Phase(int priority, int totalPhases)
     {
         this.priority = priority % totalPhases;
+        this.totalPhases = totalPhases;
     }
 
     public static Phase operator ++(Phase phase)
@@ -24,7 +25,7 @@ public class Phase : IEquatable<Phase>, IComparable<Phase>
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return priority == other.priority;
+        return priority == other.priority && totalPhases == other.totalPhases;
     }
 
     public override bool Equals(object obj)
@@ -37,13 +38,7 @@ public class Phase : IEquatable<Phase>, IComparable<Phase>
 
     public override int GetHashCode()
     {
-        return priority;
-    }
-
-    public int CompareTo(Phase other)
-    {
-        if (ReferenceEquals(this, other)) return 0;
-        if (ReferenceEquals(null, other)) return 1;
-        return priority.CompareTo(other.priority);
+        // Cantor pairing function
+        return (priority + totalPhases) * (priority + totalPhases + 1) / 2 + priority;
     }
 }

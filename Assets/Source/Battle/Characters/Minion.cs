@@ -8,7 +8,7 @@ public class Minion : Character
 
     private void Start()
     {
-        healthBar.SetMaxHealth(stats.MaxHealth);
+        healthBar.SetMaxHealth(maxHealth);
         healthBar.SetCurrentHealth(health);
     }
 
