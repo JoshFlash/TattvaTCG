@@ -12,14 +12,14 @@ public interface ICharacter
 
 public abstract class Character : MonoBehaviour, ICharacter
 {
-    [SerializeField] protected int maxHealth = default;
-    [SerializeField] protected int maxMana = default;
-    [SerializeField] protected int baseSpellPower = default;
+    [SerializeField] protected int maxHealth = 10;
+    [SerializeField] protected int maxMana = 1;
+    [SerializeField] protected int baseSpellPower = 1;
     
     [HideInInspector] public UnityEvent<int> OnHealthChanged = new ();
     [HideInInspector] public UnityEvent<int> OnManaChanged = new ();
     
-    protected int health = 1;
+    protected int health = 10;
     protected int mana = 1;
     protected int spellPower = 1;
 
@@ -60,5 +60,10 @@ public abstract class Character : MonoBehaviour, ICharacter
             mana = maxMana;
         }
         OnManaChanged.Invoke(mana);
+    }
+
+    public void RestoreAllMana()
+    {
+        RestoreMana(maxMana);
     }
 }

@@ -763,8 +763,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c78ccfc6ee944de8cdea4bf662b58e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controllerOne: {fileID: 475515246}
-  controllerTwo: {fileID: 1426213598}
+  playerOne: {fileID: 475515246}
+  playerTwo: {fileID: 1426213598}
 --- !u!4 &415297540
 Transform:
   m_ObjectHideFlags: 0
@@ -977,8 +977,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 994e48bf84114a6bb54427bc16404e64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controlledMinions: []
-  controlledChampions: []
 --- !u!1 &550056744
 GameObject:
   m_ObjectHideFlags: 0
@@ -2574,8 +2572,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 994e48bf84114a6bb54427bc16404e64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controlledMinions: []
-  controlledChampions: []
 --- !u!1 &1521132351
 GameObject:
   m_ObjectHideFlags: 0
@@ -3511,10 +3507,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 164668403, guid: ad45db531b4595243a181d09621acda7, type: 3}
-      propertyPath: m_Value
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6275276319183690767, guid: ad45db531b4595243a181d09621acda7, type: 3}
       propertyPath: m_Name
       value: Minion
@@ -3561,10 +3553,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6512318187891341450, guid: ad45db531b4595243a181d09621acda7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8891444411118980855, guid: ad45db531b4595243a181d09621acda7, type: 3}
-      propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8891444411118980855, guid: ad45db531b4595243a181d09621acda7, type: 3}

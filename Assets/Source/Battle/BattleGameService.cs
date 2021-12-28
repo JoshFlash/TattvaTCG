@@ -4,9 +4,9 @@ public class BattleGameService : IGameService
 {
     private Phase currentPhase;
     
-    private PlayerController initiativePlayer = new ();
-    private PlayerController reactivePlayer = new ();
-    
+    private PlayerController initiativePlayer = default;
+    private PlayerController reactivePlayer = default;
+
     public void BeginBattle(PlayerController playerOne, PlayerController playerTwo)
     {
         if (RandomChance.CoinFlip())
@@ -27,12 +27,6 @@ public class BattleGameService : IGameService
         (initiativePlayer, reactivePlayer) = (reactivePlayer, initiativePlayer);
     }
 
-    private void ChangeTurn()
-    {
-        initiativePlayer.IsTurnActive = !initiativePlayer.IsTurnActive;
-        reactivePlayer.IsTurnActive = !initiativePlayer.IsTurnActive;
-    }
-    
     private void StartRound()
     {
         ProgressPhase();
@@ -69,21 +63,28 @@ public class BattleGameService : IGameService
     
     private async UniTask HandleStartOfPhase()
     {
-        ChangeTurn();
+        initiativePlayer.RestoreAllMana();
+        reactivePlayer.RestoreAllMana();
+        
         await UniTask.Yield();
     }
     
     private async UniTask HandlePlayerTurnInitiative()
     {
-        while (initiativePlayer.IsTurnActive)
+        bool active = initiativePlayer.ActivateTurn();
+        while (active)
         {
-            await UniTask.Yield();
+            active = await initiativePlayer.HandleInputOnTurn();
         }
     }
     
     private async UniTask HandlePlayerTurnReactive()
     {
-        await UniTask.Yield();
+        bool active = reactivePlayer.ActivateTurn();
+        while (active)
+        {
+            active = await reactivePlayer.HandleInputOnTurn();
+        }
     }
 
     private async UniTask HandleEndOfPhase()

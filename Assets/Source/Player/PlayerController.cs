@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -7,11 +8,12 @@ public class PlayerController : MonoBehaviour
     public Champion Champion { get; set; }
     public Camera Camera { get; set; }
     
-    public bool IsTurnActive { get; set; }
+    private bool isTurnActive = false;
 
     private void Awake()
     {
         Camera ??= Camera.main;
+        Champion = new GameObject("Champion").AddComponent<Champion>();
     }
 
     private void Start()
@@ -21,24 +23,27 @@ public class PlayerController : MonoBehaviour
 
     private void HandleManaChanged(int manaRemaining)
     {
-        Log.Info($"mana changed {manaRemaining}");
         if (manaRemaining <= 0)
         {
-            IsTurnActive = false;
+            isTurnActive = false;
         }
     }
 
-    private void Update()
+    public bool ActivateTurn()
     {
-        if (!IsTurnActive)
-            return;
+        // this will later be leveraged to skip turns where no actions are available to the player
+        isTurnActive = true;
+        return isTurnActive;
+    }
 
+    public async UniTask<bool> HandleInputOnTurn()
+    {
         var right = Input.GetMouseButtonUp(1);
         var left = Input.GetMouseButtonUp(0);
         if (right || left)
         {
-            Ray ray = Camera.ScreenPointToRay(Input.mousePosition); 
-            if (Physics.Raycast(ray, out var hit)) 
+            Ray ray = Camera.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out var hit))
             {
                 if (hit.transform.TryGetComponent<Character>(out var character))
                 {
@@ -54,5 +59,13 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+
+        await UniTask.Yield();
+        return isTurnActive;
+    }
+
+    public void RestoreAllMana()
+    {
+        Champion.RestoreAllMana();
     }
 }
