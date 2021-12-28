@@ -1,12 +1,7 @@
-
-//TODO refactor this
-public enum AbilityPriority { Prep, Burst, Spell, Ability, Reaction, Recovery, EndOfTurn }
-
 public class DamageSpell
 {
     public string Name;
-    public float Damage;
-    public AbilityPriority Priority;
+    public int Damage;
 
     public void Cast(ICharacter target)
     {

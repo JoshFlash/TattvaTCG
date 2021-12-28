@@ -4,35 +4,61 @@ using UnityEngine.Events;
 
 public interface ICharacter
 {
-    void TakeDamage(float damage);
+    void TakeDamage(int damage);
+    void RestoreHealth(int healing);
+    void SpendMana(int cost);
+    void RestoreMana(int regen);
 }
 
 public abstract class Character : MonoBehaviour, ICharacter
 {
-    [SerializeField] protected CharacterStats stats = default;
+    [SerializeField] protected int maxHealth = default;
+    [SerializeField] protected int maxMana = default;
+    [SerializeField] protected int baseSpellPower = default;
     
-    protected UnityEvent<float> OnHealthChanged = new ();
+    [HideInInspector] public UnityEvent<int> OnHealthChanged = new ();
+    [HideInInspector] public UnityEvent<int> OnManaChanged = new ();
     
-    protected float health = 10f;
+    protected int health = 1;
+    protected int mana = 1;
+    protected int spellPower = 1;
 
     protected void Awake()
     {
-        health = stats.MaxHealth;
+        health = maxHealth;
+        mana = maxMana;
+        spellPower = baseSpellPower;
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(int damage)
     {
         health -= damage;
         OnHealthChanged.Invoke(health);
     }
 
-    public void Heal(float healing)
+    public void RestoreHealth(int healing)
     {
         health += healing;
-        if (health > stats.MaxHealth)
+        if (health > maxHealth)
         {
-            health = stats.MaxHealth;
+            health = maxHealth;
         }
         OnHealthChanged.Invoke(health);
+    }
+
+    public void SpendMana(int cost)
+    {
+        mana -= cost;
+        OnManaChanged.Invoke(mana);
+    }
+
+    public void RestoreMana(int regen)
+    {
+        mana += regen;
+        if (mana > maxMana)
+        {
+            mana = maxMana;
+        }
+        OnManaChanged.Invoke(mana);
     }
 }

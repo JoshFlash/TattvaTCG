@@ -46,12 +46,12 @@ public class HealthBar : Slider
         transform.LookAt(transform.position - currentCameraTransform.forward);
     }
 
-    public void SetMaxHealth(float maxHealth)
+    public void SetMaxHealth(int maxHealth)
     {
         maxValue = maxHealth;
     }
 
-    public void SetCurrentHealth(float currentHealth)
+    public void SetCurrentHealth(int currentHealth)
     {
         TweenToHealth(currentHealth);
     }

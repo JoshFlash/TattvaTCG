@@ -47,11 +47,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 480133622b494c168a5779a92432fdb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stats:
-    MaxHealth: 20
-    AttackPower: 2
-    SpellPower: 1
+  maxHealth: 20
+  maxMana: 2
+  baseSpellPower: 1
+  OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnManaChanged:
+    m_PersistentCalls:
+      m_Calls: []
   healthBar: {fileID: 164668403}
+  modelParent: {fileID: 0}
 --- !u!136 &8891444410382915005
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -262,6 +268,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+  barFillSpeed: 2
 --- !u!1 &8891444412157619157
 GameObject:
   m_ObjectHideFlags: 0

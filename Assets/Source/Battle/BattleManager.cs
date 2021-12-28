@@ -5,12 +5,12 @@ public class BattleManager : MonoBehaviour
 {
     private BattleGameService battleGameService;
     
-    [SerializeField] private PlayerController controllerOne = default;
-    [SerializeField] private PlayerController controllerTwo = default;
+    [SerializeField] private PlayerController playerOne = default;
+    [SerializeField] private PlayerController playerTwo = default;
     
     private void Start()
     {
         battleGameService = GameServices.GetService<BattleGameService>();
-        battleGameService.BeginBattle((controllerOne.Player, controllerTwo.Player));
+        battleGameService.BeginBattle(playerOne, playerTwo);
     }
 }

@@ -4,20 +4,33 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public Player Player = new ();
+    public Champion Champion { get; set; }
     public Camera Camera { get; set; }
-
-    [SerializeField] private List<Minion> controlledMinions = new ();
-    [SerializeField] private List<Champion> controlledChampions = new ();
+    
+    public bool IsTurnActive { get; set; }
 
     private void Awake()
     {
         Camera ??= Camera.main;
     }
 
+    private void Start()
+    {
+        Champion.OnManaChanged.AddListener(HandleManaChanged);
+    }
+
+    private void HandleManaChanged(int manaRemaining)
+    {
+        Log.Info($"mana changed {manaRemaining}");
+        if (manaRemaining <= 0)
+        {
+            IsTurnActive = false;
+        }
+    }
+
     private void Update()
     {
-        if (!Player.IsTurnActive)
+        if (!IsTurnActive)
             return;
 
         var right = Input.GetMouseButtonUp(1);
@@ -29,14 +42,14 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.transform.TryGetComponent<Character>(out var character))
                 {
+                    Champion.SpendMana(1);
                     if (left)
                     {
-                        var spell = new DamageSpell { Damage = 5 };
-                        spell.Cast(character);
+                        BattleActions.DamageCharacter(character, 5);
                     }
                     else
                     {
-                        character.Heal(5);
+                        BattleActions.HealCharacter(character, 5);
                     }
                 }
             }

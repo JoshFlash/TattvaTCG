@@ -2,22 +2,22 @@ using Cysharp.Threading.Tasks;
 
 public class BattleGameService : IGameService
 {
-    private Phase currentPhase = BattlePhase.Recovery;
+    private Phase currentPhase;
     
-    private Player initiativePlayer = new ();
-    private Player reactivePlayer = new ();
+    private PlayerController initiativePlayer = new ();
+    private PlayerController reactivePlayer = new ();
     
-    public void BeginBattle((Player one, Player two) player)
+    public void BeginBattle(PlayerController playerOne, PlayerController playerTwo)
     {
         if (RandomChance.CoinFlip())
         {
-            initiativePlayer = player.one;
-            reactivePlayer = player.two;
+            initiativePlayer = playerOne;
+            reactivePlayer = playerTwo;
         }
         else
         {
-            reactivePlayer = player.one;
-            initiativePlayer = player.two;
+            reactivePlayer = playerOne;
+            initiativePlayer = playerTwo;
         }
         StartRound();
     }
@@ -91,6 +91,9 @@ public class BattleGameService : IGameService
         await UniTask.Yield();
     }
 
-    public void Init() { }
+    public void Init()
+    {
+        currentPhase = BattlePhase.Recovery;
+    }
     public bool IsInitialized { get; set; }
 }
