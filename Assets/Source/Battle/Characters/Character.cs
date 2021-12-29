@@ -12,19 +12,31 @@ public interface ICharacter
 
 public abstract class Character : MonoBehaviour, ICharacter
 {
-    [SerializeField] protected int maxHealth = 10;
-    [SerializeField] protected int maxMana = 1;
-    [SerializeField] protected int baseSpellPower = 1;
-    
+    [SerializeField] private int maxHealth = 10;
+    public int MaxHealth => maxHealth;
+    [SerializeField] private int maxMana = 1;
+    public int MaxMana => maxMana;
+    [SerializeField] private int baseSpellPower = 1;
+    public int BaseSpellPower => baseSpellPower;
+
+    [SerializeField] private GameObject model = default;
+    [SerializeField] private Transform modelParent = default;
+
     [HideInInspector] public UnityEvent<int> OnHealthChanged = new ();
     [HideInInspector] public UnityEvent<int> OnManaChanged = new ();
     
-    protected int health = 10;
-    protected int mana = 1;
-    protected int spellPower = 1;
+    private int health = 10;
+    public int Health => health;
+    private int mana = 1;
+    public int Mana => mana;
+    private int spellPower = 1;
+    public int SpellPower => spellPower;
 
     protected void Awake()
     {
+        if (model)
+            Instantiate(model, modelParent);
+        
         health = maxHealth;
         mana = maxMana;
         spellPower = baseSpellPower;
