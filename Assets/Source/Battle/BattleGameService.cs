@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using UnityEngine.Events;
 
 public class BattleGameService : IGameService
 {
@@ -6,8 +7,8 @@ public class BattleGameService : IGameService
     
     private PlayerController initiativePlayer = default;
     private PlayerController reactivePlayer = default;
-
-    public void BeginBattle(PlayerController playerOne, PlayerController playerTwo)
+    
+    public async UniTask BeginBattle(PlayerController playerOne, PlayerController playerTwo)
     {
         if (RandomChance.CoinFlip())
         {
@@ -19,6 +20,8 @@ public class BattleGameService : IGameService
             reactivePlayer = playerOne;
             initiativePlayer = playerTwo;
         }
+        await initiativePlayer.SummonChampion("Alice");
+        await reactivePlayer.SummonChampion("Robert");
         StartRound();
     }
     
@@ -32,24 +35,21 @@ public class BattleGameService : IGameService
         ProgressPhase();
     }
 
-    private async UniTask EndRound()
-    {
-        await UniTask.Yield();
-        SwapInitiative();
-        StartRound();
-    }
-
     private void ProgressPhase()
     {
-        ++currentPhase;
+        currentPhase = currentPhase.Next();
         CommencePhase().Forget();
     }
 
     private async UniTask CommencePhase()
     {
+        Log.Info($"phase progressed, phase is {BattlePhase.BattlePhaseAliases[currentPhase]}");
         await HandleStartOfPhase();
+        Log.Info($"phase start, initiative is {initiativePlayer.Champion.name}");
         await HandlePlayerTurnInitiative();
+        Log.Info($"turn ended, turn switching to {reactivePlayer.Champion.name}");
         await HandlePlayerTurnReactive();
+        Log.Info($"turn ended, awaiting end of phase");
         await HandleEndOfPhase();
         if (!currentPhase.Equals(BattlePhase.Recovery))
         {
@@ -57,10 +57,11 @@ public class BattleGameService : IGameService
         }
         else
         {
+            Log.Info("awaiting end of round");
             await EndRound();
         }
     }
-    
+
     private async UniTask HandleStartOfPhase()
     {
         initiativePlayer.RestoreAllMana();
@@ -71,25 +72,33 @@ public class BattleGameService : IGameService
     
     private async UniTask HandlePlayerTurnInitiative()
     {
-        bool active = initiativePlayer.ActivateTurn();
-        while (active)
-        {
-            active = await initiativePlayer.HandleInputOnTurn();
-        }
+        await HandlePlayerTurn(initiativePlayer);
     }
     
     private async UniTask HandlePlayerTurnReactive()
     {
-        bool active = reactivePlayer.ActivateTurn();
+        await HandlePlayerTurn(reactivePlayer);
+    }
+
+    private async UniTask HandlePlayerTurn(PlayerController player)
+    {
+        bool active = player.ActivateTurn();
         while (active)
         {
-            active = await reactivePlayer.HandleInputOnTurn();
+            active = await player.HandleInputOnTurn();
         }
     }
 
     private async UniTask HandleEndOfPhase()
     {
         await UniTask.Yield();
+    }
+    
+    private async UniTask EndRound()
+    {
+        await UniTask.Yield();
+        SwapInitiative();
+        StartRound();
     }
 
     public void Init()
