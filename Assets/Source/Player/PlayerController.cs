@@ -8,7 +8,8 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private Button endTurnButton = default; 
+    [SerializeField] private Button endTurnButton = default;
+    [SerializeField] private BattleDeckController battleDeck = default;
     public Champion Champion { get; set; }
     public Camera Camera { get; set; }
     
@@ -44,6 +45,32 @@ public class PlayerController : MonoBehaviour
         {
             endTurnButton.onClick.RemoveListener(EndTurn);
             isTurnActive = false;
+        }
+    }
+    
+    private void Update()
+    {
+        Card card = battleDeck.CheckMouseoverCard();
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (battleDeck.TrySelectCard(card))
+            {
+                return;
+            }
+        }
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            // play selected card
+        }
+            
+        if (card != null)
+        {
+            battleDeck.UpdateExaminedCard(card);
+        }
+        else if (battleDeck.ShouldClearExaminedCard())
+        {
+            battleDeck.ClearExaminedCard();
         }
     }
 
