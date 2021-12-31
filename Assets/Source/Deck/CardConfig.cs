@@ -2,7 +2,10 @@ using UnityEngine;
 
 public class CardConfig : ScriptableObject
 {
-    public static CardConfig GlobalSettings = new();
+    private const string CARD_CONFIG_PATH = "Cards/CardConfig";
+
+    private static CardConfig kGlobalSettings = null;
+    public static CardConfig GlobalSettings => kGlobalSettings ? kGlobalSettings : (kGlobalSettings = Resources.Load<CardConfig>(CARD_CONFIG_PATH));
     
     public float MoveSpeed	= 0.21f;
     public float MinPadding	= 0.21f;
