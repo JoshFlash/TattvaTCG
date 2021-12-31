@@ -46,9 +46,9 @@ public class BattleDeckController : MonoBehaviour
         if (cardsInHand.Count < MAX_HAND_SIZE)
         {
             var cardPrefab = Resources.Load<Card>(CardPrefabLocation);
-            cardInstance = Instantiate(cardPrefab, HandAnchor.position, Quaternion.identity, HandAnchor);
+            cardInstance = Instantiate(cardPrefab, HandAnchor.position, HandAnchor.rotation, HandAnchor);
             cardsInHand.Add(cardInstance);
-            cardInstance.MoveToPosition(new Vector3(0, CardConfig.GlobalSettings.SelectHeight, 0), CardConfig.GlobalSettings.DealtSpeed);
+            cardInstance.MoveToPosition(cardInstance.transform.position + new Vector3(0, CardConfig.GlobalSettings.SelectHeight, 0), CardConfig.GlobalSettings.DealtSpeed);
             await Task.Delay(TimeSpan.FromSeconds(CardConfig.GlobalSettings.DealtSpeed));
             for (int i = 0; i < cardsInHand.Count; i++)
             {
@@ -57,7 +57,7 @@ public class BattleDeckController : MonoBehaviour
                 CardConfig.GlobalSettings.ExamineDodgeDistance = (cardsInHand.Count - 1f) / MAX_HAND_SIZE * CardConfig.GlobalSettings.DodgeDistance;
                 CardConfig.GlobalSettings.DodgeRightDistance = 1.25f * (cardsInHand.Count - 1f) / MAX_HAND_SIZE * CardConfig.GlobalSettings.DodgeDistance;
                 int offset = cardsInHand.Count / 2;
-                card.MoveToPosition(CardDefaultPosition(offset, i), CardConfig.GlobalSettings.SortSpeed, card.CachePosition);
+                card.MoveToPosition(HandAnchor.position + CardDefaultPosition(offset, i), CardConfig.GlobalSettings.SortSpeed, card.CachePosition);
             }
 
             await Task.Delay(TimeSpan.FromSeconds(CardConfig.GlobalSettings.SortSpeed));
