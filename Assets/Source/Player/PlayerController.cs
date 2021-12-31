@@ -30,12 +30,23 @@ public class PlayerController : MonoBehaviour
     {
     }
 
-    public bool ActivateTurn()
+    public async UniTask<bool> ActivateTurn()
     {
         endTurnButton.onClick.AddListener(EndTurn);
 
         // this will later be leveraged to skip turns where no actions are available to the player
         isTurnActive = true;
+                    
+        // debug code - deal hand
+        battleDeck.Clear();
+        int r = UnityEngine.Random.Range(1, 11);
+        for (int i = 0; i < r; i++)
+        {
+            await battleDeck.AddCard();
+        }
+        battleDeck.UnlockCards();
+        
+        
         return isTurnActive;
     }
 

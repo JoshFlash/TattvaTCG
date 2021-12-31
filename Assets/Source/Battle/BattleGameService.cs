@@ -43,7 +43,7 @@ public class BattleGameService : IGameService
 
     private async UniTask CommencePhase()
     {
-        Log.Info($"phase progressed, phase is {BattlePhase.BattlePhaseAliases[currentPhase]}");
+        Log.Info($"phase progressed, phase is {currentPhase}");
         await HandleStartOfPhase();
         Log.Info($"phase start, initiative is {initiativePlayer.Champion.name}");
         await HandlePlayerTurnInitiative();
@@ -82,7 +82,7 @@ public class BattleGameService : IGameService
 
     private async UniTask HandlePlayerTurn(PlayerController player)
     {
-        bool active = player.ActivateTurn();
+        bool active = await player.ActivateTurn();
         while (active)
         {
             active = await player.HandleInputOnTurn();

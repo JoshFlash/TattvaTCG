@@ -7,8 +7,7 @@ public enum CardState { Default, Examine, Select, DodgeLeft, DodgeRight }
 
 public class Card : MonoBehaviour
 {
-    private const float DEFAULT_MOVE_SPEED = 0.21f;
-    private CardConfig cardConfig = CardConfig.GlobalSettings;
+    private CardConfig cardConfig = null;
 
     public int Index { get; set; } = -1;
     public bool LockPosition { get; set; } = true;
@@ -28,6 +27,7 @@ public class Card : MonoBehaviour
     private void Awake()
     {
         LockPosition = true;
+        cardConfig = CardConfig.GlobalSettings;
     }
 
     public void CachePosition()
@@ -59,13 +59,13 @@ public class Card : MonoBehaviour
 
         if (ShouldMove(position))
         {
-            MoveToPosition(position);
+            MoveToPosition(position, cardConfig.MoveSpeed);
         }
     }
 
-    public void MoveToPosition(Vector3 position, float speed = DEFAULT_MOVE_SPEED, System.Action onComplete = null)
+    public void MoveToPosition(Vector3 position, float duration, System.Action onComplete = null)
     {
         targetPosition = position;
-        transform.TweenMove(targetPosition, 1 / speed, onComplete, Easing.Cubic.Out, 0f);
+        transform.TweenMove(targetPosition, duration, onComplete, Easing.Cubic.Out, 0f);
     }
 }
