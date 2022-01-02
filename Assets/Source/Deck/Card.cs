@@ -12,16 +12,18 @@ public class Card : MonoBehaviour
     public int Index { get; set; } = -1;
     public bool LockPosition { get; set; } = true;
 
-    private Vector3 targetPosition = default;
+    private (Vector3 cached, Vector3 requeseted) targetPosition = default;
     private Vector3 defaultPosition = default;
     private Vector3 examinePosition => defaultPosition + new Vector3(-cardConfig.ExamineDodgeDistance, cardConfig.ExamineHeight, 0);
     private Vector3 selectPosition => defaultPosition + new Vector3(-0.5f * defaultPosition.x, cardConfig.SelectHeight, cardConfig.SelectDepth);
     private Vector3 dodgePositionLeft => defaultPosition + new Vector3(-cardConfig.DodgeDistance, 0, 0);
     private Vector3 dodgePositionRight => defaultPosition + new Vector3(cardConfig.DodgeRightDistance, 0, 0);
 
-    private bool ShouldMove(Vector3 position)
+    private Tween<Vector3> moveTween = null;
+
+    public bool ShouldMove()
     {
-        return !LockPosition && position != targetPosition;
+        return !LockPosition && targetPosition.cached != targetPosition.requeseted;
     }
 
     private void Awake()
@@ -37,35 +39,45 @@ public class Card : MonoBehaviour
 
     public void SetState(CardState cardState)
     {
-        var position = targetPosition;
+        targetPosition.requeseted = targetPosition.cached;
         switch (cardState)
         {
             case CardState.Default:
-                position = defaultPosition;
+                targetPosition.requeseted = defaultPosition;
                 break;
             case CardState.Examine:
-                position = examinePosition;
+                targetPosition.requeseted = examinePosition;
+                SetPosition(targetPosition.requeseted);
                 break;
             case CardState.Select:
-                position = selectPosition;
+                targetPosition.requeseted = selectPosition;
                 break;
             case CardState.DodgeLeft:
-                position = dodgePositionLeft;
+                targetPosition.requeseted = dodgePositionLeft;
                 break;
             case CardState.DodgeRight:
-                position = dodgePositionRight;
+                targetPosition.requeseted = dodgePositionRight;
                 break;
-        }
-
-        if (ShouldMove(position))
-        {
-            MoveToPosition(position, cardConfig.MoveSpeed);
         }
     }
 
-    public void MoveToPosition(Vector3 position, float duration, System.Action onComplete = null)
+    public void TweenToPosition(Vector3 position, float duration, System.Action onComplete = null)
     {
-        targetPosition = position;
-        transform.TweenMove(targetPosition, duration, onComplete, Easing.Cubic.Out, 0f);
+        targetPosition.requeseted = targetPosition.cached = position;
+        moveTween?.Cancel(true);
+
+        moveTween = transform.TweenMove(targetPosition.cached, duration, onComplete, Easing.Cubic.Out, 0f);
+    }
+
+    public void TweenToRequestedPosition(float duration, System.Action onComplete = null)
+    {
+        TweenToPosition(targetPosition.requeseted, duration, onComplete);
+    }
+
+    private void SetPosition(Vector3 position)
+    {
+        targetPosition.cached = position;
+        transform.position = position;
+        moveTween?.Cancel(true);
     }
 }

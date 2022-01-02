@@ -10,8 +10,8 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Button endTurnButton = default;
     [SerializeField] private BattleDeckController battleDeck = default;
-    public Champion Champion { get; set; }
-    public Camera Camera { get; set; }
+    public Champion Champion { get; private set; }
+    public Camera Camera { get; private set; }
     
     private bool isTurnActive = false;
 
@@ -38,14 +38,12 @@ public class PlayerController : MonoBehaviour
         isTurnActive = true;
                     
         // debug code - deal hand
-        battleDeck.Clear();
-        int r = UnityEngine.Random.Range(1, 11);
+        int r = UnityEngine.Random.Range(3, 11);
         for (int i = 0; i < r; i++)
         {
             await battleDeck.AddCard();
         }
         battleDeck.UnlockCards();
-        
         
         return isTurnActive;
     }
@@ -55,33 +53,8 @@ public class PlayerController : MonoBehaviour
         if (isTurnActive)
         {
             endTurnButton.onClick.RemoveListener(EndTurn);
+            battleDeck.ClearHand();
             isTurnActive = false;
-        }
-    }
-    
-    private void Update()
-    {
-        Card card = battleDeck.CheckMouseoverCard();
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (battleDeck.TrySelectCard(card))
-            {
-                return;
-            }
-        }
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            // play selected card
-        }
-            
-        if (card != null)
-        {
-            battleDeck.UpdateExaminedCard(card);
-        }
-        else if (battleDeck.ShouldClearExaminedCard())
-        {
-            battleDeck.ClearExaminedCard();
         }
     }
 
