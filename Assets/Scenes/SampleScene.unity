@@ -427,8 +427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edbb157ca6a848efa673b0c1b75f61db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CardPrefabLocation: Cards/Card_01
-  HandAnchor: {fileID: 1041369576}
+  hand: {fileID: 1041369577}
 --- !u!1 &484658208
 GameObject:
   m_ObjectHideFlags: 0
@@ -908,6 +907,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1041369576}
+  - component: {fileID: 1041369577}
   m_Layer: 5
   m_Name: HandAnchor (1)
   m_TagString: Untagged
@@ -935,6 +935,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -50}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &1041369577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1041369575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448f13e744f04afcbd449c86e0cb7995, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardPrefabLocation: Cards/Card_01
 --- !u!1 &1317590815
 GameObject:
   m_ObjectHideFlags: 0
@@ -944,6 +957,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1317590816}
+  - component: {fileID: 1317590817}
   m_Layer: 5
   m_Name: HandAnchor (2)
   m_TagString: Untagged
@@ -971,6 +985,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -50}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &1317590817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1317590815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 448f13e744f04afcbd449c86e0cb7995, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardPrefabLocation: Cards/Card_01
 --- !u!1 &1367939992
 GameObject:
   m_ObjectHideFlags: 0
@@ -1097,8 +1124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edbb157ca6a848efa673b0c1b75f61db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CardPrefabLocation: Cards/Card_01
-  HandAnchor: {fileID: 1317590816}
+  hand: {fileID: 1317590817}
 --- !u!1 &1740271241
 GameObject:
   m_ObjectHideFlags: 0

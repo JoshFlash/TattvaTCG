@@ -1,107 +1,89 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class BattleDeckController : MonoBehaviour
 {
-    public string CardPrefabLocation = "Cards/Card_01";
+    private static LayerMask kUiLayer = default;
+    
+    [SerializeField] private HandController hand = default;
 
-    private const float CARD_DEPTH_INTERVAL = 0.0003f;
-    private const int MAX_HAND_SIZE = 10;
-
-    public Transform HandAnchor = default;
-
-    public Card SelectedCard { get; private set; } = default;
-
+    private Card selectedCard = default;
     private Card examinedCard = default;
+    private Card mouseOverCard = default;
 
-    private List<Card> cardsInHand = new();
+    private RaycastHit[] results = new RaycastHit[30];
 
-    public Card CheckMouseoverCard()
+    private void Awake()
     {
-        if (cardsInHand.Count == 0) return null;
+        kUiLayer = LayerMask.GetMask("UI");
+    }
 
-        Card mouseOverCard = null;
-        float minDistance = CardConfig.GlobalSettings.MouseOverBounds.x;
-        foreach (Card card in cardsInHand)
+    private void Update()
+    {
+        if (hand.IsEmpty) return;
+
+        CheckMouseOverCard(out mouseOverCard);
+        
+        if (Input.GetMouseButtonUp(0) && TrySelectCard(mouseOverCard))
         {
-            var sPos = Camera.main.WorldToScreenPoint(card.transform.position);
-            var xDist = MathF.Abs(sPos.x - Input.mousePosition.x);
-            var yDist = MathF.Abs(sPos.y - Input.mousePosition.y);
-            if (xDist <= minDistance && xDist < CardConfig.GlobalSettings.MouseOverBounds.x && 
-                (yDist < CardConfig.GlobalSettings.MouseOverBounds.y || Input.mousePosition.y > 1 - CardConfig.GlobalSettings.CardAreaPadding.y))
-            {
-                minDistance = xDist;
-                mouseOverCard = card;
-            }
+            return;
         }
 
-        return mouseOverCard;
-    }
-
-    public async Task<Card> AddCard()
-    {
-        Card cardInstance = null;
-        if (cardsInHand.Count < MAX_HAND_SIZE)
+        if (Input.GetMouseButtonUp(1))
         {
-            var cardPrefab = Resources.Load<Card>(CardPrefabLocation);
-            cardInstance = Instantiate(cardPrefab, HandAnchor.position, HandAnchor.rotation, HandAnchor);
-            cardsInHand.Add(cardInstance);
-            cardInstance.MoveToPosition(cardInstance.transform.position + new Vector3(0, CardConfig.GlobalSettings.SelectHeight, 0), CardConfig.GlobalSettings.DealtSpeed);
-            await Task.Delay(TimeSpan.FromSeconds(CardConfig.GlobalSettings.DealtSpeed));
-            for (int i = 0; i < cardsInHand.Count; i++)
-            {
-                var card = cardsInHand[i];
-                card.Index = i;
-                CardConfig.GlobalSettings.ExamineDodgeDistance = (cardsInHand.Count - 1f) / MAX_HAND_SIZE * CardConfig.GlobalSettings.DodgeDistance;
-                CardConfig.GlobalSettings.DodgeRightDistance = 1.25f * (cardsInHand.Count - 1f) / MAX_HAND_SIZE * CardConfig.GlobalSettings.DodgeDistance;
-                int offset = cardsInHand.Count / 2;
-                card.MoveToPosition(HandAnchor.position + CardDefaultPosition(offset, i), CardConfig.GlobalSettings.SortSpeed, card.CachePosition);
-            }
-
-            await Task.Delay(TimeSpan.FromSeconds(CardConfig.GlobalSettings.SortSpeed));
+            // play selected card
         }
 
-        return cardInstance;
-    }
-
-    public async Task DiscardCard(Card card)
-    {
-        card.MoveToPosition(CardDefaultPosition(MAX_HAND_SIZE, (int)(MAX_HAND_SIZE * 1.5f)), CardConfig.GlobalSettings.DealtSpeed);
-        card.LockPosition = true;
-
-        if (card == SelectedCard) ClearSelectedCard();
-        if (card == examinedCard) ClearExaminedCard();
-        cardsInHand.Remove(card);
-
-        await Task.Delay(TimeSpan.FromSeconds(CardConfig.GlobalSettings.DealtSpeed));
-        Destroy(card.gameObject);
-    }
-
-    private Vector3 CardDefaultPosition(int offset, int index)
-    {
-        float padding =
-            cardsInHand.Count < MAX_HAND_SIZE / 2 ? CardConfig.GlobalSettings.MaxPadding :
-            cardsInHand.Count >= (int)(MAX_HAND_SIZE * 0.8f) ? CardConfig.GlobalSettings.MinPadding :
-            (CardConfig.GlobalSettings.MaxPadding + CardConfig.GlobalSettings.MinPadding) / 2f;
-        return new((-offset + index + 0.5f) * padding, 0, CARD_DEPTH_INTERVAL * index);
-    }
-
-    public bool TrySelectCard(Card card)
-    {
-        if (cardsInHand.Contains(card))
+        if (mouseOverCard is null)
         {
-            if (examinedCard == card)
-            {
-                ClearExaminedCard();
-            }
+            ClearExaminedCard();
+        }
+        else if (examinedCard != mouseOverCard)
+        {
+            UpdateExaminedCard();
+        }
+    }
 
-            if (SelectedCard != card)
+    private void CheckMouseOverCard(out Card mouseOver)
+    {
+        mouseOver = null;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        var index = Physics.RaycastNonAlloc(ray, results, 100f, kUiLayer);
+        for (--index; index >= 0; --index)
+        {
+            var result = results[index];
+            Log.Info(result.collider.name);
+            if (result.collider.TryGetComponent(out Card hitCard))
+            {
+                if (mouseOver == null || IsPointCloser(result.point, hitCard.transform.position, mouseOver.transform.position))
+                {
+                    mouseOver = hitCard;
+                }
+            }
+        }
+        
+        bool IsPointCloser(Vector3 origin, in Vector3 testPoint, in Vector3 controlPoint) =>
+            Vector3.SqrMagnitude(origin - testPoint) < Vector3.SqrMagnitude(origin - controlPoint);
+    }
+
+    public async UniTask<Card> AddCard()
+    {
+        return await hand.AddCard();
+    }
+
+    private bool TrySelectCard(Card card)
+    {
+        if (hand.Contains(card))
+        {
+            if (selectedCard != card)
             {
                 ClearSelectedCard();
-                SelectedCard = card;
-                SelectedCard?.SetState(CardState.Select);
+                selectedCard = card;
+                selectedCard?.SetState(CardState.Select);
             }
             else
             {
@@ -114,103 +96,47 @@ public class BattleDeckController : MonoBehaviour
         return false;
     }
 
-    public void UpdateExaminedCard(Card card)
+    private void UpdateExaminedCard()
     {
-        if (cardsInHand.Contains(card) && card != SelectedCard && card != examinedCard)
+        if (mouseOverCard != selectedCard && mouseOverCard != examinedCard)
         {
             ClearExaminedCard();
-            examinedCard = card;
+            examinedCard = mouseOverCard;
             examinedCard.SetState(CardState.Examine);
 
-            if (examinedCard.Index > 0)
-            {
-                var leftCard = cardsInHand[examinedCard.Index - 1];
-                if (leftCard != SelectedCard)
-                {
-                    leftCard.SetState(CardState.DodgeLeft);
-                }
-            }
-
-            if (examinedCard.Index < cardsInHand.Count - 1)
-            {
-                var rightCard = cardsInHand[examinedCard.Index + 1];
-                if (rightCard != SelectedCard)
-                {
-                    rightCard.SetState(CardState.DodgeRight);
-                }
-            }
+            hand.UpdateAdjacentCards(examinedCard, selectedCard);
         }
     }
 
-    public void ClearExaminedCard()
+    private void ClearExaminedCard()
     {
         if (examinedCard != null)
         {
-            if (examinedCard.Index > 0)
-            {
-                var leftCard = cardsInHand[examinedCard.Index - 1];
-                if (leftCard != SelectedCard)
-                {
-                    leftCard.SetState(CardState.Default);
-                }
-            }
-
-            if (examinedCard.Index < cardsInHand.Count - 1)
-            {
-                var rightCard = cardsInHand[examinedCard.Index + 1];
-                if (rightCard != SelectedCard)
-                {
-                    rightCard.SetState(CardState.Default);
-                }
-            }
+            hand.ClearAdjacentCards(examinedCard, selectedCard);
 
             examinedCard.SetState(CardState.Default);
             examinedCard = null;
         }
     }
 
-    public void ClearSelectedCard()
+    private void ClearSelectedCard()
     {
-        if (SelectedCard != null)
+        if (selectedCard != null)
         {
-            if (SelectedCard.Index > 0)
-            {
-                cardsInHand[SelectedCard.Index - 1].SetState(CardState.Default);
-            }
-
-            if (SelectedCard.Index < cardsInHand.Count - 1)
-            {
-                cardsInHand[SelectedCard.Index + 1].SetState(CardState.Default);
-            }
-
-            SelectedCard.SetState(CardState.Default);
-            SelectedCard = null;
+            selectedCard.SetState(CardState.Default);
+            selectedCard = null;
         }
     }
 
-    public void Clear()
+    public void ClearHand()
     {
         ClearExaminedCard();
         ClearSelectedCard();
-        foreach (Card card in cardsInHand)
-        {
-            Destroy(card.gameObject);
-        }
-
-        cardsInHand.Clear();
-    }
-
-    public bool ShouldClearExaminedCard()
-    {
-        var cardAreaPadding = CardConfig.GlobalSettings.CardAreaPadding;
-        return SelectedCard != examinedCard &&
-               (Input.mousePosition.y < 1 - cardAreaPadding.y) ||
-               (Input.mousePosition.x > 1 - cardAreaPadding.x) ||
-               (Input.mousePosition.x < cardAreaPadding.x);
+        hand.DestroyAllCards();
     }
 
     public void UnlockCards()
     {
-        cardsInHand.ForEach(card => card.LockPosition = false);
+        hand.UnlockAllCards();
     }
 }
