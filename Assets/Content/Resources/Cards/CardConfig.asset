@@ -17,11 +17,8 @@ MonoBehaviour:
   MaxPadding: 0.42
   DealtSpeed: 0.21
   SortSpeed: 0.14
-  CardAreaPadding: {x: 0.14, y: 0.28}
-  MouseOverBounds: {x: 0.07, y: 0.21}
   SelectHeight: 0.42
   SelectDepth: -0.02
-  ExamineHeight: 0.21
+  ExamineHeight: 0.5
+  ExamineDepth: -0.14
   DodgeDistance: 0.07
-  ExamineDodgeDistance: 0.04
-  DodgeRightDistance: 0.04
