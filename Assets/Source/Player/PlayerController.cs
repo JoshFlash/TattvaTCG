@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -38,12 +37,12 @@ public class PlayerController : MonoBehaviour
         isTurnActive = true;
                     
         // debug code - deal hand
-        int r = UnityEngine.Random.Range(3, 11);
+        int r = UnityEngine.Random.Range(5, 11);
         for (int i = 0; i < r; i++)
         {
-            await battleDeck.AddCard();
+            await battleDeck.AddCardToHand();
         }
-        battleDeck.UnlockCards();
+        battleDeck.UnlockHand();
         
         return isTurnActive;
     }
