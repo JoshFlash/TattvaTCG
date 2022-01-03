@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public enum CardState { Default, Examine, Select, DodgeLeft, DodgeRight, Clear }
+// TODO refactor card state & positions into proper state machine logic
+public enum CardState { Default, Examine, Select, DodgeLeft, DodgeRight, Clear}
 
 public class HandController : MonoBehaviour
 {
@@ -15,8 +16,8 @@ public class HandController : MonoBehaviour
     private static Vector3 kExamineOffset      => new (0, CardConfig.GlobalSettings.ExamineHeight, CardConfig.GlobalSettings.ExamineDepth);
     private static Vector3 kClearOffset        => new (0, CardConfig.GlobalSettings.ExamineHeight / 2 , 0);
     private static Vector3 kSelectOffset       => new (0, CardConfig.GlobalSettings.SelectHeight, CardConfig.GlobalSettings.SelectDepth);
-    private static Vector3 kDodgeOffsetLeft    => new (-CardConfig.GlobalSettings.DodgeDistance, 0, 0);
-    private static Vector3 kDodgeOffsetRight   => new (CardConfig.GlobalSettings.DodgeDistance, 0, 0);
+    private static Vector3 kDodgeOffsetLeft    => new (CardConfig.GlobalSettings.DodgeDistance, 0, 0);
+    private static Vector3 kDodgeOffsetRight   => new (-CardConfig.GlobalSettings.DodgeDistance, 0, 0);
 
     [SerializeField] private string cardPrefabLocation = "Cards/Card_01";
     
@@ -52,26 +53,35 @@ public class HandController : MonoBehaviour
             // play selected card
         }
 
-        if (mouseOverCard is null)
-        {
-            ClearExaminedCard();
-        }
-        else
+        if (mouseOverCard != null)
         {
             UpdateExaminedCard();
         }
+        else if (ShouldClearExaminedCard())
+        {
+            ClearExaminedCard();
+        }
+    }
+
+    private bool ShouldClearExaminedCard()
+    {
+        var mousePos = Input.mousePosition;
+        if (examinedCard != null)
+        {
+            var examinedCardPoint = Camera.WorldToScreenPoint(examinedCard.transform.position);
+            return mousePos.y > examinedCardPoint.y;
+        }
+
+        return false;
     }
 
     private void LateUpdate()
     {
-        foreach (var card in hand.GetMovingCards(ShouldMove))
+        foreach (var card in hand.GetMovingCards())
         {
             card.MoveToRequestedPosition(CardConfig.GlobalSettings.MoveSpeed);
         }
     }
-
-    private bool ShouldMove(Card cardData) =>
-        !cardData.LockPosition && cardData.TargetPositionCached != cardData.TargetPositionRequested;
 
     private Vector3 GetOffset(CardState state)
     {
@@ -106,14 +116,20 @@ public class HandController : MonoBehaviour
             var result = results[index];
             if (result.collider.TryGetComponent(out Card hitCard))
             {
+                var examinedDistance = GetExaminedCardSqrDistance(result.point);
                 var distance = Vector3.SqrMagnitude(result.point - hitCard.transform.position);
-                if (mouseOver == null || distance < minSqrDistance)
+                if (distance < minSqrDistance && distance < examinedDistance)
                 {
                     minSqrDistance = distance;
                     mouseOver = hitCard;
                 }
             }
         }
+    }
+
+    private float GetExaminedCardSqrDistance(Vector3 point)
+    {
+        return examinedCard != null ? Vector3.SqrMagnitude(point - examinedCard.defaultPosition) : float.MaxValue;
     }
 
     private bool TrySelectCard()
@@ -204,7 +220,7 @@ public class HandController : MonoBehaviour
         {
             ClearAdjacentCards(examinedCard, selectedCard);
 
-            examinedCard.SetState(CardState.Clear, GetOffset(CardState.Clear));
+            examinedCard.SetState(CardState.Default, GetOffset(CardState.Default));
             examinedCard = null;
         }
     }

@@ -7,14 +7,18 @@ using UnityEngine;
 public class Card : MonoBehaviour
 {
     private Tween<Vector3> moveTween = null;
-    private Vector3 defaultPosition = default;
+    
+    public Vector3 defaultPosition = default;
+    private Vector3 targetPositionCached  = default;
+    private Vector3 targetPositionRequested  = default;
 
-    public Vector3 TargetPositionCached { get; private set; }
-    public Vector3 TargetPositionRequested { get; private set; }
-
-    public CardState State { get; set; } = CardState.Default;
-    public int Index { get; init; }= -1;
+    public CardState State { get; private set; } = CardState.Default;
     public bool LockPosition { get; set;} = true;
+
+    public bool ShouldMove()
+    {
+        return !LockPosition && targetPositionCached != targetPositionRequested;
+    }
     
     public void CachePosition()
     {
@@ -29,38 +33,40 @@ public class Card : MonoBehaviour
     public void SetState(CardState cardState, Vector3 requestedOffset)
     {
         State = cardState;
-        TargetPositionRequested = defaultPosition + transform.rotation * requestedOffset;
+        targetPositionRequested = defaultPosition + transform.rotation * requestedOffset;
     }
 
     public void TweenToPosition(Vector3 position, float duration, System.Action onComplete = null)
     {
-        TargetPositionRequested = TargetPositionCached = position;
+        targetPositionRequested = targetPositionCached = position;
         moveTween?.Cancel(true);
-        moveTween = transform.TweenMove(TargetPositionRequested, duration, onComplete, Easing.Cubic.Out, 0f);
+        moveTween = transform.TweenMove(targetPositionRequested, duration, onComplete, Easing.Cubic.Out, 0f);
     }
 
     public void MoveToRequestedPosition(float duration, System.Action onComplete = null)
     {
         if (State.Equals(CardState.Examine))
         {
-            SetPosition(TargetPositionRequested);
+            SetPosition(targetPositionRequested);
             return;
         }
         
         if (State.Equals(CardState.Clear))
         {
-            SetPosition(TargetPositionRequested);
-            TargetPositionRequested = defaultPosition;
+            SetPosition(targetPositionRequested);
+            targetPositionRequested = defaultPosition;
+            LockPosition = true;
+            onComplete += () => LockPosition = false;
         }
         
-        TweenToPosition(TargetPositionRequested, duration, onComplete);
+        TweenToPosition(targetPositionRequested, duration, onComplete);
     }
 
     private void SetPosition(Vector3 position)
     {
         if (!LockPosition)
         {
-            TargetPositionCached = position;
+            targetPositionCached = position;
             transform.position = position;
             moveTween?.Cancel(true);
         }

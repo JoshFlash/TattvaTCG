@@ -8,9 +8,9 @@ public class HandData : IEnumerable<Card>
     public bool IsEmpty => handData.Count == 0;
     public int Size => handData.Count;
 
-    public List<Card> GetMovingCards(Predicate<Card> shouldMove)
+    public List<Card> GetMovingCards()
     {
-        return handData.FindAll(shouldMove);
+        return handData.FindAll(card => card.ShouldMove());
     }
 
     public void Add(Card card)

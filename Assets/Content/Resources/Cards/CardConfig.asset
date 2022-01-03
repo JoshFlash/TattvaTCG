@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: CardConfig
   m_EditorClassIdentifier: 
   MoveSpeed: 0.21
-  MinPadding: 0.21
-  MaxPadding: 0.42
+  MinPadding: 0.15
+  MaxPadding: 0.21
   DealtSpeed: 0.21
   SortSpeed: 0.14
   SelectHeight: 0.42
