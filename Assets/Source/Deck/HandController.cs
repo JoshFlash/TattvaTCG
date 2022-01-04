@@ -13,6 +13,7 @@ public class HandController : MonoBehaviour
     private const int kMaxHandSize = 10;
     private const float kCardDepthInterval = 0.01f;
     
+    // TODO move into DataService for card config
     private static Vector3 kExamineOffset      => new (0, CardConfig.GlobalSettings.ExamineHeight, CardConfig.GlobalSettings.ExamineDepth);
     private static Vector3 kClearOffset        => new (0, CardConfig.GlobalSettings.ExamineHeight / 2 , 0);
     private static Vector3 kSelectOffset       => new (0, CardConfig.GlobalSettings.SelectHeight, CardConfig.GlobalSettings.SelectDepth);
@@ -21,7 +22,7 @@ public class HandController : MonoBehaviour
 
     [SerializeField] private string cardPrefabLocation = "Cards/Card_01";
     
-    private HandData hand = new HandData();
+    private PlayerHand playerHand = new PlayerHand();
     
     private Card selectedCard = default;
     private Card examinedCard = default;
@@ -39,7 +40,7 @@ public class HandController : MonoBehaviour
 
     private void Update()
     {
-        if (hand.IsEmpty) return;
+        if (playerHand.IsEmpty) return;
 
         CheckMouseOverCard(out mouseOverCard);
         
@@ -77,7 +78,7 @@ public class HandController : MonoBehaviour
 
     private void LateUpdate()
     {
-        foreach (var card in hand.GetMovingCards())
+        foreach (var card in playerHand.GetMovingCards())
         {
             card.MoveToRequestedPosition(CardConfig.GlobalSettings.MoveSpeed);
         }
@@ -134,7 +135,7 @@ public class HandController : MonoBehaviour
 
     private bool TrySelectCard()
     {
-        if (hand.Contains(mouseOverCard))
+        if (playerHand.Contains(mouseOverCard))
         {
             selectedCard?.SetState(CardState.Default, GetOffset(CardState.Default));
             if (selectedCard != mouseOverCard)
@@ -156,11 +157,11 @@ public class HandController : MonoBehaviour
     public async UniTask<Card> AddCard()
     {
         Card cardInstance = null;
-        if (hand.Size < kMaxHandSize)
+        if (playerHand.Size < kMaxHandSize)
         {
             var cardPrefab = Resources.Load<Card>(cardPrefabLocation);
             cardInstance = Instantiate(cardPrefab, transform.position, transform.rotation, transform);
-            hand.Add(cardInstance);
+            playerHand.Add(cardInstance);
             cardInstance.TweenToPosition(cardInstance.transform.position + new Vector3(0, CardConfig.GlobalSettings.SelectHeight, 0), CardConfig.GlobalSettings.DealtSpeed);
 
             await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.GlobalSettings.DealtSpeed));
@@ -177,7 +178,7 @@ public class HandController : MonoBehaviour
     {
         card.TweenToPosition(CardDefaultPosition(kMaxHandSize, (int)(kMaxHandSize * 1.5f)), CardConfig.GlobalSettings.DealtSpeed);
         card.LockPosition = true;
-        hand.Remove(card);
+        playerHand.Remove(card);
 
         await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.GlobalSettings.DealtSpeed));
         Destroy(card.gameObject);
@@ -186,9 +187,9 @@ public class HandController : MonoBehaviour
     private void AdjustPositions(Vector3 handAnchorPosition)
     {
         int index = -1;
-        foreach (var card in hand)
+        foreach (var card in playerHand)
         {
-            int offset = hand.Size / 2;
+            int offset = playerHand.Size / 2;
             card.TweenToPosition(handAnchorPosition + CardDefaultPosition(offset, ++index), CardConfig.GlobalSettings.SortSpeed, card.CachePosition);
         }
     }
@@ -196,8 +197,8 @@ public class HandController : MonoBehaviour
     private Vector3 CardDefaultPosition(int offset, int index)
     {
         float padding =
-            hand.Size < kMaxHandSize / 2 ? CardConfig.GlobalSettings.MaxPadding :
-            hand.Size >= (int)(kMaxHandSize * 0.8f) ? CardConfig.GlobalSettings.MinPadding :
+            playerHand.Size < kMaxHandSize / 2 ? CardConfig.GlobalSettings.MaxPadding :
+            playerHand.Size >= (int)(kMaxHandSize * 0.8f) ? CardConfig.GlobalSettings.MinPadding :
             (CardConfig.GlobalSettings.MaxPadding + CardConfig.GlobalSettings.MinPadding) / 2f;
         return new((-offset + index + 0.5f) * padding, 0, kCardDepthInterval * index);
     }
@@ -243,7 +244,7 @@ public class HandController : MonoBehaviour
 
     public void UnlockAllCards()
     {
-        foreach (var cardData in hand)
+        foreach (var cardData in playerHand)
         {
             cardData.LockPosition = false;
         }
@@ -251,8 +252,8 @@ public class HandController : MonoBehaviour
 
     private void UpdateAdjacentCards(Card examinedCard, Card selectedCard)
     {
-        var leftCard = hand.GetLeftCard(examinedCard);
-        var rightCard = hand.GetRightCard(examinedCard);
+        var leftCard = playerHand.GetLeftCard(examinedCard);
+        var rightCard = playerHand.GetRightCard(examinedCard);
         
         if (leftCard && leftCard != selectedCard)
         {
@@ -267,8 +268,8 @@ public class HandController : MonoBehaviour
 
     private void ClearAdjacentCards(Card examinedCard, Card selectedCard)
     {
-        var leftCard = hand.GetLeftCard(examinedCard);
-        var rightCard = hand.GetRightCard(examinedCard);
+        var leftCard = playerHand.GetLeftCard(examinedCard);
+        var rightCard = playerHand.GetRightCard(examinedCard);
         
         if (leftCard && leftCard != selectedCard)
         {
@@ -283,12 +284,12 @@ public class HandController : MonoBehaviour
 
     private void DestroyAllCards()
     {
-        foreach (Card card in hand)
+        foreach (Card card in playerHand)
         {
             Destroy(card.gameObject);
         }
 
-        hand.Clear();
+        playerHand.Clear();
     }
 
 }
