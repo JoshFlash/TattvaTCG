@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private Button endTurnButton = default; 
-    public Champion Champion { get; set; }
-    public Camera Camera { get; set; }
+    [SerializeField] private Button endTurnButton = default;
+    [SerializeField] private BattleDeckController battleDeck = default;
+    public Champion Champion { get; private set; }
+    public Camera Camera { get; private set; }
     
     private bool isTurnActive = false;
 
@@ -29,12 +29,21 @@ public class PlayerController : MonoBehaviour
     {
     }
 
-    public bool ActivateTurn()
+    public async UniTask<bool> ActivateTurn()
     {
         endTurnButton.onClick.AddListener(EndTurn);
 
         // this will later be leveraged to skip turns where no actions are available to the player
         isTurnActive = true;
+                    
+        // debug code - deal hand
+        int r = UnityEngine.Random.Range(5, 11);
+        for (int i = 0; i < r; i++)
+        {
+            await battleDeck.AddCardToHand();
+        }
+        battleDeck.UnlockHand();
+        
         return isTurnActive;
     }
 
@@ -43,6 +52,7 @@ public class PlayerController : MonoBehaviour
         if (isTurnActive)
         {
             endTurnButton.onClick.RemoveListener(EndTurn);
+            battleDeck.ClearHand();
             isTurnActive = false;
         }
     }
