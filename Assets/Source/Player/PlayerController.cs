@@ -1,39 +1,60 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    public Champion Champion { get; set; }
-    public Camera Camera { get; set; }
+    [SerializeField] private Button endTurnButton = default;
+    [SerializeField] private BattleDeckController battleDeck = default;
+    public Champion Champion { get; private set; }
+    public Camera Camera { get; private set; }
     
     private bool isTurnActive = false;
 
     private void Awake()
     {
         Camera ??= Camera.main;
-        Champion = new GameObject("Champion").AddComponent<Champion>();
     }
 
-    private void Start()
+    public async UniTask SummonChampion(string championName)
     {
-        Champion.OnManaChanged.AddListener(HandleManaChanged);
+        Champion = new GameObject(championName).AddComponent<Champion>();
+        await Task.Delay(1000);
     }
 
-    private void HandleManaChanged(int manaRemaining)
+    public void OnChampionDefeated()
     {
-        if (manaRemaining <= 0)
-        {
-            isTurnActive = false;
-        }
     }
 
-    public bool ActivateTurn()
+    public async UniTask<bool> ActivateTurn()
     {
+        endTurnButton.onClick.AddListener(EndTurn);
+
         // this will later be leveraged to skip turns where no actions are available to the player
         isTurnActive = true;
+                    
+        // debug code - deal hand
+        int r = UnityEngine.Random.Range(5, 11);
+        for (int i = 0; i < r; i++)
+        {
+            await battleDeck.AddCardToHand();
+        }
+        battleDeck.UnlockHand();
+        
         return isTurnActive;
+    }
+
+    private void EndTurn()
+    {
+        if (isTurnActive)
+        {
+            endTurnButton.onClick.RemoveListener(EndTurn);
+            battleDeck.ClearHand();
+            isTurnActive = false;
+        }
     }
 
     public async UniTask<bool> HandleInputOnTurn()
@@ -45,7 +66,7 @@ public class PlayerController : MonoBehaviour
             Ray ray = Camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out var hit))
             {
-                if (hit.transform.TryGetComponent<Character>(out var character))
+                if (Champion.Mana > 0 && hit.transform.TryGetComponent<Character>(out var character))
                 {
                     Champion.SpendMana(1);
                     if (left)

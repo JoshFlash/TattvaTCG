@@ -8,5 +8,5 @@ public static class BattlePhase
     public static readonly Phase Spell      = new (2, TOTAL_PHASES);
     public static readonly Phase Ability    = new (3, TOTAL_PHASES);
     public static readonly Phase Recovery   = new (4, TOTAL_PHASES);
-
+    
 }
