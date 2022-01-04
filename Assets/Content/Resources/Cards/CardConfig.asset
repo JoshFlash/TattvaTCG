@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc6fb62222cf4eaa92b9e07ffd9c4f07, type: 3}
+  m_Name: CardConfig
+  m_EditorClassIdentifier: 
+  MoveSpeed: 0.21
+  MinPadding: 0.15
+  MaxPadding: 0.21
+  DealtSpeed: 0.21
+  SortSpeed: 0.14
+  SelectHeight: 0.42
+  SelectDepth: -0.02
+  ExamineHeight: 0.5
+  ExamineDepth: -0.14
+  DodgeDistance: 0.07

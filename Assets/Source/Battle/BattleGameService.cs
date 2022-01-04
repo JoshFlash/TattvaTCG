@@ -27,29 +27,29 @@ public class BattleGameService : IGameService
     
     private void SwapInitiative()
     {
+        Log.Info("swapping initiative");
         (initiativePlayer, reactivePlayer) = (reactivePlayer, initiativePlayer);
     }
 
     private void StartRound()
     {
+        Log.Info("starting new round");
         ProgressPhase();
     }
 
     private void ProgressPhase()
     {
         currentPhase = currentPhase.Next();
+        Log.Info($"phase progressed, phase is {currentPhase}");
+
         CommencePhase().Forget();
     }
 
     private async UniTask CommencePhase()
     {
-        Log.Info($"phase progressed, phase is {BattlePhase.BattlePhaseAliases[currentPhase]}");
         await HandleStartOfPhase();
-        Log.Info($"phase start, initiative is {initiativePlayer.Champion.name}");
         await HandlePlayerTurnInitiative();
-        Log.Info($"turn ended, turn switching to {reactivePlayer.Champion.name}");
         await HandlePlayerTurnReactive();
-        Log.Info($"turn ended, awaiting end of phase");
         await HandleEndOfPhase();
         if (!currentPhase.Equals(BattlePhase.Recovery))
         {
@@ -57,7 +57,6 @@ public class BattleGameService : IGameService
         }
         else
         {
-            Log.Info("awaiting end of round");
             await EndRound();
         }
     }
@@ -66,7 +65,8 @@ public class BattleGameService : IGameService
     {
         initiativePlayer.RestoreAllMana();
         reactivePlayer.RestoreAllMana();
-        
+        Log.Info($"phase start, initiative belongs to {initiativePlayer.Champion.name}");
+
         await UniTask.Yield();
     }
     
@@ -82,7 +82,9 @@ public class BattleGameService : IGameService
 
     private async UniTask HandlePlayerTurn(PlayerController player)
     {
-        bool active = player.ActivateTurn();
+        Log.Info($"{player.Champion.name} turn started, awaiting input");
+        
+        bool active = await player.ActivateTurn();
         while (active)
         {
             active = await player.HandleInputOnTurn();
@@ -91,12 +93,15 @@ public class BattleGameService : IGameService
 
     private async UniTask HandleEndOfPhase()
     {
+        Log.Info("awaiting end of phase");
         await UniTask.Yield();
     }
     
     private async UniTask EndRound()
     {
+        Log.Info("awaiting end of round");
         await UniTask.Yield();
+
         SwapInitiative();
         StartRound();
     }
