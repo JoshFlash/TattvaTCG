@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-// TODO refactor card state & positions into proper state machine logic
-public enum CardState { Default, Examine, Select, DodgeLeft, DodgeRight, Clear}
-
 public class HandController : MonoBehaviour
 {
     private static LayerMask kUiLayer = default;
@@ -13,13 +10,6 @@ public class HandController : MonoBehaviour
     private const int kMaxHandSize = 10;
     private const float kCardDepthInterval = 0.01f;
     
-    // TODO move into DataService for card config
-    private static Vector3 kExamineOffset      => new (0, CardConfig.GlobalSettings.ExamineHeight, CardConfig.GlobalSettings.ExamineDepth);
-    private static Vector3 kClearOffset        => new (0, CardConfig.GlobalSettings.ExamineHeight / 2 , 0);
-    private static Vector3 kSelectOffset       => new (0, CardConfig.GlobalSettings.SelectHeight, CardConfig.GlobalSettings.SelectDepth);
-    private static Vector3 kDodgeOffsetLeft    => new (CardConfig.GlobalSettings.DodgeDistance, 0, 0);
-    private static Vector3 kDodgeOffsetRight   => new (-CardConfig.GlobalSettings.DodgeDistance, 0, 0);
-
     [SerializeField] private string cardPrefabLocation = "Cards/Card_01";
     
     private PlayerHand playerHand = new PlayerHand();
@@ -80,31 +70,10 @@ public class HandController : MonoBehaviour
     {
         foreach (var card in playerHand.GetMovingCards())
         {
-            card.MoveToRequestedPosition(CardConfig.GlobalSettings.MoveSpeed);
+            card.MoveToRequestedPosition(CardConfig.Instance.MoveSpeed);
         }
     }
 
-    private Vector3 GetOffset(CardState state)
-    {
-        switch (state)
-        {
-            case CardState.Default:
-                return Vector3.zero;
-            case CardState.Examine:
-                return kExamineOffset;
-            case CardState.Clear:
-                return kClearOffset;
-            case CardState.Select:
-                return kSelectOffset;
-            case CardState.DodgeLeft:
-                return kDodgeOffsetLeft;
-            case CardState.DodgeRight:
-                return kDodgeOffsetRight;
-        }
-
-        return Vector3.zero;
-    }
-    
     private void CheckMouseOverCard(out Card mouseOver)
     {
         mouseOver = null;
@@ -137,11 +106,11 @@ public class HandController : MonoBehaviour
     {
         if (playerHand.Contains(mouseOverCard))
         {
-            selectedCard?.SetState(CardState.Default, GetOffset(CardState.Default));
+            selectedCard?.SetState(CardState.Default);
             if (selectedCard != mouseOverCard)
             {
                 selectedCard = mouseOverCard;
-                selectedCard.SetState(CardState.Select, GetOffset(CardState.Select));
+                selectedCard.SetState(CardState.Select);
             }
             else
             {
@@ -162,13 +131,13 @@ public class HandController : MonoBehaviour
             var cardPrefab = Resources.Load<Card>(cardPrefabLocation);
             cardInstance = Instantiate(cardPrefab, transform.position, transform.rotation, transform);
             playerHand.Add(cardInstance);
-            cardInstance.TweenToPosition(cardInstance.transform.position + new Vector3(0, CardConfig.GlobalSettings.SelectHeight, 0), CardConfig.GlobalSettings.DealtSpeed);
+            cardInstance.TweenToPosition(cardInstance.transform.position + new Vector3(0, CardConfig.Instance.SelectHeight, 0), CardConfig.Instance.DealtSpeed);
 
-            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.GlobalSettings.DealtSpeed));
+            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.Instance.DealtSpeed));
             
             AdjustPositions(transform.position);
 
-            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.GlobalSettings.SortSpeed));
+            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.Instance.SortSpeed));
         }
 
         return cardInstance;
@@ -176,11 +145,11 @@ public class HandController : MonoBehaviour
 
     public async UniTask DiscardCard(Card card)
     {
-        card.TweenToPosition(CardDefaultPosition(kMaxHandSize, (int)(kMaxHandSize * 1.5f)), CardConfig.GlobalSettings.DealtSpeed);
+        card.TweenToPosition(CardDefaultPosition(kMaxHandSize, (int)(kMaxHandSize * 1.5f)), CardConfig.Instance.DealtSpeed);
         card.LockPosition = true;
         playerHand.Remove(card);
 
-        await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.GlobalSettings.DealtSpeed));
+        await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.Instance.DealtSpeed));
         Destroy(card.gameObject);
     }
 
@@ -190,16 +159,16 @@ public class HandController : MonoBehaviour
         foreach (var card in playerHand)
         {
             int offset = playerHand.Size / 2;
-            card.TweenToPosition(handAnchorPosition + CardDefaultPosition(offset, ++index), CardConfig.GlobalSettings.SortSpeed, card.CachePosition);
+            card.TweenToPosition(handAnchorPosition + CardDefaultPosition(offset, ++index), CardConfig.Instance.SortSpeed, card.CachePosition);
         }
     }
     
     private Vector3 CardDefaultPosition(int offset, int index)
     {
         float padding =
-            playerHand.Size < kMaxHandSize / 2 ? CardConfig.GlobalSettings.MaxPadding :
-            playerHand.Size >= (int)(kMaxHandSize * 0.8f) ? CardConfig.GlobalSettings.MinPadding :
-            (CardConfig.GlobalSettings.MaxPadding + CardConfig.GlobalSettings.MinPadding) / 2f;
+            playerHand.Size < kMaxHandSize / 2 ? CardConfig.Instance.MaxPadding :
+            playerHand.Size >= (int)(kMaxHandSize * 0.8f) ? CardConfig.Instance.MinPadding :
+            (CardConfig.Instance.MaxPadding + CardConfig.Instance.MinPadding) / 2f;
         return new((-offset + index + 0.5f) * padding, 0, kCardDepthInterval * index);
     }
 
@@ -209,7 +178,7 @@ public class HandController : MonoBehaviour
         {
             ClearExaminedCard();
             examinedCard = mouseOverCard;
-            examinedCard.SetState(CardState.Examine, GetOffset(CardState.Examine));
+            examinedCard.SetState(CardState.Examine);
 
             UpdateAdjacentCards(examinedCard, selectedCard);
         }
@@ -221,7 +190,7 @@ public class HandController : MonoBehaviour
         {
             ClearAdjacentCards(examinedCard, selectedCard);
 
-            examinedCard.SetState(CardState.Default, GetOffset(CardState.Default));
+            examinedCard.SetState(CardState.Default);
             examinedCard = null;
         }
     }
@@ -230,7 +199,7 @@ public class HandController : MonoBehaviour
     {
         if (selectedCard != null)
         {
-            selectedCard.SetState(CardState.Default, GetOffset(CardState.Default));
+            selectedCard.SetState(CardState.Default);
             selectedCard = null;
         }
     }
@@ -257,12 +226,12 @@ public class HandController : MonoBehaviour
         
         if (leftCard && leftCard != selectedCard)
         {
-            leftCard.SetState(CardState.DodgeLeft, GetOffset(CardState.DodgeLeft));
+            leftCard.SetState(CardState.DodgeLeft);
         }
 
         if (rightCard && rightCard != selectedCard)
         {
-            rightCard.SetState(CardState.DodgeRight, GetOffset(CardState.DodgeRight));
+            rightCard.SetState(CardState.DodgeRight);
         }
     }
 
@@ -273,12 +242,12 @@ public class HandController : MonoBehaviour
         
         if (leftCard && leftCard != selectedCard)
         {
-            leftCard.SetState(CardState.Default, GetOffset(CardState.Default));
+            leftCard.SetState(CardState.Default);
         }
 
         if (rightCard && rightCard != selectedCard)
         {
-            rightCard.SetState(CardState.Default, GetOffset(CardState.Default));
+            rightCard.SetState(CardState.Default);
         }
     }
 
