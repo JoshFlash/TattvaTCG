@@ -1,8 +1,6 @@
-using Cysharp.Threading.Tasks;
 using TweenKey;
 using TweenKey.Interpolation;
 using UnityEngine;
-
 
 public class Card : MonoBehaviour
 {
@@ -30,10 +28,10 @@ public class Card : MonoBehaviour
         LockPosition = true;
     }
 
-    public void SetState(CardState cardState, Vector3 requestedOffset)
+    public void SetState(CardState cardState)
     {
         State = cardState;
-        targetPositionRequested = defaultPosition + transform.rotation * requestedOffset;
+        targetPositionRequested = defaultPosition + transform.rotation * State.Offset;
     }
 
     public void TweenToPosition(Vector3 position, float duration, System.Action onComplete = null)
