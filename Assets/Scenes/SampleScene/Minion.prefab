@@ -50,6 +50,7 @@ MonoBehaviour:
   maxHealth: 20
   maxMana: 2
   baseSpellPower: 1
+  model: {fileID: 4620553551767997569, guid: a54d3c6f4cb8f4a488917fcd073fc281, type: 3}
   OnHealthChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -57,7 +58,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   healthBar: {fileID: 164668403}
-  modelParent: {fileID: 0}
+  modelParent: {fileID: 4761048705443656357}
 --- !u!136 &8891444410382915005
 CapsuleCollider:
   m_ObjectHideFlags: 0

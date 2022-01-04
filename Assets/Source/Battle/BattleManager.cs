@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class BattleManager : MonoBehaviour
@@ -11,6 +12,6 @@ public class BattleManager : MonoBehaviour
     private void Start()
     {
         battleGameService = GameServices.GetService<BattleGameService>();
-        battleGameService.BeginBattle(playerOne, playerTwo);
+        battleGameService.BeginBattle(playerOne, playerTwo).Forget();
     }
 }
