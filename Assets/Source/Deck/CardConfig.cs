@@ -13,11 +13,11 @@ public class CardConfig : ScriptableObject
     public float DealtSpeed	= 0.21f;
     public float SortSpeed	= 0.14f;
 		
-    public float SelectHeight   = 0.42f;
-    public float SelectDepth    = -0.02f;
-    public float ExamineHeight  = 0.5f;
-    public float ExamineDepth  = -0.14f;
-    public float DodgeDistance  = 0.07f;
+    public float SelectHeight  = 0.42f;
+    public float ExamineHeight = 0.5f;
+    public float ExamineDepth  = -0.07f;
+    public float DodgeDistance = 0.07f;
+    public float DepthInterval = -0.01f;
 
     [InitializeOnLoadMethod]
     public static void Init()

@@ -11,11 +11,11 @@ public class Card : MonoBehaviour
     private Vector3 targetPositionRequested  = default;
 
     public CardState State { get; private set; } = CardState.Default;
-    public bool LockPosition { get; set;} = true;
+    public bool LockInteraction { get; set;} = true;
 
     public bool ShouldMove()
     {
-        return !LockPosition && targetPositionCached != targetPositionRequested;
+        return !LockInteraction && targetPositionCached != targetPositionRequested;
     }
     
     public void CachePosition()
@@ -25,7 +25,7 @@ public class Card : MonoBehaviour
 
     private void Awake()
     {
-        LockPosition = true;
+        LockInteraction = true;
     }
 
     public void SetState(CardState cardState)
@@ -49,12 +49,12 @@ public class Card : MonoBehaviour
             return;
         }
         
-        if (State.Equals(CardState.Clear))
+        if (State.Equals(CardState.ClearFocus))
         {
             SetPosition(targetPositionRequested);
             targetPositionRequested = defaultPosition;
-            LockPosition = true;
-            onComplete += () => LockPosition = false;
+            LockInteraction = true;
+            onComplete += () => LockInteraction = false;
         }
         
         TweenToPosition(targetPositionRequested, duration, onComplete);
@@ -62,7 +62,7 @@ public class Card : MonoBehaviour
 
     private void SetPosition(Vector3 position)
     {
-        if (!LockPosition)
+        if (!LockInteraction)
         {
             targetPositionCached = position;
             transform.position = position;

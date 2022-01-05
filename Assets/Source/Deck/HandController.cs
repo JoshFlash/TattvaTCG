@@ -6,9 +6,7 @@ using UnityEngine;
 public class HandController : MonoBehaviour
 {
     private static LayerMask kUiLayer = default;
-    
     private const int kMaxHandSize = 10;
-    private const float kCardDepthInterval = 0.01f;
     
     [SerializeField] private string cardPrefabLocation = "Cards/Card_01";
     
@@ -19,6 +17,7 @@ public class HandController : MonoBehaviour
     private Card mouseOverCard = default;
     
     private RaycastHit[] results = new RaycastHit[30];
+    private bool abeyInput = false;
     
     public Camera Camera { get; private set; }
     
@@ -30,12 +29,13 @@ public class HandController : MonoBehaviour
 
     private void Update()
     {
-        if (playerHand.IsEmpty) return;
+        if (playerHand.IsEmpty || abeyInput) return;
 
         CheckMouseOverCard(out mouseOverCard);
         
-        if (Input.GetMouseButtonUp(0) && TrySelectCard())
+        if (Input.GetMouseButtonUp(0))
         {
+            UpdateSelectedCard();
             return;
         }
 
@@ -57,7 +57,7 @@ public class HandController : MonoBehaviour
     private bool ShouldClearExaminedCard()
     {
         var mousePos = Input.mousePosition;
-        if (examinedCard != null)
+        if (examinedCard != null && examinedCard != selectedCard)
         {
             var examinedCardPoint = Camera.WorldToScreenPoint(examinedCard.transform.position);
             return mousePos.y > examinedCardPoint.y;
@@ -86,6 +86,8 @@ public class HandController : MonoBehaviour
             var result = results[index];
             if (result.collider.TryGetComponent(out Card hitCard))
             {
+                if (hitCard.LockInteraction) continue;
+                
                 var examinedDistance = GetExaminedCardSqrDistance(result.point);
                 var distance = Vector3.SqrMagnitude(result.point - hitCard.transform.position);
                 if (distance < minSqrDistance && distance < examinedDistance)
@@ -102,29 +104,23 @@ public class HandController : MonoBehaviour
         return examinedCard != null ? Vector3.SqrMagnitude(point - examinedCard.defaultPosition) : float.MaxValue;
     }
 
-    private bool TrySelectCard()
+    private void UpdateSelectedCard()
     {
         if (playerHand.Contains(mouseOverCard))
         {
-            selectedCard?.SetState(CardState.Default);
-            if (selectedCard != mouseOverCard)
+            var currentlySelectedCard = selectedCard;
+            ClearSelectedCard();
+            if (currentlySelectedCard != mouseOverCard)
             {
                 selectedCard = mouseOverCard;
                 selectedCard.SetState(CardState.Select);
             }
-            else
-            {
-                selectedCard = null;
-            }
-
-            return true;
         }
-
-        return false;
     }
 
     public async UniTask<Card> AddCard()
     {
+        abeyInput = true;
         Card cardInstance = null;
         if (playerHand.Size < kMaxHandSize)
         {
@@ -140,13 +136,14 @@ public class HandController : MonoBehaviour
             await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.Instance.SortSpeed));
         }
 
+        abeyInput = false;
         return cardInstance;
     }
 
     public async UniTask DiscardCard(Card card)
     {
         card.TweenToPosition(CardDefaultPosition(kMaxHandSize, (int)(kMaxHandSize * 1.5f)), CardConfig.Instance.DealtSpeed);
-        card.LockPosition = true;
+        card.LockInteraction = true;
         playerHand.Remove(card);
 
         await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.Instance.DealtSpeed));
@@ -169,7 +166,7 @@ public class HandController : MonoBehaviour
             playerHand.Size < kMaxHandSize / 2 ? CardConfig.Instance.MaxPadding :
             playerHand.Size >= (int)(kMaxHandSize * 0.8f) ? CardConfig.Instance.MinPadding :
             (CardConfig.Instance.MaxPadding + CardConfig.Instance.MinPadding) / 2f;
-        return new((-offset + index + 0.5f) * padding, 0, kCardDepthInterval * index);
+        return new((-offset + index + 0.5f) * padding, CardConfig.Instance.DepthInterval * 2 * index, CardConfig.Instance.DepthInterval * index);
     }
 
     private void UpdateExaminedCard()
@@ -186,11 +183,11 @@ public class HandController : MonoBehaviour
 
     private void ClearExaminedCard()
     {
-        if (examinedCard != null)
+        if (examinedCard != null && examinedCard != selectedCard)
         {
             ClearAdjacentCards(examinedCard, selectedCard);
 
-            examinedCard.SetState(CardState.Default);
+            examinedCard.SetState(CardState.ClearFocus);
             examinedCard = null;
         }
     }
@@ -199,7 +196,10 @@ public class HandController : MonoBehaviour
     {
         if (selectedCard != null)
         {
-            selectedCard.SetState(CardState.Default);
+            if (selectedCard == examinedCard) examinedCard = null;
+            ClearAdjacentCards(selectedCard, null);
+            
+            selectedCard.SetState(CardState.ClearFocus);
             selectedCard = null;
         }
     }
@@ -213,9 +213,9 @@ public class HandController : MonoBehaviour
 
     public void UnlockAllCards()
     {
-        foreach (var cardData in playerHand)
+        foreach (var card in playerHand)
         {
-            cardData.LockPosition = false;
+            card.LockInteraction = false;
         }
     }
 
@@ -235,17 +235,17 @@ public class HandController : MonoBehaviour
         }
     }
 
-    private void ClearAdjacentCards(Card examinedCard, Card selectedCard)
+    private void ClearAdjacentCards(Card centerCard, Card lockedCard)
     {
-        var leftCard = playerHand.GetLeftCard(examinedCard);
-        var rightCard = playerHand.GetRightCard(examinedCard);
+        var leftCard = playerHand.GetLeftCard(centerCard);
+        var rightCard = playerHand.GetRightCard(centerCard);
         
-        if (leftCard && leftCard != selectedCard)
+        if (leftCard && leftCard != lockedCard)
         {
             leftCard.SetState(CardState.Default);
         }
 
-        if (rightCard && rightCard != selectedCard)
+        if (rightCard && rightCard != lockedCard)
         {
             rightCard.SetState(CardState.Default);
         }
