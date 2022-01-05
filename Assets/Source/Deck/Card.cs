@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    private Tween<Vector3> moveTween = null;
-    
-    public Vector3 defaultPosition = default;
-    private Vector3 targetPositionCached  = default;
-    private Vector3 targetPositionRequested  = default;
-
     public CardState State { get; private set; } = CardState.Default;
     public bool LockInteraction { get; set;} = true;
+    public Vector3 DefaultPosition { get; private set; }
+
+    private Vector3 targetPositionCached  = default;
+    private Vector3 targetPositionRequested  = default;
+    
+    private Tween<Vector3> moveTween = null;
 
     public bool ShouldMove()
     {
@@ -20,7 +20,7 @@ public class Card : MonoBehaviour
     
     public void CachePosition()
     {
-        defaultPosition = transform.position;
+        DefaultPosition = transform.position;
     }
 
     private void Awake()
@@ -31,7 +31,7 @@ public class Card : MonoBehaviour
     public void SetState(CardState cardState)
     {
         State = cardState;
-        targetPositionRequested = defaultPosition + transform.rotation * State.Offset;
+        targetPositionRequested = DefaultPosition + transform.rotation * State.Offset;
     }
 
     public void TweenToPosition(Vector3 position, float duration, System.Action onComplete = null)
@@ -52,7 +52,7 @@ public class Card : MonoBehaviour
         if (State.Equals(CardState.ClearFocus))
         {
             SetPosition(targetPositionRequested);
-            targetPositionRequested = defaultPosition;
+            targetPositionRequested = DefaultPosition;
             LockInteraction = true;
             onComplete += () => LockInteraction = false;
         }

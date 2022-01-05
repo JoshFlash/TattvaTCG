@@ -101,7 +101,7 @@ public class HandController : MonoBehaviour
 
     private float GetExaminedCardSqrDistance(Vector3 point)
     {
-        return examinedCard != null ? Vector3.SqrMagnitude(point - examinedCard.defaultPosition) : float.MaxValue;
+        return examinedCard != null ? Vector3.SqrMagnitude(point - examinedCard.DefaultPosition) : float.MaxValue;
     }
 
     private void UpdateSelectedCard()
