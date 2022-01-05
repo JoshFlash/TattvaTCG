@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CardConfig : ScriptableObject
 {
-    private const string CARD_CONFIG_PATH = "Cards/CardConfig";
+    private const string kCardConfigPath = "Cards/CardConfig";
     public static CardConfig Instance;
     
     public float MoveSpeed	= 0.21f;
@@ -22,6 +22,6 @@ public class CardConfig : ScriptableObject
     [InitializeOnLoadMethod]
     public static void Init()
     {
-        Instance = Resources.Load<CardConfig>(CARD_CONFIG_PATH);
+        Instance = Resources.Load<CardConfig>(kCardConfigPath);
     }
 }
