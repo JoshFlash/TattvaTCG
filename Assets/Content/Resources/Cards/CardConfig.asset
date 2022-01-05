@@ -18,7 +18,7 @@ MonoBehaviour:
   DealtSpeed: 0.21
   SortSpeed: 0.14
   SelectHeight: 0.42
-  SelectDepth: -0.02
-  ExamineHeight: 0.5
-  ExamineDepth: -0.14
+  ExamineHeight: 0.25
+  ExamineDepth: -0.07
   DodgeDistance: 0.07
+  DepthInterval: -0.01
