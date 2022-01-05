@@ -70,7 +70,7 @@ public class HandController : MonoBehaviour
     {
         foreach (var card in playerHand.GetMovingCards())
         {
-            card.MoveToRequestedPosition(CardConfig.Instance.MoveSpeed);
+            card.MoveToRequestedPosition(CardConfig.MoveSpeed);
         }
     }
 
@@ -127,13 +127,13 @@ public class HandController : MonoBehaviour
             var cardPrefab = Resources.Load<Card>(cardPrefabLocation);
             cardInstance = Instantiate(cardPrefab, transform.position, transform.rotation, transform);
             playerHand.Add(cardInstance);
-            cardInstance.TweenToPosition(cardInstance.transform.position + new Vector3(0, CardConfig.Instance.SelectHeight, 0), CardConfig.Instance.DealtSpeed);
+            cardInstance.TweenToPosition(cardInstance.transform.position + new Vector3(0, CardConfig.SelectHeight, 0), CardConfig.DealtSpeed);
 
-            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.Instance.DealtSpeed));
+            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.DealtSpeed));
             
             AdjustPositions(transform.position);
 
-            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.Instance.SortSpeed));
+            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.SortSpeed));
         }
 
         abeyInput = false;
@@ -142,11 +142,11 @@ public class HandController : MonoBehaviour
 
     public async UniTask DiscardCard(Card card)
     {
-        card.TweenToPosition(CardDefaultPosition(kMaxHandSize, (int)(kMaxHandSize * 1.5f)), CardConfig.Instance.DealtSpeed);
+        card.TweenToPosition(CardDefaultPosition(kMaxHandSize, (int)(kMaxHandSize * 1.5f)), CardConfig.DealtSpeed);
         card.LockInteraction = true;
         playerHand.Remove(card);
 
-        await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.Instance.DealtSpeed));
+        await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.DealtSpeed));
         Destroy(card.gameObject);
     }
 
@@ -156,17 +156,17 @@ public class HandController : MonoBehaviour
         foreach (var card in playerHand)
         {
             int offset = playerHand.Size / 2;
-            card.TweenToPosition(handAnchorPosition + CardDefaultPosition(offset, ++index), CardConfig.Instance.SortSpeed, card.CachePosition);
+            card.TweenToPosition(handAnchorPosition + CardDefaultPosition(offset, ++index), CardConfig.SortSpeed, card.CachePosition);
         }
     }
     
     private Vector3 CardDefaultPosition(int offset, int index)
     {
         float padding =
-            playerHand.Size < kMaxHandSize / 2 ? CardConfig.Instance.MaxPadding :
-            playerHand.Size >= (int)(kMaxHandSize * 0.8f) ? CardConfig.Instance.MinPadding :
-            (CardConfig.Instance.MaxPadding + CardConfig.Instance.MinPadding) / 2f;
-        return new((-offset + index + 0.5f) * padding, CardConfig.Instance.DepthInterval * 2 * index, CardConfig.Instance.DepthInterval * index);
+            playerHand.Size < kMaxHandSize / 2 ? CardConfig.MaxPadding :
+            playerHand.Size >= (int)(kMaxHandSize * 0.8f) ? CardConfig.MinPadding :
+            (CardConfig.MaxPadding + CardConfig.MinPadding) / 2f;
+        return new((-offset + index + 0.5f) * padding, CardConfig.DepthInterval * 2 * index, CardConfig.DepthInterval * index);
     }
 
     private void UpdateExaminedCard()
