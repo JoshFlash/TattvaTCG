@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
+    public bool LockInteraction { get; set; } = true;
     public CardState State { get; private set; } = CardState.Default;
-    public bool LockInteraction { get; set;} = true;
     public Vector3 DefaultPosition { get; private set; }
 
-    private Vector3 targetPositionCached  = default;
-    private Vector3 targetPositionRequested  = default;
+    private Vector3 targetPositionCached = default;
+    private Vector3 targetPositionRequested = default;
     
     private Tween<Vector3> moveTween = null;
 
