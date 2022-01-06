@@ -12,12 +12,9 @@ public interface ICharacter
 
 public abstract class Character : MonoBehaviour, ICharacter
 {
-    [SerializeField] private int maxHealth = 10;
-    public int MaxHealth => maxHealth;
-    [SerializeField] private int maxMana = 1;
-    public int MaxMana => maxMana;
-    [SerializeField] private int baseSpellPower = 1;
-    public int BaseSpellPower => baseSpellPower;
+    [field: SerializeField] public int MaxHealth { get; private set; } = 10;
+    [field: SerializeField] public int MaxMana { get; private set; } = 1;
+    [field: SerializeField] public int BaseSpellPower { get; private set; } = 1;
 
     [SerializeField] private GameObject model = default;
     [SerializeField] private Transform modelParent = default;
@@ -25,45 +22,42 @@ public abstract class Character : MonoBehaviour, ICharacter
     [HideInInspector] public UnityEvent<int> OnHealthChanged = new ();
     [HideInInspector] public UnityEvent<int> OnManaChanged = new ();
     
-    private int health = 10;
-    public int Health => health;
-    private int mana = 1;
-    public int Mana => mana;
-    private int spellPower = 1;
-    public int SpellPower => spellPower;
+    public int Health { get; private set; } = 10;
+    public int Mana { get; private set; } = 1;
+    public int SpellPower { get; private set; } = 1;
 
     protected void Awake()
     {
         if (model)
             Instantiate(model, modelParent);
         
-        health = maxHealth;
-        mana = maxMana;
-        spellPower = baseSpellPower;
+        Health = MaxHealth;
+        Mana = MaxMana;
+        SpellPower = BaseSpellPower;
     }
 
     public void TakeDamage(int damage)
     {
-        health -= damage;
-        OnHealthChanged.Invoke(health);
+        Health -= damage;
+        OnHealthChanged.Invoke(Health);
     }
 
     public void RestoreHealth(int healing)
     {
-        health += healing;
-        if (health > maxHealth)
+        Health += healing;
+        if (Health > MaxHealth)
         {
-            health = maxHealth;
+            Health = MaxHealth;
         }
-        OnHealthChanged.Invoke(health);
+        OnHealthChanged.Invoke(Health);
     }
 
     public void SpendMana(int cost)
     {
         if (cost != 0)
         {
-            mana -= cost;
-            OnManaChanged.Invoke(mana);
+            Mana -= cost;
+            OnManaChanged.Invoke(Mana);
         }
     }
 
@@ -71,18 +65,18 @@ public abstract class Character : MonoBehaviour, ICharacter
     {
         if (regen != 0)
         {
-            mana += regen;
-            if (mana > maxMana)
+            Mana += regen;
+            if (Mana > MaxMana)
             {
-                mana = maxMana;
+                Mana = MaxMana;
             }
 
-            OnManaChanged.Invoke(mana);
+            OnManaChanged.Invoke(Mana);
         }
     }
 
     public void RestoreAllMana()
     {
-        RestoreMana(maxMana);
+        RestoreMana(MaxMana);
     }
 }

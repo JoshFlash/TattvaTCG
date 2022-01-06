@@ -6,6 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(ICardAction))]
 public class Card : MonoBehaviour
 {
+    [field: SerializeField] public int ManaCost { get; private set; } = 1;
+
     public Vector3 DefaultPosition { get; private set; }
     public  bool LockInteraction { get; private set; }
     
@@ -15,7 +17,6 @@ public class Card : MonoBehaviour
     private Tween<Vector3> moveTween = null;
 
     private ICardAction cardAction = default;
-    [field: SerializeField] public int ManaCost { get; } = 1;
 
     public bool ShouldMove()
     {
