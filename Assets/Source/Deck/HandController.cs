@@ -10,13 +10,13 @@ public class HandController : MonoBehaviour
     
     [SerializeField] private string cardPrefabLocation = "Cards/Card_01";
     
-    private PlayerHand playerHand = new PlayerHand();
+    private PlayerHand playerHand = new();
     
     private Card selectedCard = default;
     private Card examinedCard = default;
     private Card mouseOverCard = default;
     
-    private RaycastHit[] results = new RaycastHit[30];
+    private readonly RaycastHit[] results = new RaycastHit[30];
     private bool abeyInput = false;
     
     public Camera Camera { get; private set; }
@@ -27,23 +27,11 @@ public class HandController : MonoBehaviour
         Camera ??= Camera.main;
     }
 
-    private void Update()
+    public bool IsReceivingInput => !(playerHand.IsEmpty || abeyInput);
+
+    public void UpdateCardFocus()
     {
-        if (playerHand.IsEmpty || abeyInput) return;
-
         CheckMouseOverCard(out mouseOverCard);
-        
-        if (Input.GetMouseButtonUp(0))
-        {
-            UpdateSelectedCard();
-            return;
-        }
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            // play selected card
-        }
-
         if (mouseOverCard != null)
         {
             UpdateExaminedCard();
@@ -104,7 +92,7 @@ public class HandController : MonoBehaviour
         return examinedCard != null ? Vector3.SqrMagnitude(point - examinedCard.DefaultPosition) : float.MaxValue;
     }
 
-    private void UpdateSelectedCard()
+    public void UpdateSelectedCard()
     {
         if (playerHand.Contains(mouseOverCard))
         {
@@ -143,7 +131,7 @@ public class HandController : MonoBehaviour
     public async UniTask DiscardCard(Card card)
     {
         card.TweenToPosition(CardDefaultPosition(kMaxHandSize, (int)(kMaxHandSize * 1.5f)), CardConfig.DealtSpeed);
-        card.LockInteraction = true;
+        card.Lock();
         playerHand.Remove(card);
 
         await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.DealtSpeed));
@@ -215,7 +203,7 @@ public class HandController : MonoBehaviour
     {
         foreach (var card in playerHand)
         {
-            card.LockInteraction = false;
+            card.Unlock();
         }
     }
 
@@ -261,4 +249,29 @@ public class HandController : MonoBehaviour
         playerHand.Clear();
     }
 
+    public async UniTask<int> TryPlaySelectedCard(int championMana, int championSpellPower)
+    {
+        abeyInput = true;
+        int manaSpent = 0;
+        if (selectedCard?.ManaCost <= championMana)
+        {
+            var target = await SelectTarget();
+
+            if (selectedCard.PlayCard(target))
+            {
+                await DiscardCard(selectedCard);
+                manaSpent = selectedCard.ManaCost;
+            }
+        }
+
+        abeyInput = false;
+        return manaSpent;
+    }
+
+    private async UniTask<ICharacter> SelectTarget()
+    {
+        await UniTask.Yield();
+        var winion = FindObjectOfType<Minion>();
+        return winion;
+    }
 }
