@@ -78,7 +78,7 @@ public class HandController : MonoBehaviour
                 
                 var examinedDistance = GetExaminedCardSqrDistance(result.point);
                 var distance = Vector3.SqrMagnitude(result.point - hitCard.transform.position);
-                if (distance < minSqrDistance && distance < examinedDistance)
+                if (distance < minSqrDistance && distance < examinedDistance - CardConfig.SwapTolerance)
                 {
                     minSqrDistance = distance;
                     mouseOver = hitCard;

@@ -73,28 +73,7 @@ public class PlayerController : MonoBehaviour
             {
                 int manaSpent = await handController.TryPlaySelectedCard(Champion.Mana, Champion.SpellPower);
                 Champion.SpendMana(manaSpent);
-            }
-        }
-
-        var right = Input.GetMouseButtonUp(1);
-        var left = Input.GetMouseButtonUp(0);
-        if (right || left)
-        {
-            Ray ray = Camera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out var hit))
-            {
-                if (Champion.Mana > 0 && hit.transform.TryGetComponent<Character>(out var character))
-                {
-                    Champion.SpendMana(1);
-                    if (left)
-                    {
-                        BattleActions.DamageCharacter(character, 5);
-                    }
-                    else
-                    {
-                        BattleActions.HealCharacter(character, 5);
-                    }
-                }
+                await UniTask.Yield();
             }
         }
 
