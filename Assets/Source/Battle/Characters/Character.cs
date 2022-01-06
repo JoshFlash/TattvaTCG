@@ -60,18 +60,25 @@ public abstract class Character : MonoBehaviour, ICharacter
 
     public void SpendMana(int cost)
     {
-        mana -= cost;
-        OnManaChanged.Invoke(mana);
+        if (cost != 0)
+        {
+            mana -= cost;
+            OnManaChanged.Invoke(mana);
+        }
     }
 
     public void RestoreMana(int regen)
     {
-        mana += regen;
-        if (mana > maxMana)
+        if (regen != 0)
         {
-            mana = maxMana;
+            mana += regen;
+            if (mana > maxMana)
+            {
+                mana = maxMana;
+            }
+
+            OnManaChanged.Invoke(mana);
         }
-        OnManaChanged.Invoke(mana);
     }
 
     public void RestoreAllMana()

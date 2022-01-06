@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Button endTurnButton = default;
     [SerializeField] private BattleDeckController battleDeck = default;
+    [SerializeField] private HandController handController = default;
+
     public Champion Champion { get; private set; }
     public Camera Camera { get; private set; }
     
@@ -40,9 +42,9 @@ public class PlayerController : MonoBehaviour
         int r = UnityEngine.Random.Range(5, 11);
         for (int i = 0; i < r; i++)
         {
-            await battleDeck.AddCardToHand();
+            await battleDeck.AddCardToHand(handController);
         }
-        battleDeck.UnlockHand();
+        handController.UnlockAllCards();
         
         return isTurnActive;
     }
@@ -52,13 +54,28 @@ public class PlayerController : MonoBehaviour
         if (isTurnActive)
         {
             endTurnButton.onClick.RemoveListener(EndTurn);
-            battleDeck.ClearHand();
+            handController.ClearAllCards();
             isTurnActive = false;
         }
     }
 
     public async UniTask<bool> HandleInputOnTurn()
     {
+        if (handController.IsReceivingInput)
+        {
+            handController.UpdateCardFocus();
+            if (Input.GetMouseButtonUp(0))
+            {
+                handController.UpdateSelectedCard();
+                await UniTask.Yield();
+            }
+            if (Input.GetMouseButtonUp(1))
+            {
+                int manaSpent = await handController.TryPlaySelectedCard(Champion.Mana, Champion.SpellPower);
+                Champion.SpendMana(manaSpent);
+            }
+        }
+
         var right = Input.GetMouseButtonUp(1);
         var left = Input.GetMouseButtonUp(0);
         if (right || left)

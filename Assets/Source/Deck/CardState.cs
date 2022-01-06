@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public struct CardState
+public struct CardState : IEquatable<CardState>
 {
     private static Vector3 kDefaultOffset       => Vector3.zero;
     private static Vector3 kExamineOffset       => new(0, CardConfig.ExamineHeight, CardConfig.ExamineDepth);
@@ -37,4 +37,21 @@ public struct CardState
     private static readonly Lazy<CardState> kDodgeLeft = new(() => new() { Offset = kDodgeOffsetLeft, Id = 5 } );
     public static CardState DodgeLeft => kDodgeLeft.Value;
 
+    public bool Equals(CardState other)
+    {
+        return Id == other.Id;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is CardState other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return (Offset.GetHashCode() * 397) ^ Id;
+        }
+    }
 }
