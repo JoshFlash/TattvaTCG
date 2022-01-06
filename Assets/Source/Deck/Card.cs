@@ -61,8 +61,10 @@ public class Card : MonoBehaviour
         moveTween = transform.TweenMove(targetPositionRequested, duration, onComplete, Easing.Cubic.Out, 0f);
     }
 
-    public void MoveToRequestedPosition(float duration, System.Action onComplete = null)
+    public void MoveToRequestedPosition(float duration)
     {
+        Action onComplete = delegate {};
+
         if (state.Equals(CardState.Examine))
         {
             SetPosition(targetPositionRequested);
