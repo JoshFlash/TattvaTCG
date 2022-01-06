@@ -128,11 +128,13 @@ public class HandController : MonoBehaviour
         return cardInstance;
     }
 
-    public async UniTask DiscardCard(Card card)
+    public async UniTask DiscardCard(Card card, Vector3 handAnchorPosition)
     {
-        card.TweenToPosition(CardDefaultPosition(kMaxHandSize, (int)(kMaxHandSize * 1.5f)), CardConfig.DealtSpeed);
+        card.TweenToPosition(handAnchorPosition + CardDefaultPosition(kMaxHandSize, -1), CardConfig.DealtSpeed);
         card.Lock();
         playerHand.Remove(card);
+        
+        AdjustPositions(transform.position);
 
         await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.DealtSpeed));
         Destroy(card.gameObject);
@@ -259,7 +261,7 @@ public class HandController : MonoBehaviour
 
             if (selectedCard.PlayCard(target))
             {
-                await DiscardCard(selectedCard);
+                await DiscardCard(selectedCard, transform.position);
                 manaSpent = selectedCard.ManaCost;
             }
         }
