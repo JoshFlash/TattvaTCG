@@ -1058,7 +1058,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 448f13e744f04afcbd449c86e0cb7995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardPrefabLocation: Cards/DamageCharacter_Card
+  cardPrefabLocation: Cards/DamageCard_LuminBolt
 --- !u!1 &1317590815
 GameObject:
   m_ObjectHideFlags: 0
@@ -1108,7 +1108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 448f13e744f04afcbd449c86e0cb7995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardPrefabLocation: Cards/DamageCharacter_Card
+  cardPrefabLocation: Cards/DamageCard_LuminBolt
 --- !u!1 &1367939992
 GameObject:
   m_ObjectHideFlags: 0
