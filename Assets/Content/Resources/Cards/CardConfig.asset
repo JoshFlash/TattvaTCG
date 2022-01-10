@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc6fb62222cf4eaa92b9e07ffd9c4f07, type: 3}
   m_Name: CardConfig
   m_EditorClassIdentifier: 
-  MoveSpeed: 0.21
-  MinPadding: 0.15
-  MaxPadding: 0.21
-  DealtSpeed: 0.21
-  SortSpeed: 0.14
-  SelectHeight: 0.42
-  SelectDepth: -0.02
-  ExamineHeight: 0.5
-  ExamineDepth: -0.14
-  DodgeDistance: 0.07
+  moveSpeed: 0.21
+  minPadding: 0.15
+  maxPadding: 0.21
+  dealtSpeed: 0.21
+  sortSpeed: 0.14
+  selectHeight: 0.42
+  examineHeight: 0.25
+  examineDepth: -0.07
+  dodgeDistance: 0.07
+  depthInterval: -0.01
+  swapTolerance: 0.007

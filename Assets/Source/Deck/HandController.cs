@@ -6,19 +6,18 @@ using UnityEngine;
 public class HandController : MonoBehaviour
 {
     private static LayerMask kUiLayer = default;
-    
     private const int kMaxHandSize = 10;
-    private const float kCardDepthInterval = 0.01f;
     
     [SerializeField] private string cardPrefabLocation = "Cards/Card_01";
     
-    private PlayerHand playerHand = new PlayerHand();
+    private PlayerHand playerHand = new();
     
     private Card selectedCard = default;
     private Card examinedCard = default;
     private Card mouseOverCard = default;
     
-    private RaycastHit[] results = new RaycastHit[30];
+    private readonly RaycastHit[] results = new RaycastHit[30];
+    private bool abeyInput = false;
     
     public Camera Camera { get; private set; }
     
@@ -28,22 +27,11 @@ public class HandController : MonoBehaviour
         Camera ??= Camera.main;
     }
 
-    private void Update()
+    public bool IsReceivingInput => !(playerHand.IsEmpty || abeyInput);
+
+    public void UpdateCardFocus()
     {
-        if (playerHand.IsEmpty) return;
-
         CheckMouseOverCard(out mouseOverCard);
-        
-        if (Input.GetMouseButtonUp(0) && TrySelectCard())
-        {
-            return;
-        }
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            // play selected card
-        }
-
         if (mouseOverCard != null)
         {
             UpdateExaminedCard();
@@ -57,7 +45,7 @@ public class HandController : MonoBehaviour
     private bool ShouldClearExaminedCard()
     {
         var mousePos = Input.mousePosition;
-        if (examinedCard != null)
+        if (examinedCard != null && examinedCard != selectedCard)
         {
             var examinedCardPoint = Camera.WorldToScreenPoint(examinedCard.transform.position);
             return mousePos.y > examinedCardPoint.y;
@@ -70,7 +58,7 @@ public class HandController : MonoBehaviour
     {
         foreach (var card in playerHand.GetMovingCards())
         {
-            card.MoveToRequestedPosition(CardConfig.Instance.MoveSpeed);
+            card.MoveToRequestedPosition(CardConfig.MoveSpeed);
         }
     }
 
@@ -86,9 +74,11 @@ public class HandController : MonoBehaviour
             var result = results[index];
             if (result.collider.TryGetComponent(out Card hitCard))
             {
+                if (hitCard.LockInteraction) continue;
+                
                 var examinedDistance = GetExaminedCardSqrDistance(result.point);
                 var distance = Vector3.SqrMagnitude(result.point - hitCard.transform.position);
-                if (distance < minSqrDistance && distance < examinedDistance)
+                if (distance < minSqrDistance && distance < examinedDistance - CardConfig.SwapTolerance)
                 {
                     minSqrDistance = distance;
                     mouseOver = hitCard;
@@ -99,57 +89,54 @@ public class HandController : MonoBehaviour
 
     private float GetExaminedCardSqrDistance(Vector3 point)
     {
-        return examinedCard != null ? Vector3.SqrMagnitude(point - examinedCard.defaultPosition) : float.MaxValue;
+        return examinedCard != null ? Vector3.SqrMagnitude(point - examinedCard.DefaultPosition) : float.MaxValue;
     }
 
-    private bool TrySelectCard()
+    public void UpdateSelectedCard()
     {
         if (playerHand.Contains(mouseOverCard))
         {
-            selectedCard?.SetState(CardState.Default);
-            if (selectedCard != mouseOverCard)
+            var currentlySelectedCard = selectedCard;
+            ClearSelectedCard();
+            if (currentlySelectedCard != mouseOverCard)
             {
                 selectedCard = mouseOverCard;
                 selectedCard.SetState(CardState.Select);
             }
-            else
-            {
-                selectedCard = null;
-            }
-
-            return true;
         }
-
-        return false;
     }
 
     public async UniTask<Card> AddCard()
     {
+        abeyInput = true;
         Card cardInstance = null;
         if (playerHand.Size < kMaxHandSize)
         {
             var cardPrefab = Resources.Load<Card>(cardPrefabLocation);
             cardInstance = Instantiate(cardPrefab, transform.position, transform.rotation, transform);
             playerHand.Add(cardInstance);
-            cardInstance.TweenToPosition(cardInstance.transform.position + new Vector3(0, CardConfig.Instance.SelectHeight, 0), CardConfig.Instance.DealtSpeed);
+            cardInstance.TweenToPosition(cardInstance.transform.position + new Vector3(0, CardConfig.SelectHeight, 0), CardConfig.DealtSpeed);
 
-            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.Instance.DealtSpeed));
+            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.DealtSpeed));
             
             AdjustPositions(transform.position);
 
-            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.Instance.SortSpeed));
+            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.SortSpeed));
         }
 
+        abeyInput = false;
         return cardInstance;
     }
 
-    public async UniTask DiscardCard(Card card)
+    public async UniTask DiscardCard(Card card, Vector3 handAnchorPosition)
     {
-        card.TweenToPosition(CardDefaultPosition(kMaxHandSize, (int)(kMaxHandSize * 1.5f)), CardConfig.Instance.DealtSpeed);
-        card.LockPosition = true;
+        card.TweenToPosition(handAnchorPosition + CardDefaultPosition(kMaxHandSize, -1), CardConfig.DealtSpeed);
+        card.Lock();
         playerHand.Remove(card);
+        
+        AdjustPositions(transform.position);
 
-        await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.Instance.DealtSpeed));
+        await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.DealtSpeed));
         Destroy(card.gameObject);
     }
 
@@ -159,17 +146,17 @@ public class HandController : MonoBehaviour
         foreach (var card in playerHand)
         {
             int offset = playerHand.Size / 2;
-            card.TweenToPosition(handAnchorPosition + CardDefaultPosition(offset, ++index), CardConfig.Instance.SortSpeed, card.CachePosition);
+            card.TweenToPosition(handAnchorPosition + CardDefaultPosition(offset, ++index), CardConfig.SortSpeed, card.CachePosition);
         }
     }
     
     private Vector3 CardDefaultPosition(int offset, int index)
     {
         float padding =
-            playerHand.Size < kMaxHandSize / 2 ? CardConfig.Instance.MaxPadding :
-            playerHand.Size >= (int)(kMaxHandSize * 0.8f) ? CardConfig.Instance.MinPadding :
-            (CardConfig.Instance.MaxPadding + CardConfig.Instance.MinPadding) / 2f;
-        return new((-offset + index + 0.5f) * padding, 0, kCardDepthInterval * index);
+            playerHand.Size < kMaxHandSize / 2 ? CardConfig.MaxPadding :
+            playerHand.Size >= (int)(kMaxHandSize * 0.8f) ? CardConfig.MinPadding :
+            (CardConfig.MaxPadding + CardConfig.MinPadding) / 2f;
+        return new((-offset + index + 0.5f) * padding, CardConfig.DepthInterval * 2 * index, CardConfig.DepthInterval * index);
     }
 
     private void UpdateExaminedCard()
@@ -186,11 +173,11 @@ public class HandController : MonoBehaviour
 
     private void ClearExaminedCard()
     {
-        if (examinedCard != null)
+        if (examinedCard != null && examinedCard != selectedCard)
         {
             ClearAdjacentCards(examinedCard, selectedCard);
 
-            examinedCard.SetState(CardState.Default);
+            examinedCard.SetState(CardState.ClearFocus);
             examinedCard = null;
         }
     }
@@ -199,7 +186,10 @@ public class HandController : MonoBehaviour
     {
         if (selectedCard != null)
         {
-            selectedCard.SetState(CardState.Default);
+            if (selectedCard == examinedCard) examinedCard = null;
+            ClearAdjacentCards(selectedCard, null);
+            
+            selectedCard.SetState(CardState.ClearFocus);
             selectedCard = null;
         }
     }
@@ -213,9 +203,9 @@ public class HandController : MonoBehaviour
 
     public void UnlockAllCards()
     {
-        foreach (var cardData in playerHand)
+        foreach (var card in playerHand)
         {
-            cardData.LockPosition = false;
+            card.Unlock();
         }
     }
 
@@ -235,17 +225,17 @@ public class HandController : MonoBehaviour
         }
     }
 
-    private void ClearAdjacentCards(Card examinedCard, Card selectedCard)
+    private void ClearAdjacentCards(Card centerCard, Card lockedCard)
     {
-        var leftCard = playerHand.GetLeftCard(examinedCard);
-        var rightCard = playerHand.GetRightCard(examinedCard);
+        var leftCard = playerHand.GetLeftCard(centerCard);
+        var rightCard = playerHand.GetRightCard(centerCard);
         
-        if (leftCard && leftCard != selectedCard)
+        if (leftCard && leftCard != lockedCard)
         {
             leftCard.SetState(CardState.Default);
         }
 
-        if (rightCard && rightCard != selectedCard)
+        if (rightCard && rightCard != lockedCard)
         {
             rightCard.SetState(CardState.Default);
         }
@@ -261,4 +251,29 @@ public class HandController : MonoBehaviour
         playerHand.Clear();
     }
 
+    public async UniTask<int> TryPlaySelectedCard(int championMana, int championSpellPower)
+    {
+        abeyInput = true;
+        int manaSpent = 0;
+        if (selectedCard?.ManaCost <= championMana)
+        {
+            var target = await SelectTarget();
+
+            if (selectedCard.PlayCard(target))
+            {
+                await DiscardCard(selectedCard, transform.position);
+                manaSpent = selectedCard.ManaCost;
+            }
+        }
+
+        abeyInput = false;
+        return manaSpent;
+    }
+
+    private async UniTask<ICharacter> SelectTarget()
+    {
+        await UniTask.Yield();
+        var winion = FindObjectOfType<Minion>();
+        return winion;
+    }
 }

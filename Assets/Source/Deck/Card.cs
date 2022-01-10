@@ -1,37 +1,57 @@
+using System;
 using TweenKey;
 using TweenKey.Interpolation;
 using UnityEngine;
 
+[RequireComponent(typeof(ICardAction))]
 public class Card : MonoBehaviour
 {
-    private Tween<Vector3> moveTween = null;
-    
-    public Vector3 defaultPosition = default;
-    private Vector3 targetPositionCached  = default;
-    private Vector3 targetPositionRequested  = default;
+    [field: SerializeField] public int ManaCost { get; private set; } = 1;
 
-    public CardState State { get; private set; } = CardState.Default;
-    public bool LockPosition { get; set;} = true;
+    public Vector3 DefaultPosition { get; private set; }
+    public  bool LockInteraction { get; private set; }
+    
+    private CardState state = CardState.Default;
+    private Vector3 targetPositionCached = default;
+    private Vector3 targetPositionRequested = default;
+    private Tween<Vector3> moveTween = null;
+
+    private ICardAction cardAction = default;
 
     public bool ShouldMove()
     {
-        return !LockPosition && targetPositionCached != targetPositionRequested;
+        return !LockInteraction && targetPositionCached != targetPositionRequested;
     }
     
     public void CachePosition()
     {
-        defaultPosition = transform.position;
+        DefaultPosition = transform.position;
     }
 
     private void Awake()
     {
-        LockPosition = true;
+        Lock();
+    }
+
+    private void Start()
+    {
+        cardAction = GetComponent<ICardAction>();
+    }
+
+    public void Lock()
+    {
+        LockInteraction = true;
+    }
+
+    public void Unlock()
+    {
+        LockInteraction = false;
     }
 
     public void SetState(CardState cardState)
     {
-        State = cardState;
-        targetPositionRequested = defaultPosition + transform.rotation * State.Offset;
+        state = cardState;
+        targetPositionRequested = DefaultPosition + transform.rotation * state.Offset;
     }
 
     public void TweenToPosition(Vector3 position, float duration, System.Action onComplete = null)
@@ -41,20 +61,22 @@ public class Card : MonoBehaviour
         moveTween = transform.TweenMove(targetPositionRequested, duration, onComplete, Easing.Cubic.Out, 0f);
     }
 
-    public void MoveToRequestedPosition(float duration, System.Action onComplete = null)
+    public void MoveToRequestedPosition(float duration)
     {
-        if (State.Equals(CardState.Examine))
+        Action onComplete = delegate {};
+
+        if (state.Equals(CardState.Examine))
         {
             SetPosition(targetPositionRequested);
             return;
         }
         
-        if (State.Equals(CardState.Clear))
+        if (state.Equals(CardState.ClearFocus))
         {
             SetPosition(targetPositionRequested);
-            targetPositionRequested = defaultPosition;
-            LockPosition = true;
-            onComplete += () => LockPosition = false;
+            targetPositionRequested = DefaultPosition;
+            Lock();
+            onComplete += Unlock;
         }
         
         TweenToPosition(targetPositionRequested, duration, onComplete);
@@ -62,11 +84,23 @@ public class Card : MonoBehaviour
 
     private void SetPosition(Vector3 position)
     {
-        if (!LockPosition)
+        if (!LockInteraction)
         {
             targetPositionCached = position;
             transform.position = position;
             moveTween?.Cancel(true);
         }
+    }
+
+    public bool PlayCard(ICharacter target)
+    {
+        if (!LockInteraction)
+        {
+            Lock();
+            cardAction.Invoke(target);
+            return true;
+        }
+
+        return false;
     }
 }

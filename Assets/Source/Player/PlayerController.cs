@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Button endTurnButton = default;
     [SerializeField] private BattleDeckController battleDeck = default;
+    [SerializeField] private HandController handController = default;
+
     public Champion Champion { get; private set; }
     public Camera Camera { get; private set; }
     
@@ -40,9 +42,9 @@ public class PlayerController : MonoBehaviour
         int r = UnityEngine.Random.Range(5, 11);
         for (int i = 0; i < r; i++)
         {
-            await battleDeck.AddCardToHand();
+            await battleDeck.AddCardToHand(handController);
         }
-        battleDeck.UnlockHand();
+        handController.UnlockAllCards();
         
         return isTurnActive;
     }
@@ -52,32 +54,26 @@ public class PlayerController : MonoBehaviour
         if (isTurnActive)
         {
             endTurnButton.onClick.RemoveListener(EndTurn);
-            battleDeck.ClearHand();
+            handController.ClearAllCards();
             isTurnActive = false;
         }
     }
 
     public async UniTask<bool> HandleInputOnTurn()
     {
-        var right = Input.GetMouseButtonUp(1);
-        var left = Input.GetMouseButtonUp(0);
-        if (right || left)
+        if (handController.IsReceivingInput)
         {
-            Ray ray = Camera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out var hit))
+            handController.UpdateCardFocus();
+            if (Input.GetMouseButtonUp(0))
             {
-                if (Champion.Mana > 0 && hit.transform.TryGetComponent<Character>(out var character))
-                {
-                    Champion.SpendMana(1);
-                    if (left)
-                    {
-                        BattleActions.DamageCharacter(character, 5);
-                    }
-                    else
-                    {
-                        BattleActions.HealCharacter(character, 5);
-                    }
-                }
+                handController.UpdateSelectedCard();
+                await UniTask.Yield();
+            }
+            if (Input.GetMouseButtonUp(1))
+            {
+                int manaSpent = await handController.TryPlaySelectedCard(Champion.Mana, Champion.SpellPower);
+                Champion.SpendMana(manaSpent);
+                await UniTask.Yield();
             }
         }
 
