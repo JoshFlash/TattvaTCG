@@ -6,20 +6,8 @@ using UnityEngine;
 
 public class BattleDeckController : MonoBehaviour
 {
-    [SerializeField] private HandController handController = default;
-    
-    public async UniTask<Card> AddCardToHand()
+    public async UniTask<Card> AddCardToHand(HandController handController)
     {
         return await handController.AddCard();
-    }
-
-    public void UnlockHand()
-    {
-        handController.UnlockAllCards();
-    }
-
-    public void ClearHand()
-    {
-        handController.ClearAllCards();
     }
 }
