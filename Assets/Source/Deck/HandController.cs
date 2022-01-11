@@ -101,7 +101,7 @@ public class HandController : MonoBehaviour
             if (currentlySelectedCard != mouseOverCard)
             {
                 selectedCard = mouseOverCard;
-                selectedCard.SetState(CardState.Select);
+                selectedCard.SetState(CardState.Select, playerHand.GetCenterCard().DefaultPosition);
             }
         }
     }
@@ -115,8 +115,10 @@ public class HandController : MonoBehaviour
             var cardPrefab = Resources.Load<Card>(cardPrefabLocation);
             cardInstance = Instantiate(cardPrefab, transform.position, transform.rotation, transform);
             playerHand.Add(cardInstance);
-            cardInstance.TweenToPosition(cardInstance.transform.position + new Vector3(0, CardConfig.SelectHeight, 0), CardConfig.DealtSpeed);
 
+            var startPosition = CardDefaultPosition(0, 0) + transform.position + cardInstance.transform.rotation * CardState.Select.Offset;
+            cardInstance.TweenToPosition(startPosition, CardConfig.DealtSpeed);
+            
             await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.DealtSpeed));
             
             AdjustPositions(transform.position);

@@ -12,7 +12,8 @@ public class CardConfig : ScriptableObject
     [SerializeField] private float dealtSpeed	= 0.21f;
     [SerializeField] private float sortSpeed	= 0.14f;
     
-    [SerializeField] private float selectHeight  = 0.42f;
+    [SerializeField] private float selectHeight  = 0.64f;
+    [SerializeField] private float selectDepth  = -0.42f;
     [SerializeField] private float examineHeight = 0.25f;
     [SerializeField] private float examineDepth  = -0.07f;
     [SerializeField] private float dodgeDistance = 0.07f;
@@ -26,6 +27,7 @@ public class CardConfig : ScriptableObject
     public static float SortSpeed { get; private set; }
     
     public static float SelectHeight { get; private set; }
+    public static float SelectDepth { get; private set; }
     public static float ExamineHeight { get; private set; }
     public static float ExamineDepth { get; private set; }
     public static float DodgeDistance { get; private set; }
@@ -44,6 +46,7 @@ public class CardConfig : ScriptableObject
         DealtSpeed      = config.dealtSpeed;
         SortSpeed       = config.sortSpeed;
         SelectHeight    = config.selectHeight;
+        SelectDepth     = config.selectDepth;
         ExamineHeight   = config.examineHeight;
         ExamineDepth    = config.examineDepth;
         DodgeDistance   = config.dodgeDistance;

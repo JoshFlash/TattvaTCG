@@ -56,4 +56,14 @@ public class PlayerHand : IEnumerable<Card>
         var index = cards.IndexOf(referenceCard);
         return index < Size - 1 ? cards[index + 1] : null;
     }
+
+    public Card GetCenterCard()
+    {
+        if (Size > 0)
+        {
+            return cards[Size / 2];
+        }
+
+        return null;
+    }
 }
