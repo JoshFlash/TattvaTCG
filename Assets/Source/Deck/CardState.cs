@@ -6,7 +6,7 @@ public struct CardState : IEquatable<CardState>
     private static Vector3 kDefaultOffset       => Vector3.zero;
     private static Vector3 kExamineOffset       => new(0, CardConfig.ExamineHeight, CardConfig.ExamineDepth);
     private static Vector3 kClearOffset         => new(0, CardConfig.ExamineHeight / 2, 0);
-    private static Vector3 kSelectOffset        => new(0, CardConfig.SelectHeight, CardConfig.DepthInterval * 2);
+    private static Vector3 kSelectOffset        => new(0, CardConfig.SelectHeight, CardConfig.SelectDepth);
     private static Vector3 kDodgeOffsetRight    => new(-CardConfig.DodgeDistance, 0, 0);
     private static Vector3 kDodgeOffsetLeft     => new(CardConfig.DodgeDistance, 0, 0);
     

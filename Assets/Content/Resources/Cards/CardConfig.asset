@@ -17,7 +17,8 @@ MonoBehaviour:
   maxPadding: 0.21
   dealtSpeed: 0.21
   sortSpeed: 0.14
-  selectHeight: 0.42
+  selectHeight: 0.64
+  selectDepth: -0.42
   examineHeight: 0.25
   examineDepth: -0.07
   dodgeDistance: 0.07
