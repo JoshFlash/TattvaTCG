@@ -11,7 +11,7 @@ public class BattleManager : MonoBehaviour
     
     private void Start()
     {
-        battleGameService = GameServices.GetService<BattleGameService>();
+        battleGameService = GameServices.Get<BattleGameService>();
         battleGameService.BeginBattle(playerOne, playerTwo).Forget();
     }
 }

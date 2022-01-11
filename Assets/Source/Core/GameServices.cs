@@ -12,19 +12,19 @@ public static class GameServices
 {
     private static List<IGameService> services = new List<IGameService>();
 	
-    public static T GetService<T>()
+    public static T Get<T>()
         where T : class, IGameService
     {
         return services.Find(s => s is T) as T;
     }
 	
-    public static IGameService GetService(string serviceName)
+    public static IGameService Get(string serviceName)
     {
         return services.Find(s => s.GetType().ToString() == serviceName);
     }
 	
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    public static void InitializeGameServices()
+    public static void InitializeAll()
     {
         foreach (var service in services)
         {
@@ -37,7 +37,7 @@ public static class GameServices
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    public static void RegisterAllGameServices()
+    public static void RegisterAll()
     {
         var types = new List<Type>(typeof(IGameService).Assembly.GetTypes())
             .FindAll(type => typeof(IGameService).IsAssignableFrom(type) && !type.IsInterface);
