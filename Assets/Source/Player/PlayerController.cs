@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,7 +23,7 @@ public class PlayerController : MonoBehaviour
     public async UniTask SummonChampion(string championName)
     {
         Champion = new GameObject(championName).AddComponent<Champion>();
-        await Task.Delay(1000);
+        await UniTask.Delay(1000);
     }
 
     public void OnChampionDefeated()
@@ -71,14 +70,47 @@ public class PlayerController : MonoBehaviour
             }
             if (Input.GetMouseButtonUp(1))
             {
-                int manaSpent = await handController.TryPlaySelectedCard(Champion.Mana, Champion.SpellPower);
-                Champion.SpendMana(manaSpent);
+                if (handController.TryPlaySelectedCard(Champion.Mana))
+                {
+                    var target = await SelectTarget();
+                    if (target is null)
+                    {
+                        handController.ClearSelectedCard();
+                    }
+                    else
+                    {
+                        int manaSpent = await handController.PlaySelectedCard(target);
+                        Champion.SpendMana(manaSpent);
+                    }
+                }
                 await UniTask.Yield();
             }
         }
 
         await UniTask.Yield();
         return isTurnActive;
+    }
+
+    private async UniTask<ICharacter> SelectTarget()
+    {
+        ICharacter target = null;
+        while (target is null)
+        {
+            await UniTask.Yield();
+
+            if (Input.GetMouseButtonUp(1)) break;
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                var results = MainCamera.ScreenCast();
+                foreach (var hit in results)
+                {
+                    if (hit.collider.TryGetComponent(out target)) break;
+                }
+            }
+        }
+        
+        return target;
     }
 
     public void RestoreAllMana()
