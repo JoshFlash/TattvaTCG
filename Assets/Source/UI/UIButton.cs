@@ -53,7 +53,7 @@ public class UIButton : Button
 					InvokeCallbackOnInstance(splitMethodName[1], component);
 					break;
 				case ButtonCallbackTarget.GameService:
-					var service = GameServices.GetService(splitMethodName[0]);
+					var service = GameServices.Get(splitMethodName[0]);
 					InvokeCallbackOnInstance(splitMethodName[1], service);
 					break;
 				case ButtonCallbackTarget.Static:
