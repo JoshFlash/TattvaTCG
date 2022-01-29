@@ -70,7 +70,7 @@ public class HandController : MonoBehaviour
                 if (hitCard.LockInteraction) continue;
                 
                 var examinedDistance = GetExaminedCardSqrDistance(result.point);
-                var distance = Vector3.SqrMagnitude(result.point - hitCard.transform.position);
+                var distance = Vector3.SqrMagnitude(result.point - hitCard.GetStablePosition());
                 if (distance < minSqrDistance && distance < examinedDistance - CardConfig.SwapTolerance)
                 {
                     minSqrDistance = distance;

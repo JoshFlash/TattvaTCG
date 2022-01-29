@@ -104,4 +104,9 @@ public class Card : MonoBehaviour
 
         return false;
     }
+
+    public Vector3 GetStablePosition()
+    {
+        return state.Equals(CardState.ClearFocus) ? DefaultPosition : transform.position;
+    }
 }
