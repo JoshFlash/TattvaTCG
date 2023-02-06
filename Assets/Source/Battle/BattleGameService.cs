@@ -6,29 +6,18 @@ public class BattleGameService : IGameService
     private Phase currentPhase;
     
     private PlayerController initiativePlayer = default;
-    private PlayerController reactivePlayer = default;
     
-    public async UniTask BeginBattle(PlayerController playerOne, PlayerController playerTwo)
+    public async UniTask BeginBattle(PlayerController playerOne)
     {
-        if (RandomChance.CoinFlip())
-        {
-            initiativePlayer = playerOne;
-            reactivePlayer = playerTwo;
-        }
-        else
-        {
-            reactivePlayer = playerOne;
-            initiativePlayer = playerTwo;
-        }
+        initiativePlayer = playerOne;
+
         await initiativePlayer.SummonChampion("Alice");
-        await reactivePlayer.SummonChampion("Robert");
         StartRound();
     }
     
     private void SwapInitiative()
     {
         Log.Info("swapping initiative");
-        (initiativePlayer, reactivePlayer) = (reactivePlayer, initiativePlayer);
     }
 
     private void StartRound()
@@ -49,7 +38,6 @@ public class BattleGameService : IGameService
     {
         await HandleStartOfPhase();
         await HandlePlayerTurnInitiative();
-        await HandlePlayerTurnReactive();
         await HandleEndOfPhase();
         if (!currentPhase.Equals(BattlePhase.Recovery))
         {
@@ -64,7 +52,6 @@ public class BattleGameService : IGameService
     private async UniTask HandleStartOfPhase()
     {
         initiativePlayer.RestoreAllMana();
-        reactivePlayer.RestoreAllMana();
         Log.Info($"phase start, initiative belongs to {initiativePlayer.Champion.name}");
 
         await UniTask.Yield();
@@ -73,11 +60,6 @@ public class BattleGameService : IGameService
     private async UniTask HandlePlayerTurnInitiative()
     {
         await HandlePlayerTurn(initiativePlayer);
-    }
-    
-    private async UniTask HandlePlayerTurnReactive()
-    {
-        await HandlePlayerTurn(reactivePlayer);
     }
 
     private async UniTask HandlePlayerTurn(PlayerController player)

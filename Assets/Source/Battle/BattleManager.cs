@@ -7,11 +7,10 @@ public class BattleManager : MonoBehaviour
     private BattleGameService battleGameService;
     
     [SerializeField] private PlayerController playerOne = default;
-    [SerializeField] private PlayerController playerTwo = default;
     
     private void Start()
     {
         battleGameService = GameServices.Get<BattleGameService>();
-        battleGameService.BeginBattle(playerOne, playerTwo).Forget();
+        battleGameService.BeginBattle(playerOne).Forget();
     }
 }
