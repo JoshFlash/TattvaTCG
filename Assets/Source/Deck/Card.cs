@@ -48,10 +48,11 @@ public class Card : MonoBehaviour
         LockInteraction = false;
     }
 
-    public void SetState(CardState cardState)
+    public void SetState(CardState cardState, Vector3? defaultPosition = null)
     {
         state = cardState;
-        targetPositionRequested = DefaultPosition + transform.rotation * state.Offset;
+        var relativePosition = defaultPosition ?? DefaultPosition;
+        targetPositionRequested = relativePosition + transform.rotation * state.Offset;
     }
 
     public void TweenToPosition(Vector3 position, float duration, System.Action onComplete = null)
@@ -73,7 +74,7 @@ public class Card : MonoBehaviour
         
         if (state.Equals(CardState.ClearFocus))
         {
-            SetPosition(targetPositionRequested);
+            SetPosition((transform.position + targetPositionRequested) / 2);
             targetPositionRequested = DefaultPosition;
             Lock();
             onComplete += Unlock;
@@ -102,5 +103,10 @@ public class Card : MonoBehaviour
         }
 
         return false;
+    }
+
+    public Vector3 GetStablePosition()
+    {
+        return state.Equals(CardState.ClearFocus) ? DefaultPosition : transform.position;
     }
 }

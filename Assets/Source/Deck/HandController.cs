@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class HandController : MonoBehaviour
 {
-    private static LayerMask kUiLayer = default;
+    private static int kUiLayer = default;
     private const int kMaxHandSize = 10;
     
     [SerializeField] private string cardPrefabLocation = "Cards/Card_01";
@@ -16,15 +16,11 @@ public class HandController : MonoBehaviour
     private Card examinedCard = default;
     private Card mouseOverCard = default;
     
-    private readonly RaycastHit[] results = new RaycastHit[30];
     private bool abeyInput = false;
-    
-    public Camera Camera { get; private set; }
     
     private void Awake()
     {
         kUiLayer = LayerMask.GetMask("UI");
-        Camera ??= Camera.main;
     }
 
     public bool IsReceivingInput => !(playerHand.IsEmpty || abeyInput);
@@ -47,8 +43,7 @@ public class HandController : MonoBehaviour
         var mousePos = Input.mousePosition;
         if (examinedCard != null && examinedCard != selectedCard)
         {
-            var examinedCardPoint = Camera.WorldToScreenPoint(examinedCard.transform.position);
-            return mousePos.y > examinedCardPoint.y;
+            return mousePos.y > examinedCard.transform.position.WorldToScreenPoint().y;
         }
 
         return false;
@@ -65,19 +60,17 @@ public class HandController : MonoBehaviour
     private void CheckMouseOverCard(out Card mouseOver)
     {
         mouseOver = null;
-        Ray ray = Camera.ScreenPointToRay(Input.mousePosition);
-
         var minSqrDistance = float.MaxValue;
-        var index = Physics.SphereCastNonAlloc(ray, 0.01f, results, 100f, kUiLayer);
-        for (--index; index >= 0; --index)
+
+        var results = MainCamera.ScreenCast(kUiLayer);
+        foreach (var result in results)
         {
-            var result = results[index];
             if (result.collider.TryGetComponent(out Card hitCard))
             {
                 if (hitCard.LockInteraction) continue;
                 
                 var examinedDistance = GetExaminedCardSqrDistance(result.point);
-                var distance = Vector3.SqrMagnitude(result.point - hitCard.transform.position);
+                var distance = Vector3.SqrMagnitude(result.point - hitCard.GetStablePosition());
                 if (distance < minSqrDistance && distance < examinedDistance - CardConfig.SwapTolerance)
                 {
                     minSqrDistance = distance;
@@ -101,7 +94,7 @@ public class HandController : MonoBehaviour
             if (currentlySelectedCard != mouseOverCard)
             {
                 selectedCard = mouseOverCard;
-                selectedCard.SetState(CardState.Select);
+                selectedCard.SetState(CardState.Select, playerHand.GetCenterCard().DefaultPosition);
             }
         }
     }
@@ -115,8 +108,10 @@ public class HandController : MonoBehaviour
             var cardPrefab = Resources.Load<Card>(cardPrefabLocation);
             cardInstance = Instantiate(cardPrefab, transform.position, transform.rotation, transform);
             playerHand.Add(cardInstance);
-            cardInstance.TweenToPosition(cardInstance.transform.position + new Vector3(0, CardConfig.SelectHeight, 0), CardConfig.DealtSpeed);
 
+            var startPosition = CardDefaultPosition(0, 0) + transform.position + cardInstance.transform.rotation * CardState.Select.Offset;
+            cardInstance.TweenToPosition(startPosition, CardConfig.DealtSpeed);
+            
             await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.DealtSpeed));
             
             AdjustPositions(transform.position);
@@ -182,7 +177,7 @@ public class HandController : MonoBehaviour
         }
     }
 
-    private void ClearSelectedCard()
+    public void ClearSelectedCard()
     {
         if (selectedCard != null)
         {
@@ -251,29 +246,29 @@ public class HandController : MonoBehaviour
         playerHand.Clear();
     }
 
-    public async UniTask<int> TryPlaySelectedCard(int championMana, int championSpellPower)
+    public async UniTask<int> PlaySelectedCard(ICharacter target)
     {
         abeyInput = true;
         int manaSpent = 0;
-        if (selectedCard?.ManaCost <= championMana)
-        {
-            var target = await SelectTarget();
 
-            if (selectedCard.PlayCard(target))
-            {
-                await DiscardCard(selectedCard, transform.position);
-                manaSpent = selectedCard.ManaCost;
-            }
+        if (selectedCard.PlayCard(target))
+        {
+            await DiscardCard(selectedCard, transform.position);
+            manaSpent = selectedCard.ManaCost;
         }
 
         abeyInput = false;
         return manaSpent;
     }
 
-    private async UniTask<ICharacter> SelectTarget()
+    public bool TryPlaySelectedCard(int championMana)
     {
-        await UniTask.Yield();
-        var winion = FindObjectOfType<Minion>();
-        return winion;
+        if (selectedCard?.ManaCost <= championMana)
+        {
+            selectedCard.SetState(CardState.Target);
+            return true;
+        }
+        
+        return false;
     }
 }
