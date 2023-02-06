@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: CardConfig
   m_EditorClassIdentifier: 
   moveSpeed: 0.21
-  minPadding: 0.15
-  maxPadding: 0.21
+  minPadding: 1.5
+  maxPadding: 2.1
   dealtSpeed: 0.21
   sortSpeed: 0.14
-  selectHeight: 0.64
-  selectDepth: -0.42
-  examineHeight: 0.25
-  examineDepth: -0.07
-  dodgeDistance: 0.07
+  selectHeight: 6.4
+  selectDepth: -4.2
+  examineHeight: 2.5
+  examineDepth: -0.7
+  dodgeDistance: 0.7
   depthInterval: -0.01
-  swapTolerance: 0.007
+  swapTolerance: 0.07

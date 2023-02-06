@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class HandController : MonoBehaviour
 {
-    private static int kUiLayer = default;
+    private static int kHandLayer = default;
     private const int kMaxHandSize = 10;
     
     [SerializeField] private string cardPrefabLocation = "Cards/Card_01";
@@ -20,7 +20,7 @@ public class HandController : MonoBehaviour
     
     private void Awake()
     {
-        kUiLayer = LayerMask.GetMask("UI");
+        kHandLayer = LayerMask.GetMask("Cards");
     }
 
     public bool IsReceivingInput => !(playerHand.IsEmpty || abeyInput);
@@ -62,7 +62,7 @@ public class HandController : MonoBehaviour
         mouseOver = null;
         var minSqrDistance = float.MaxValue;
 
-        var results = MainCamera.ScreenCast(kUiLayer);
+        var results = MainCamera.ScreenCast(kHandLayer);
         foreach (var result in results)
         {
             if (result.collider.TryGetComponent(out Card hitCard))
