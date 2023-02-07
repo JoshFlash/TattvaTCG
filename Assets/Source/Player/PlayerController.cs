@@ -1,7 +1,8 @@
-using System;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using TweenKey;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -9,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Button endTurnButton = default;
     [SerializeField] private BattleDeckController battleDeck = default;
     [SerializeField] private HandController handController = default;
+    [SerializeField] private Transform championContainer = default;
 
     public Champion Champion { get; private set; }
     public Camera Camera { get; private set; }
@@ -20,9 +22,12 @@ public class PlayerController : MonoBehaviour
         Camera ??= Camera.main;
     }
 
-    public async UniTask SummonChampion(string championName)
+    public async UniTask SummonChampion(string championResource)
     {
-        Champion = new GameObject(championName).AddComponent<Champion>();
+        Assert.IsNotNull(championContainer);
+        
+        Champion = Instantiate(Resources.Load(championResource), championContainer, false).GetComponent<Champion>();
+        Champion.transform.TweenByRotation(Quaternion.AngleAxis(-160, -transform.up), 0.5f);
         await UniTask.Delay(1000);
     }
 
