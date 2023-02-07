@@ -11,7 +11,8 @@ public class BattleGameService : IGameService
     {
         initiativePlayer = playerOne;
 
-        await initiativePlayer.SummonChampion("Alice");
+        const string _DEBUG_championResource = "Cards/Champions/Helf";
+        await initiativePlayer.SummonChampion(_DEBUG_championResource);
         StartRound();
     }
     

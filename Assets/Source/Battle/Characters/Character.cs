@@ -16,8 +16,6 @@ public abstract class Character : MonoBehaviour, ICharacter
     [field: SerializeField] public int MaxMana { get; private set; } = 1;
     [field: SerializeField] public int BaseSpellPower { get; private set; } = 1;
 
-    [SerializeField] private GameObject model = default;
-    [SerializeField] private Transform modelParent = default;
 
     [HideInInspector] public UnityEvent<int> OnHealthChanged = new ();
     [HideInInspector] public UnityEvent<int> OnManaChanged = new ();
@@ -28,9 +26,6 @@ public abstract class Character : MonoBehaviour, ICharacter
 
     protected void Awake()
     {
-        if (model)
-            Instantiate(model, modelParent);
-        
         Health = MaxHealth;
         Mana = MaxMana;
         SpellPower = BaseSpellPower;
