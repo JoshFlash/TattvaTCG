@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -67,7 +66,7 @@ public class HandController : MonoBehaviour
         {
             if (result.collider.TryGetComponent(out Card hitCard))
             {
-                if (hitCard.LockInteraction) continue;
+                if (hitCard.BlockMouseover) continue;
                 
                 var examinedDistance = GetExaminedCardSqrDistance(result.point);
                 var distance = Vector3.SqrMagnitude(result.point - hitCard.GetStablePosition());
