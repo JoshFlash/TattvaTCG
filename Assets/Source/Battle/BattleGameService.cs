@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
 using TweenKey;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class BattleGameService : IGameService
 {
@@ -59,7 +58,7 @@ public class BattleGameService : IGameService
         await HandlePlayerTurn(opponent);
         await HandlePlayerTurn(player);
         await HandleEndOfPhase();
-        if (!currentPhase.Equals(BattlePhase.Recovery))
+        if (!currentPhase.Equals(Phase.Recovery))
         {
             ProgressPhase(player, opponent);
         }
@@ -105,7 +104,7 @@ public class BattleGameService : IGameService
 
     public void Init()
     {
-        currentPhase = BattlePhase.Recovery;
+        currentPhase = Phase.Recovery;
     }
 
     public bool IsInitialized { get; set; }
