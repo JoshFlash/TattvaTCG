@@ -1,24 +1,46 @@
 using Cysharp.Threading.Tasks;
+using TweenKey;
+using UnityEngine;
 using UnityEngine.Events;
 
 public class BattleGameService : IGameService
 {
     private Phase currentPhase;
     private int round = 0;
-    
-    public async UniTask BeginBattle(IPlayerController playerOne, IPlayerController playerTwo)
+
+    public async UniTask BeginBattle(
+        IPlayerController player, 
+        IPlayerController opponent, 
+        Transform playerChampParent, 
+        Transform opponentChampParent
+    )
     {
         const string _DEBUG_championResource = "Cards/Champions/Helf";
-        await playerOne.SummonChampion(_DEBUG_championResource);
-        await playerTwo.SummonChampion("Nulliam");
-        StartRound(playerOne, playerTwo);
+        const string _DEBUG_enemyResource = "Cards/Champions/Jimp";
+
+        await SummonChampion(_DEBUG_championResource, playerChampParent, player);
+        await SummonChampion(_DEBUG_enemyResource, opponentChampParent, opponent);
+
+        StartRound(player, opponent);
+    }
+
+    private async UniTask SummonChampion(string resourcePath, Transform championContainer, IPlayerController owner)
+    {
+        var champObject = GameObject.Instantiate(Resources.Load(resourcePath), championContainer, false) as GameObject;
+        var champion = champObject.GetComponent<Champion>();
+        var polarity = championContainer.transform.position.x > 0 ? -1 : 1;
+        const int champRotation = 160;
+        champion.transform.TweenByRotation(Quaternion.AngleAxis(polarity * champRotation, -champion.transform.up), 0.5f);
+        owner.AssignChampion(champion);
+
+        await UniTask.Delay(1000);
     }
 
     private void StartRound(IPlayerController player, IPlayerController opponent)
     {
         ++round;
         Log.Info($"starting round: {round:00}");
-        
+
         ProgressPhase(player, opponent);
     }
 
@@ -59,7 +81,7 @@ public class BattleGameService : IGameService
     private async UniTask HandlePlayerTurn(IPlayerController player)
     {
         Log.Info($"{player} turn started, awaiting input");
-        
+
         bool active = await player.ActivateTurn();
         while (active)
         {
@@ -72,7 +94,7 @@ public class BattleGameService : IGameService
         Log.Info("awaiting end of phase");
         await UniTask.Yield();
     }
-    
+
     private async UniTask EndRound(IPlayerController player, IPlayerController opponent)
     {
         Log.Info("awaiting end of round");
@@ -85,5 +107,6 @@ public class BattleGameService : IGameService
     {
         currentPhase = BattlePhase.Recovery;
     }
+
     public bool IsInitialized { get; set; }
 }

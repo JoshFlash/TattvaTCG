@@ -1,8 +1,5 @@
 using Cysharp.Threading.Tasks;
-using TweenKey;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour, IPlayerController
@@ -10,31 +7,18 @@ public class PlayerController : MonoBehaviour, IPlayerController
     [SerializeField] private Button endTurnButton = default;
     [SerializeField] private BattleDeckController battleDeck = default;
     [SerializeField] private HandController handController = default;
-    
-    // TODO move this to a 'board' class
-    [SerializeField] private Transform championContainer = default;
 
-    private Champion Champion { get; set; }
-    private Camera Camera { get; set; }
-    
+    private Champion champion = default;
     private bool isTurnActive = false;
 
-    private void Awake()
+    public void AssignChampion(Champion champion)
     {
-        Camera ??= Camera.main;
-    }
-
-    public async UniTask SummonChampion(string championResource)
-    {
-        Assert.IsNotNull(championContainer);
-        
-        Champion = Instantiate(Resources.Load(championResource), championContainer, false).GetComponent<Champion>();
-        Champion.transform.TweenByRotation(Quaternion.AngleAxis(-160, -transform.up), 0.5f);
-        await UniTask.Delay(1000);
+        this.champion = champion;
     }
 
     public void OnChampionDefeated()
     {
+        Log.NotImplemented();
     }
 
     public async UniTask<bool> ActivateTurn()
@@ -86,7 +70,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
             if (Input.GetMouseButtonUp(1))
             {
-                if (handController.TryPlaySelectedCard(Champion.Mana))
+                if (handController.TryPlaySelectedCard(champion.Mana))
                 {
                     var target = await SelectTarget();
                     if (target is null)
@@ -96,7 +80,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
                     else
                     {
                         int manaSpent = await handController.PlaySelectedCard(target);
-                        Champion.SpendMana(manaSpent);
+                        champion.SpendMana(manaSpent);
                     }
                 }
 
@@ -129,6 +113,6 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     public void RestoreAllMana()
     {
-        Champion.RestoreAllMana();
+        champion.RestoreAllMana();
     }
 }

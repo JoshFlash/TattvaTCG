@@ -1,13 +1,14 @@
-
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class OpponentController : MonoBehaviour, IPlayerController
 {
-    public async UniTask SummonChampion(string resourcePath)
+    private List<Champion> champions = new();
+
+    public void AssignChampion(Champion champion)
     {
-        Log.NotImplemented();
-        await UniTask.Yield();
+        champions.Add(champion);
     }
 
     public void OnChampionDefeated()
