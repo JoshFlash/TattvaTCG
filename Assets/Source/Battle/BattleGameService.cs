@@ -4,73 +4,66 @@ using UnityEngine.Events;
 public class BattleGameService : IGameService
 {
     private Phase currentPhase;
+    private int round = 0;
     
-    private PlayerController initiativePlayer = default;
-    
-    public async UniTask BeginBattle(PlayerController playerOne)
+    public async UniTask BeginBattle(IPlayerController playerOne, IPlayerController playerTwo)
     {
-        initiativePlayer = playerOne;
-
         const string _DEBUG_championResource = "Cards/Champions/Helf";
-        await initiativePlayer.SummonChampion(_DEBUG_championResource);
-        StartRound();
-    }
-    
-    private void SwapInitiative()
-    {
-        Log.Info("swapping initiative");
+        await playerOne.SummonChampion(_DEBUG_championResource);
+        await playerTwo.SummonChampion("Nulliam");
+        StartRound(playerOne, playerTwo);
     }
 
-    private void StartRound()
+    private void StartRound(IPlayerController player, IPlayerController opponent)
     {
-        Log.Info("starting new round");
-        ProgressPhase();
+        ++round;
+        Log.Info($"starting round: {round:00}");
+        
+        ProgressPhase(player, opponent);
     }
 
-    private void ProgressPhase()
+    private void ProgressPhase(IPlayerController player, IPlayerController opponent)
     {
         currentPhase = currentPhase.Next();
         Log.Info($"phase progressed, phase is {currentPhase}");
 
-        CommencePhase().Forget();
+        CommencePhase(player, opponent).Forget();
     }
 
-    private async UniTask CommencePhase()
+    private async UniTask CommencePhase(IPlayerController player, IPlayerController opponent)
     {
-        await HandleStartOfPhase();
-        await HandlePlayerTurnInitiative();
+        await HandleStartOfPhase(opponent);
+        await HandleStartOfPhase(player);
+        await HandlePlayerTurn(opponent);
+        await HandlePlayerTurn(player);
         await HandleEndOfPhase();
         if (!currentPhase.Equals(BattlePhase.Recovery))
         {
-            ProgressPhase();
+            ProgressPhase(player, opponent);
         }
         else
         {
-            await EndRound();
+            await EndRound(player, opponent);
         }
     }
 
-    private async UniTask HandleStartOfPhase()
+    private async UniTask HandleStartOfPhase(IPlayerController player)
     {
-        initiativePlayer.RestoreAllMana();
-        Log.Info($"phase start, initiative belongs to {initiativePlayer.Champion.name}");
+        Log.Info($"phase start: {currentPhase}");
+
+        player.RestoreAllMana();
 
         await UniTask.Yield();
     }
-    
-    private async UniTask HandlePlayerTurnInitiative()
-    {
-        await HandlePlayerTurn(initiativePlayer);
-    }
 
-    private async UniTask HandlePlayerTurn(PlayerController player)
+    private async UniTask HandlePlayerTurn(IPlayerController player)
     {
-        Log.Info($"{player.Champion.name} turn started, awaiting input");
+        Log.Info($"{player} turn started, awaiting input");
         
         bool active = await player.ActivateTurn();
         while (active)
         {
-            active = await player.HandleInputOnTurn();
+            active = await player.HandleTurn();
         }
     }
 
@@ -80,13 +73,12 @@ public class BattleGameService : IGameService
         await UniTask.Yield();
     }
     
-    private async UniTask EndRound()
+    private async UniTask EndRound(IPlayerController player, IPlayerController opponent)
     {
         Log.Info("awaiting end of round");
         await UniTask.Yield();
 
-        SwapInitiative();
-        StartRound();
+        StartRound(player, opponent);
     }
 
     public void Init()

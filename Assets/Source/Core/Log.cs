@@ -9,4 +9,11 @@ public class Log
     {
         UnityEngine.Debug.unityLogger.Log(logType, label + obj);
     }
+
+    [Conditional("GAME_LOGGER")]
+    public static void NotImplemented()
+    {
+        string message = "[ALERT] Method not yet implemented!";
+        UnityEngine.Debug.unityLogger.Log(UnityEngine.LogType.Error, message);
+    }
 }

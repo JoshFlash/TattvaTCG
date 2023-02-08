@@ -547,7 +547,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Bite your enemy, dealing 12 doggy damage
+  m_text: The dog of the railway train
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e6d7ab5e49547a64885d9dae75054a8f, type: 2}
   m_sharedMaterial: {fileID: 2969766039037617930, guid: e6d7ab5e49547a64885d9dae75054a8f, type: 2}
@@ -803,7 +803,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Ferocious Bite
+  m_text: Kibbleshanks
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e6d7ab5e49547a64885d9dae75054a8f, type: 2}
   m_sharedMaterial: {fileID: 2969766039037617930, guid: e6d7ab5e49547a64885d9dae75054a8f, type: 2}

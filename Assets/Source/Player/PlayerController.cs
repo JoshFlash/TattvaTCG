@@ -5,15 +5,17 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IPlayerController
 {
     [SerializeField] private Button endTurnButton = default;
     [SerializeField] private BattleDeckController battleDeck = default;
     [SerializeField] private HandController handController = default;
+    
+    // TODO move this to a 'board' class
     [SerializeField] private Transform championContainer = default;
 
-    public Champion Champion { get; private set; }
-    public Camera Camera { get; private set; }
+    private Champion Champion { get; set; }
+    private Camera Camera { get; set; }
     
     private bool isTurnActive = false;
 
@@ -63,7 +65,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public async UniTask<bool> HandleInputOnTurn()
+    public async UniTask<bool> HandleTurn()
+    {
+        await HandleInput();
+
+        await UniTask.Yield();
+        return isTurnActive;
+    }
+
+    private async UniTask HandleInput()
     {
         if (handController.IsReceivingInput)
         {
@@ -73,6 +83,7 @@ public class PlayerController : MonoBehaviour
                 handController.UpdateSelectedCard();
                 await UniTask.Yield();
             }
+
             if (Input.GetMouseButtonUp(1))
             {
                 if (handController.TryPlaySelectedCard(Champion.Mana))
@@ -88,12 +99,10 @@ public class PlayerController : MonoBehaviour
                         Champion.SpendMana(manaSpent);
                     }
                 }
+
                 await UniTask.Yield();
             }
         }
-
-        await UniTask.Yield();
-        return isTurnActive;
     }
 
     private async UniTask<ICharacter> SelectTarget()
