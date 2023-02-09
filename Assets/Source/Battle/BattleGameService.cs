@@ -6,6 +6,7 @@ public class BattleGameService : IGameService
 {
     private Phase currentPhase;
     private int round = 0;
+    private BattleDebugData battleDebugData = default;
 
     public async UniTask BeginBattle(
         IPlayerController player, 
@@ -14,22 +15,21 @@ public class BattleGameService : IGameService
         Transform opponentChampParent
     )
     {
-        const string _DEBUG_championResource = "Cards/Champions/Helf";
-        const string _DEBUG_enemyResource = "Cards/Champions/Jimp";
+        battleDebugData = GameServices.Get<DebugService>().BattleDebugData;
 
-        await SummonChampion(_DEBUG_championResource, playerChampParent, player);
-        await SummonChampion(_DEBUG_enemyResource, opponentChampParent, opponent);
+        await SummonChampion(battleDebugData.PlayerChampionPrefab, playerChampParent, player);
+        await SummonChampion(battleDebugData.EnemyChampionPrefab, opponentChampParent, opponent);
 
         StartRound(player, opponent);
     }
 
-    private async UniTask SummonChampion(string resourcePath, Transform championContainer, IPlayerController owner)
+    private async UniTask SummonChampion(GameObject championPrefab, Transform championContainer, IPlayerController owner)
     {
-        var champObject = GameObject.Instantiate(Resources.Load(resourcePath), championContainer, false) as GameObject;
+        var champObject = GameObject.Instantiate(championPrefab, championContainer, false) as GameObject;
         var champion = champObject.GetComponent<Champion>();
-        var polarity = championContainer.transform.position.x > 0 ? -1 : 1;
-        const int champRotation = 160;
-        champion.transform.TweenByRotation(Quaternion.AngleAxis(polarity * champRotation, -champion.transform.up), 0.5f);
+        
+        var angle = (championContainer.transform.position.x > 0 ? -1 : 1) * battleDebugData.ChampionCardRotation;
+        champion.transform.TweenByRotation(Quaternion.AngleAxis(angle, -champion.transform.up), 0.5f);
         owner.AssignChampion(champion);
 
         await UniTask.Delay(1000);
