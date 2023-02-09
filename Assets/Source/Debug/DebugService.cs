@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class DebugService : IGameService
 {
-    private const string kBattleDebugAssetPath = "Debug/BattleData";
+    private const string kBattleDebugAssetPath = "BattleDebugData";
     public BattleDebugData BattleDebugData = default;
 
     public void Init()

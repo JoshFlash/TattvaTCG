@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CardConfig : ScriptableObject
 {
-    private const string kCardConfigPath = "Cards/CardConfig";
+    private const string kCardConfigPath = "CardConfig";
     
     [SerializeField] private float moveSpeed	= 0.21f;
     [SerializeField] private float minPadding	= 0.15f;
