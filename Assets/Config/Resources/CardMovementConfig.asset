@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc6fb62222cf4eaa92b9e07ffd9c4f07, type: 3}
-  m_Name: CardConfig
+  m_Name: CardMovementConfig
   m_EditorClassIdentifier: 
   moveSpeed: 0.21
   minPadding: 1.5

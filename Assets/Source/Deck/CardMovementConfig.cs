@@ -2,23 +2,24 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-public class CardConfig : ScriptableObject
+[CreateAssetMenu(fileName = "New CardMovementConfig", menuName = "Configs/Card Movement Config")]
+public class CardMovementConfig : ScriptableObject
 {
-    private const string kCardConfigPath = "CardConfig";
+    private const string kCardConfigPath = "CardMovementConfig";
     
     [SerializeField] private float moveSpeed	= 0.21f;
-    [SerializeField] private float minPadding	= 0.15f;
-    [SerializeField] private float maxPadding	= 0.21f;
+    [SerializeField] private float minPadding	= 1.5f;
+    [SerializeField] private float maxPadding	= 2.1f;
     [SerializeField] private float dealtSpeed	= 0.21f;
     [SerializeField] private float sortSpeed	= 0.14f;
     
-    [SerializeField] private float selectHeight  = 0.64f;
-    [SerializeField] private float selectDepth  = -0.42f;
-    [SerializeField] private float examineHeight = 0.25f;
-    [SerializeField] private float examineDepth  = -0.07f;
-    [SerializeField] private float dodgeDistance = 0.07f;
+    [SerializeField] private float selectHeight  = 6.4f;
+    [SerializeField] private float selectDepth  = -4.2f;
+    [SerializeField] private float examineHeight = 2.5f;
+    [SerializeField] private float examineDepth  = -0.7f;
+    [SerializeField] private float dodgeDistance = 0.7f;
     [SerializeField] private float depthInterval = -0.01f;
-    [SerializeField] private float swapTolerance = 0.007f;
+    [SerializeField] private float swapTolerance = 0.07f;
 
     public static float MoveSpeed { get; private set; }
     public static float MinPadding { get; private set; }
@@ -38,7 +39,7 @@ public class CardConfig : ScriptableObject
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void Init()
     {
-        var config = Resources.Load<CardConfig>(kCardConfigPath);
+        var config = Resources.Load<CardMovementConfig>(kCardConfigPath);
         
         MoveSpeed       = config.moveSpeed;
         MinPadding      = config.minPadding;

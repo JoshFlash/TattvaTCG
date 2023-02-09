@@ -5,7 +5,10 @@ using System.Collections.Generic;
 public class PlayerHand : IEnumerable<PlayerCard>
 {
     private readonly List<PlayerCard> cards = new();
+    public readonly int kMaxHandSize = 10;
+
     public bool IsEmpty => cards.Count == 0;
+    public bool IsFull => cards.Count >= kMaxHandSize;
     public int Size => cards.Count;
 
     public List<PlayerCard> GetMovingCards()

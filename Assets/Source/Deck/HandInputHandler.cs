@@ -2,14 +2,16 @@ using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class HandController : MonoBehaviour
+public class HandInputHandler
 {
-    private static int kHandLayer = default;
-    private const int kMaxHandSize = 10;
+    public HandInputHandler(PlayerHand playerHand)
+    {
+        this.playerHand = playerHand;
+        handLayer = LayerMask.GetMask("Cards");
+    }
     
-    [SerializeField] private string cardPrefabLocation = "Cards/Card_01";
-    
-    private PlayerHand playerHand = new();
+    private readonly int handLayer = default;
+    private readonly PlayerHand playerHand;
     
     private PlayerCard selectedCard = default;
     private PlayerCard examinedCard = default;
@@ -17,11 +19,6 @@ public class HandController : MonoBehaviour
     
     private bool abeyInput = false;
     
-    private void Awake()
-    {
-        kHandLayer = LayerMask.GetMask("Cards");
-    }
-
     public bool IsReceivingInput => !(playerHand.IsEmpty || abeyInput);
 
     public void UpdateCardFocus()
@@ -48,20 +45,12 @@ public class HandController : MonoBehaviour
         return false;
     }
 
-    private void LateUpdate()
-    {
-        foreach (var card in playerHand.GetMovingCards())
-        {
-            card.MoveToRequestedPosition(CardConfig.MoveSpeed);
-        }
-    }
-
     private void CheckMouseOverCard(out PlayerCard mouseOver)
     {
         mouseOver = null;
         var minSqrDistance = float.MaxValue;
 
-        var results = MainCamera.ScreenCast(kHandLayer);
+        var results = MainCamera.ScreenCast(handLayer);
         foreach (var result in results)
         {
             if (result.collider.TryGetComponent(out PlayerCard hitCard))
@@ -70,7 +59,7 @@ public class HandController : MonoBehaviour
                 
                 var examinedDistance = GetExaminedCardSqrDistance(result.point);
                 var distance = Vector3.SqrMagnitude(result.point - hitCard.GetStablePosition());
-                if (distance < minSqrDistance && distance < examinedDistance - CardConfig.SwapTolerance)
+                if (distance < minSqrDistance && distance < examinedDistance - CardMovementConfig.SwapTolerance)
                 {
                     minSqrDistance = distance;
                     mouseOver = hitCard;
@@ -98,40 +87,32 @@ public class HandController : MonoBehaviour
         }
     }
 
-    public async UniTask<PlayerCard> AddCard()
+    public async UniTask AddAndAdjust(PlayerCard card, Transform handAnchor)
     {
         abeyInput = true;
-        PlayerCard playerCardInstance = null;
-        if (playerHand.Size < kMaxHandSize)
-        {
-            var cardPrefab = GameServices.Get<DebugService>().BattleDebugData.PlayerDefaultCardInDeck.GetComponent<PlayerCard>();
-            playerCardInstance = Instantiate(cardPrefab, transform.position, transform.rotation, transform);
-            playerHand.Add(playerCardInstance);
 
-            var startPosition = CardDefaultPosition(0, 0) + transform.position + playerCardInstance.transform.rotation * CardState.Select.Offset;
-            playerCardInstance.TweenToPosition(startPosition, CardConfig.DealtSpeed);
-            
-            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.DealtSpeed));
-            
-            AdjustPositions(transform.position);
+        var startPosition = CardDefaultPosition(0, 0) + handAnchor.position + card.transform.rotation * CardState.Select.Offset;
+        card.TweenToPosition(startPosition, CardMovementConfig.DealtSpeed);
+        
+        await UniTask.Delay(TimeSpan.FromSeconds(CardMovementConfig.DealtSpeed));
+        
+        AdjustPositions(handAnchor.position);
 
-            await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.SortSpeed));
-        }
+        await UniTask.Delay(TimeSpan.FromSeconds(CardMovementConfig.SortSpeed));
 
         abeyInput = false;
-        return playerCardInstance;
     }
 
-    public async UniTask DiscardCard(PlayerCard playerCard, Vector3 handAnchorPosition)
+    public async UniTask DiscardCard(PlayerCard playerCard, Transform handAnchor)
     {
-        playerCard.TweenToPosition(handAnchorPosition + CardDefaultPosition(kMaxHandSize, -1), CardConfig.DealtSpeed);
+        playerCard.TweenToPosition(handAnchor.position + CardDefaultPosition(playerHand.kMaxHandSize, -1), CardMovementConfig.DealtSpeed);
         playerCard.Lock();
         playerHand.Remove(playerCard);
         
-        AdjustPositions(transform.position);
+        AdjustPositions(handAnchor.position);
 
-        await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.DealtSpeed));
-        Destroy(playerCard.gameObject);
+        await UniTask.Delay(TimeSpan.FromSeconds(CardMovementConfig.DealtSpeed));
+        GameObject.Destroy(playerCard.gameObject);
     }
 
     private void AdjustPositions(Vector3 handAnchorPosition)
@@ -140,17 +121,17 @@ public class HandController : MonoBehaviour
         foreach (var card in playerHand)
         {
             int offset = playerHand.Size / 2;
-            card.TweenToPosition(handAnchorPosition + CardDefaultPosition(offset, ++index), CardConfig.SortSpeed, card.CachePosition);
+            card.TweenToPosition(handAnchorPosition + CardDefaultPosition(offset, ++index), CardMovementConfig.SortSpeed, card.CachePosition);
         }
     }
     
     private Vector3 CardDefaultPosition(int offset, int index)
     {
         float padding =
-            playerHand.Size < kMaxHandSize / 2 ? CardConfig.MaxPadding :
-            playerHand.Size >= (int)(kMaxHandSize * 0.8f) ? CardConfig.MinPadding :
-            (CardConfig.MaxPadding + CardConfig.MinPadding) / 2f;
-        return new((-offset + index + 0.5f) * padding, CardConfig.DepthInterval * 2 * index, CardConfig.DepthInterval * index);
+            playerHand.Size < playerHand.kMaxHandSize / 2 ? CardMovementConfig.MaxPadding :
+            playerHand.Size >= (int)(playerHand.kMaxHandSize * 0.8f) ? CardMovementConfig.MinPadding :
+            (CardMovementConfig.MaxPadding + CardMovementConfig.MinPadding) / 2f;
+        return new((-offset + index + 0.5f) * padding, CardMovementConfig.DepthInterval * 2 * index, CardMovementConfig.DepthInterval * index);
     }
 
     private void UpdateExaminedCard()
@@ -239,20 +220,20 @@ public class HandController : MonoBehaviour
     {
         foreach (PlayerCard card in playerHand)
         {
-            Destroy(card.gameObject);
+            GameObject.Destroy(card.gameObject);
         }
 
         playerHand.Clear();
     }
 
-    public async UniTask<int> PlaySelectedCard(ICharacter target)
+    public async UniTask<int> PlaySelectedCard(ICharacter target, Transform handAnchor)
     {
         abeyInput = true;
         int manaSpent = 0;
 
         if (selectedCard.PlayCard(target))
         {
-            await DiscardCard(selectedCard, transform.position);
+            await DiscardCard(selectedCard, handAnchor);
             manaSpent = selectedCard.ManaCost;
         }
 

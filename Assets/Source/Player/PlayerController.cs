@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,11 +6,27 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour, IPlayerController
 {
     [SerializeField] private Button endTurnButton = default;
-    [SerializeField] private BattleDeckController battleDeck = default;
-    [SerializeField] private HandController handController = default;
-
+    [SerializeField] private Transform handAnchor = default;
+    
+    private HandInputHandler handInputHandler = default; 
+    private BattleDeck battleDeck = default;
+    
     private Champion champion = default;
     private bool isTurnActive = false;
+
+    private void Awake()
+    {
+        battleDeck = new BattleDeck();
+        handInputHandler = new HandInputHandler(battleDeck.PlayerHand);
+    }
+    
+    private void LateUpdate()
+    {
+        foreach (var card in battleDeck.PlayerHand.GetMovingCards())
+        {
+            card.MoveToRequestedPosition(CardMovementConfig.MoveSpeed);
+        }
+    }
 
     public void AssignChampion(Champion champion)
     {
@@ -32,9 +49,9 @@ public class PlayerController : MonoBehaviour, IPlayerController
         int r = UnityEngine.Random.Range(5, 11);
         for (int i = 0; i < r; i++)
         {
-            await battleDeck.AddCardToHand(handController);
+            await battleDeck.AddCardToHand(handInputHandler, handAnchor);
         }
-        handController.UnlockAllCards();
+        handInputHandler.UnlockAllCards();
         
         return isTurnActive;
     }
@@ -44,7 +61,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
         if (isTurnActive)
         {
             endTurnButton.onClick.RemoveListener(EndTurn);
-            handController.ClearAllCards();
+            handInputHandler.ClearAllCards();
             isTurnActive = false;
         }
     }
@@ -59,27 +76,27 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     private async UniTask HandleInput()
     {
-        if (handController.IsReceivingInput)
+        if (handInputHandler.IsReceivingInput)
         {
-            handController.UpdateCardFocus();
+            handInputHandler.UpdateCardFocus();
             if (Input.GetMouseButtonUp(0))
             {
-                handController.UpdateSelectedCard();
+                handInputHandler.UpdateSelectedCard();
                 await UniTask.Yield();
             }
 
             if (Input.GetMouseButtonUp(1))
             {
-                if (handController.TryPlaySelectedCard(champion.Mana))
+                if (handInputHandler.TryPlaySelectedCard(champion.Mana))
                 {
                     var target = await SelectTarget();
                     if (target is null)
                     {
-                        handController.ClearSelectedCard();
+                        handInputHandler.ClearSelectedCard();
                     }
                     else
                     {
-                        int manaSpent = await handController.PlaySelectedCard(target);
+                        int manaSpent = await handInputHandler.PlaySelectedCard(target, handAnchor);
                         champion.SpendMana(manaSpent);
                     }
                 }

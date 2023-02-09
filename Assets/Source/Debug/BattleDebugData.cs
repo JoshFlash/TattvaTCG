@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New BattleData", menuName = "Battle Debug Data")]
+[CreateAssetMenu(fileName = "New BattleData", menuName = "Configs/Battle Debug Data")]
 public class BattleDebugData : ScriptableObject
 {
     public GameObject PlayerChampionPrefab;
