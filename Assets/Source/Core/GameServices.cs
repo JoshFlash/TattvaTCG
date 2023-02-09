@@ -23,7 +23,7 @@ public static class GameServices
         return services.Find(s => s.GetType().ToString() == serviceName);
     }
 	
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void InitializeAll()
     {
         foreach (var service in services)
@@ -36,7 +36,7 @@ public static class GameServices
         }
     }
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     public static void RegisterAll()
     {
         var types = new List<Type>(typeof(IGameService).Assembly.GetTypes())
