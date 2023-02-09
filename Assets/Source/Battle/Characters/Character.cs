@@ -8,14 +8,16 @@ public interface ICharacter
     void RestoreHealth(int healing);
     void SpendMana(int cost);
     void RestoreMana(int regen);
+    void AssignCombatAction(CombatAction action);
+    void AssignTarget(ICharacter character);
 }
 
+public enum CombatAction { None, Attack, Defend, Cast }
 public abstract class Character : MonoBehaviour, ICharacter
 {
     [field: SerializeField] public int MaxHealth { get; private set; } = 10;
     [field: SerializeField] public int MaxMana { get; private set; } = 1;
     [field: SerializeField] public int BaseSpellPower { get; private set; } = 1;
-
 
     [HideInInspector] public UnityEvent<int> OnHealthChanged = new ();
     [HideInInspector] public UnityEvent<int> OnManaChanged = new ();
@@ -23,6 +25,9 @@ public abstract class Character : MonoBehaviour, ICharacter
     public int Health { get; private set; } = 10;
     public int Mana { get; private set; } = 1;
     public int SpellPower { get; private set; } = 1;
+
+    public CombatAction SelectedAction { get; private set; } = CombatAction.None;
+    public ICharacter Target { get; private set; } = default;
 
     protected void Awake()
     {
@@ -68,6 +73,16 @@ public abstract class Character : MonoBehaviour, ICharacter
 
             OnManaChanged.Invoke(Mana);
         }
+    }
+
+    public void AssignCombatAction(CombatAction action)
+    {
+        SelectedAction = action;
+    }
+
+    public void AssignTarget(ICharacter character)
+    {
+        Target = character;
     }
 
     public void RestoreAllMana()

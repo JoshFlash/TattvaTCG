@@ -54,7 +54,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3129914318742635295, guid: b16a11ece81782e47929d6a7151293be, type: 3}
       propertyPath: m_Name
-      value: Champ Card Base
+      value: Helf
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
