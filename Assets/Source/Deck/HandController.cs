@@ -11,9 +11,9 @@ public class HandController : MonoBehaviour
     
     private PlayerHand playerHand = new();
     
-    private Card selectedCard = default;
-    private Card examinedCard = default;
-    private Card mouseOverCard = default;
+    private PlayerCard selectedCard = default;
+    private PlayerCard examinedCard = default;
+    private PlayerCard mouseOverCard = default;
     
     private bool abeyInput = false;
     
@@ -56,7 +56,7 @@ public class HandController : MonoBehaviour
         }
     }
 
-    private void CheckMouseOverCard(out Card mouseOver)
+    private void CheckMouseOverCard(out PlayerCard mouseOver)
     {
         mouseOver = null;
         var minSqrDistance = float.MaxValue;
@@ -64,7 +64,7 @@ public class HandController : MonoBehaviour
         var results = MainCamera.ScreenCast(kHandLayer);
         foreach (var result in results)
         {
-            if (result.collider.TryGetComponent(out Card hitCard))
+            if (result.collider.TryGetComponent(out PlayerCard hitCard))
             {
                 if (hitCard.BlockMouseover) continue;
                 
@@ -98,18 +98,18 @@ public class HandController : MonoBehaviour
         }
     }
 
-    public async UniTask<Card> AddCard()
+    public async UniTask<PlayerCard> AddCard()
     {
         abeyInput = true;
-        Card cardInstance = null;
+        PlayerCard playerCardInstance = null;
         if (playerHand.Size < kMaxHandSize)
         {
-            var cardPrefab = Resources.Load<Card>(cardPrefabLocation);
-            cardInstance = Instantiate(cardPrefab, transform.position, transform.rotation, transform);
-            playerHand.Add(cardInstance);
+            var cardPrefab = GameServices.Get<DebugService>().BattleDebugData.PlayerDefaultCardInDeck.GetComponent<PlayerCard>();
+            playerCardInstance = Instantiate(cardPrefab, transform.position, transform.rotation, transform);
+            playerHand.Add(playerCardInstance);
 
-            var startPosition = CardDefaultPosition(0, 0) + transform.position + cardInstance.transform.rotation * CardState.Select.Offset;
-            cardInstance.TweenToPosition(startPosition, CardConfig.DealtSpeed);
+            var startPosition = CardDefaultPosition(0, 0) + transform.position + playerCardInstance.transform.rotation * CardState.Select.Offset;
+            playerCardInstance.TweenToPosition(startPosition, CardConfig.DealtSpeed);
             
             await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.DealtSpeed));
             
@@ -119,19 +119,19 @@ public class HandController : MonoBehaviour
         }
 
         abeyInput = false;
-        return cardInstance;
+        return playerCardInstance;
     }
 
-    public async UniTask DiscardCard(Card card, Vector3 handAnchorPosition)
+    public async UniTask DiscardCard(PlayerCard playerCard, Vector3 handAnchorPosition)
     {
-        card.TweenToPosition(handAnchorPosition + CardDefaultPosition(kMaxHandSize, -1), CardConfig.DealtSpeed);
-        card.Lock();
-        playerHand.Remove(card);
+        playerCard.TweenToPosition(handAnchorPosition + CardDefaultPosition(kMaxHandSize, -1), CardConfig.DealtSpeed);
+        playerCard.Lock();
+        playerHand.Remove(playerCard);
         
         AdjustPositions(transform.position);
 
         await UniTask.Delay(TimeSpan.FromSeconds(CardConfig.DealtSpeed));
-        Destroy(card.gameObject);
+        Destroy(playerCard.gameObject);
     }
 
     private void AdjustPositions(Vector3 handAnchorPosition)
@@ -203,7 +203,7 @@ public class HandController : MonoBehaviour
         }
     }
 
-    private void UpdateAdjacentCards(Card examinedCard, Card selectedCard)
+    private void UpdateAdjacentCards(PlayerCard examinedCard, PlayerCard selectedCard)
     {
         var leftCard = playerHand.GetLeftCard(examinedCard);
         var rightCard = playerHand.GetRightCard(examinedCard);
@@ -219,17 +219,17 @@ public class HandController : MonoBehaviour
         }
     }
 
-    private void ClearAdjacentCards(Card centerCard, Card lockedCard)
+    private void ClearAdjacentCards(PlayerCard centerCard, PlayerCard lockedPlayerCard)
     {
         var leftCard = playerHand.GetLeftCard(centerCard);
         var rightCard = playerHand.GetRightCard(centerCard);
         
-        if (leftCard && leftCard != lockedCard)
+        if (leftCard && leftCard != lockedPlayerCard)
         {
             leftCard.SetState(CardState.Default);
         }
 
-        if (rightCard && rightCard != lockedCard)
+        if (rightCard && rightCard != lockedPlayerCard)
         {
             rightCard.SetState(CardState.Default);
         }
@@ -237,7 +237,7 @@ public class HandController : MonoBehaviour
 
     private void DestroyAllCards()
     {
-        foreach (Card card in playerHand)
+        foreach (PlayerCard card in playerHand)
         {
             Destroy(card.gameObject);
         }

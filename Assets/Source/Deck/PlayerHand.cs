@@ -2,25 +2,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerHand : IEnumerable<Card>
+public class PlayerHand : IEnumerable<PlayerCard>
 {
-    private readonly List<Card> cards = new();
+    private readonly List<PlayerCard> cards = new();
     public bool IsEmpty => cards.Count == 0;
     public int Size => cards.Count;
 
-    public List<Card> GetMovingCards()
+    public List<PlayerCard> GetMovingCards()
     {
         return cards.FindAll(card => card.ShouldMove());
     }
 
-    public void Add(Card card)
+    public void Add(PlayerCard playerCard)
     {
-        cards.Add(card);
+        cards.Add(playerCard);
     }
     
-    public void Remove(Card card)
+    public void Remove(PlayerCard playerCard)
     {
-        cards.Remove(card);
+        cards.Remove(playerCard);
     }
 
     public void Clear()
@@ -28,7 +28,7 @@ public class PlayerHand : IEnumerable<Card>
         cards.Clear();
     }
 
-    public IEnumerator<Card> GetEnumerator()
+    public IEnumerator<PlayerCard> GetEnumerator()
     {
         return cards.GetEnumerator();
     }
@@ -38,26 +38,26 @@ public class PlayerHand : IEnumerable<Card>
         return GetEnumerator();
     }
 
-    public Card this[int index] => cards[index];
+    public PlayerCard this[int index] => cards[index];
 
-    public bool Contains(Card card)
+    public bool Contains(PlayerCard playerCard)
     {
-        return cards.Contains(card);
+        return cards.Contains(playerCard);
     }
 
-    public Card GetLeftCard(Card referenceCard)
+    public PlayerCard GetLeftCard(PlayerCard referencePlayerCard)
     {
-        var index = cards.IndexOf(referenceCard);
+        var index = cards.IndexOf(referencePlayerCard);
         return index > 0 ? cards[index - 1] : null;
     }
 
-    public Card GetRightCard(Card referenceCard)
+    public PlayerCard GetRightCard(PlayerCard referencePlayerCard)
     {
-        var index = cards.IndexOf(referenceCard);
+        var index = cards.IndexOf(referencePlayerCard);
         return index < Size - 1 ? cards[index + 1] : null;
     }
 
-    public Card GetCenterCard()
+    public PlayerCard GetCenterCard()
     {
         if (Size > 0)
         {

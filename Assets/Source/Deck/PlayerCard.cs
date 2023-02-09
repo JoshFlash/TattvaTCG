@@ -4,7 +4,7 @@ using TweenKey.Interpolation;
 using UnityEngine;
 
 [RequireComponent(typeof(ICardAction))]
-public class Card : MonoBehaviour
+public class PlayerCard : MonoBehaviour
 {
     [field: SerializeField] public int ManaCost { get; private set; } = 1;
 

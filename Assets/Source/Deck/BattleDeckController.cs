@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class BattleDeckController : MonoBehaviour
 {
-    public async UniTask<Card> AddCardToHand(HandController handController)
+    public async UniTask<PlayerCard> AddCardToHand(HandController handController)
     {
         return await handController.AddCard();
     }
