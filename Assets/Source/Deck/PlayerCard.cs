@@ -72,6 +72,13 @@ public class PlayerCard : MonoBehaviour
         state = cardState;
         var relativePosition = defaultPosition ?? DefaultPosition;
         targetPositionRequested = relativePosition + transform.rotation * state.Offset;
+
+        if (state.Equals(CardState.ClearFocus))
+        {
+            var snapPosition = (transform.position + targetPositionRequested) / 2;
+            snapPosition.z = targetPositionRequested.z;
+            SetPosition(snapPosition);
+        }
     }
 
     public void TweenToPosition(Vector3 position, float duration, System.Action onComplete = null)
@@ -93,7 +100,6 @@ public class PlayerCard : MonoBehaviour
         
         if (state.Equals(CardState.ClearFocus))
         {
-            SetPosition((transform.position + targetPositionRequested) / 2);
             targetPositionRequested = DefaultPosition;
         }
         

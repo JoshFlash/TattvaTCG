@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using TweenKey;
 using UnityEngine;
 
 public class HandInputHandler
@@ -91,6 +92,7 @@ public class HandInputHandler
     {
         abeyInput = true;
         card.transform.SetParent(handAnchor);
+        card.transform.TweenByRotation(Quaternion.AngleAxis(180, -card.transform.up), 0.5f);
 
         var startPosition = CardDefaultPosition(0, 0) + handAnchor.position + card.transform.rotation * CardState.Select.Offset;
         card.TweenToPosition(startPosition, CardMovementConfig.DealtSpeed);

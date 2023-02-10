@@ -20,7 +20,19 @@ public class PlayerController : MonoBehaviour, IPlayerController
         battleDeck = new BattleDeck(debugDeck);
         handInputHandler = new HandInputHandler(battleDeck.PlayerHand);
     }
-    
+
+    private void Update()
+    {
+        
+        #if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.KeypadPlus))
+            Time.timeScale *= 1.5f;
+        if (Input.GetKeyDown(KeyCode.KeypadMinus))
+            Time.timeScale /= 1.5f;
+        #endif
+        
+    }
+
     private void LateUpdate()
     {
         foreach (var card in battleDeck.PlayerHand.GetMovingCards())
