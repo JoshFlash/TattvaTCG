@@ -16,7 +16,8 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     private void Awake()
     {
-        battleDeck = new BattleDeck();
+        var debugDeck = new SavedDeck(GameServices.Get<DebugService>().DebugStarterDeck);
+        battleDeck = new BattleDeck(debugDeck);
         handInputHandler = new HandInputHandler(battleDeck.PlayerHand);
     }
     
@@ -45,15 +46,15 @@ public class PlayerController : MonoBehaviour, IPlayerController
         // this will later be leveraged to skip turns where no actions are available to the player
         isTurnActive = true;
                     
-        // debug code - deal hand
-        int r = UnityEngine.Random.Range(5, 11);
-        for (int i = 0; i < r; i++)
-        {
-            await battleDeck.AddCardToHand(handInputHandler, handAnchor);
-        }
+        await battleDeck.DrawCards(GetCardDrawCount(), handInputHandler, handAnchor);
         handInputHandler.UnlockAllCards();
         
         return isTurnActive;
+    }
+
+    private int GetCardDrawCount()
+    {
+        return GameServices.Get<DebugService>().BattleDebugData.CardDrawPerTurn;
     }
 
     private void EndTurn()
@@ -131,5 +132,10 @@ public class PlayerController : MonoBehaviour, IPlayerController
     public void RestoreAllMana()
     {
         champion.RestoreAllMana();
+    }
+
+    public void OnBattleStart()
+    {
+        battleDeck.ShuffleDeckIntoDrawPile();
     }
 }

@@ -34,4 +34,9 @@ public class OpponentController : MonoBehaviour, IPlayerController
     {
         Log.NotImplemented();
     }
+
+    public void OnBattleStart()
+    {
+        Log.NotImplemented();
+    }
 }

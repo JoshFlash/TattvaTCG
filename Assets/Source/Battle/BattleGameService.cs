@@ -20,6 +20,9 @@ public class BattleGameService : IGameService
         await SummonChampion(battleDebugData.PlayerChampionPrefab, playerChampParent, player);
         await SummonChampion(battleDebugData.EnemyChampionPrefab, opponentChampParent, opponent);
 
+        player.OnBattleStart();
+        opponent.OnBattleStart();
+
         StartRound(player, opponent);
     }
 

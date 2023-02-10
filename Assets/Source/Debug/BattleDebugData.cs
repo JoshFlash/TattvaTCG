@@ -7,4 +7,5 @@ public class BattleDebugData : ScriptableObject
     public GameObject EnemyChampionPrefab;
     public GameObject PlayerDefaultCardInDeck;
     public int ChampionCardRotation = 160;
+    public int CardDrawPerTurn = 6;
 }

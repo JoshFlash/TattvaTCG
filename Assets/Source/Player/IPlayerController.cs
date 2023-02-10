@@ -7,4 +7,5 @@ public interface IPlayerController
     UniTask<bool> ActivateTurn();
     UniTask<bool> HandleTurn();
     void RestoreAllMana();
+    void OnBattleStart();
 }

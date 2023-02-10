@@ -3,9 +3,12 @@ using TweenKey;
 using TweenKey.Interpolation;
 using UnityEngine;
 
+public enum CardRarity { Junk = 0, Common, Uncommon, Rare, Epic, Legendary }
+
 [RequireComponent(typeof(ICardAction))]
 public class PlayerCard : MonoBehaviour
 {
+    [field: SerializeField] public CardRarity Rarity { get; private set; } = CardRarity.Common;
     [field: SerializeField] public int ManaCost { get; private set; } = 1;
 
     public Vector3 DefaultPosition { get; private set; }

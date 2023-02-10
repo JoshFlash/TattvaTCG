@@ -90,6 +90,7 @@ public class HandInputHandler
     public async UniTask AddAndAdjust(PlayerCard card, Transform handAnchor)
     {
         abeyInput = true;
+        card.transform.SetParent(handAnchor);
 
         var startPosition = CardDefaultPosition(0, 0) + handAnchor.position + card.transform.rotation * CardState.Select.Offset;
         card.TweenToPosition(startPosition, CardMovementConfig.DealtSpeed);

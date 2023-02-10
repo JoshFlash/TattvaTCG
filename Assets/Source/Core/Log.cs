@@ -11,9 +11,9 @@ public class Log
     }
 
     [Conditional("GAME_LOGGER")]
-    public static void NotImplemented()
+    public static void NotImplemented(string todo = "")
     {
-        string message = "[ALERT] Method not yet implemented!";
+        string message = "[ALERT] Method not yet implemented!" + todo;
         UnityEngine.Debug.unityLogger.Log(UnityEngine.LogType.Error, message);
     }
 }
