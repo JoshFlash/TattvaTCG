@@ -52,12 +52,8 @@ public class PlayerController : MonoBehaviour, IPlayerController
         Log.NotImplemented();
     }
 
-    public async UniTask<bool> ActivateTurn()
+    public async UniTask<bool> ActivateTurn(Phase phase)
     {
-                    
-        await battleDeck.DrawCards(GetCardDrawCount(), handInputHandler, handAnchor, drawAnchor);
-        handInputHandler.UnlockAllCards();
-        
         endTurnButton.onClick.AddListener(EndTurn);
 
         await UniTask.Yield();
@@ -66,22 +62,16 @@ public class PlayerController : MonoBehaviour, IPlayerController
         return isTurnActive;
     }
 
-    private int GetCardDrawCount()
-    {
-        return GameServices.Get<DebugService>().BattleDebugData.CardDrawPerTurn;
-    }
-
     private void EndTurn()
     {
         if (isTurnActive)
         {
             endTurnButton.onClick.RemoveListener(EndTurn);
-            battleDeck.DiscardHand(handInputHandler);
             isTurnActive = false;
         }
     }
 
-    public async UniTask<bool> HandleTurn()
+    public async UniTask<bool> HandleTurn(Phase phase)
     {
         await HandleInput();
 
@@ -104,13 +94,8 @@ public class PlayerController : MonoBehaviour, IPlayerController
             {
                 if (handInputHandler.TryPlayCard(champion.Mana, out PlayerCard card))
                 {
-                    var target = await SelectTarget();
-                    if (card.CanPlayOnTarget(target))
-                    {
-                        int manaSpent = await battleDeck.PlayCardOnTarget(card, target, handInputHandler, handAnchor);
-                        champion.SpendMana(manaSpent);
-                    }
-                    else
+                    bool success = await SelectTargetAndPlay(card);
+                    if (!success)
                     {
                         handInputHandler.ClearSelectedCard();
                     }
@@ -121,35 +106,58 @@ public class PlayerController : MonoBehaviour, IPlayerController
         }
     }
 
-    private async UniTask<ICharacter> SelectTarget()
+    private async UniTask<bool> SelectTargetAndPlay(PlayerCard card)
     {
         ICharacter target = null;
-        while (target is null)
+        bool shouldCast = false;
+        while (true)
         {
             await UniTask.Yield();
 
             if (Input.GetMouseButtonUp(1)) break;
-
             if (Input.GetMouseButtonUp(0))
             {
+                shouldCast = true;
                 var results = MainCamera.ScreenCast();
                 foreach (var hit in results)
                 {
                     if (hit.collider.TryGetComponent(out target)) break;
                 }
+
+                break;
             }
         }
         
-        return target;
-    }
+        if (card.CanPlayOnTarget(target) && shouldCast)
+        {
+            int manaSpent = await battleDeck.PlayCardOnTarget(card, target, handInputHandler, handAnchor);
+            champion.SpendMana(manaSpent);
 
-    public void RestoreAllMana()
-    {
-        champion.RestoreAllMana();
+            return true;
+        }
+
+        return false;
     }
 
     public async UniTask OnBattleStart()
     {
         await battleDeck.ShuffleDeckIntoDrawPile();
+    }
+
+    public async UniTask OnRoundStart()
+    {
+        await battleDeck.DrawCards(GetCardDrawCount(), handInputHandler, handAnchor, drawAnchor);
+        handInputHandler.UnlockAllCards();
+    }
+
+    public async UniTask OnRoundEnd()
+    {
+        await battleDeck.DiscardHand(handInputHandler);
+    }
+
+    private int GetCardDrawCount()
+    {
+        champion.RestoreAllMana();
+        return GameServices.Get<DebugService>().BattleDebugData.CardDrawPerTurn;
     }
 }

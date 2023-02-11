@@ -4,10 +4,12 @@ using TweenKey.Interpolation;
 using UnityEngine;
 
 public enum CardRarity { Junk = 0, Common, Uncommon, Rare, Epic, Legendary }
+public enum CardType { Summon, Spell }
 
 [RequireComponent(typeof(ICardAction))]
 public class PlayerCard : MonoBehaviour
 {
+    [field: SerializeField] public CardType Type { get; private set; } = CardType.Spell;
     [field: SerializeField] public CardRarity Rarity { get; private set; } = CardRarity.Common;
     [field: SerializeField] public int ManaCost { get; private set; } = 1;
 

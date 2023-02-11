@@ -12,6 +12,7 @@ public class CardMovementConfig : ScriptableObject
     [SerializeField] private float maxPadding	= 2.1f;
     [SerializeField] private float dealtSpeed	= 0.21f;
     [SerializeField] private float sortSpeed	= 0.14f;
+    [SerializeField] private float summonSpeed	= 0.21f;
     
     [SerializeField] private float selectHeight  = 6.4f;
     [SerializeField] private float selectDepth  = -4.2f;
@@ -26,6 +27,7 @@ public class CardMovementConfig : ScriptableObject
     public static float MaxPadding { get; private set; }
     public static float DealtSpeed { get; private set; }
     public static float SortSpeed { get; private set; }
+    public static float SummonSpeed { get; private set; }
     
     public static float SelectHeight { get; private set; }
     public static float SelectDepth { get; private set; }
@@ -53,5 +55,6 @@ public class CardMovementConfig : ScriptableObject
         DodgeDistance   = config.dodgeDistance;
         DepthInterval   = config.depthInterval;
         SwapTolerance   = config.swapTolerance;
+        SummonSpeed = config.summonSpeed;
     }
 }

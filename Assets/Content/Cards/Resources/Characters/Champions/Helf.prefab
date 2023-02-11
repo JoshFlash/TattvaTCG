@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Helf
       objectReference: {fileID: 0}
+    - target: {fileID: 6873613418286348982, guid: b16a11ece81782e47929d6a7151293be, type: 3}
+      propertyPath: <IsFriendly>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

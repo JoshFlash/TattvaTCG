@@ -154,6 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d8ba85a2bbf4565a8fe18b78a5fb073, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Type>k__BackingField: 1
   <Rarity>k__BackingField: 1
   <ManaCost>k__BackingField: 1
 --- !u!114 &-3474074277642028090
@@ -169,6 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   modifier: 0
+  targeting: 0
 --- !u!1 &3176772028061215937
 GameObject:
   m_ObjectHideFlags: 0
@@ -483,7 +485,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.018, y: -1.39}
+  m_AnchoredPosition: {x: -0.018, y: -1.338}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &4719245338865204166
@@ -611,7 +613,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -0.73054695, y: -0.04261613, z: -1.5846128, w: -3.0126917}
+  m_margin: {x: -0.42647743, y: -0.04261613, z: -0.9801235, w: -3.0126917}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0

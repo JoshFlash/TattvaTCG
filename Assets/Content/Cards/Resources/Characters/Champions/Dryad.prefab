@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 843144437310052308, guid: b16a11ece81782e47929d6a7151293be, type: 3}
+      propertyPath: m_text
+      value: Naphira
+      objectReference: {fileID: 0}
     - target: {fileID: 3129914318742635280, guid: b16a11ece81782e47929d6a7151293be, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -55,6 +59,21 @@ PrefabInstance:
     - target: {fileID: 3129914318742635295, guid: b16a11ece81782e47929d6a7151293be, type: 3}
       propertyPath: m_Name
       value: Dryad
+      objectReference: {fileID: 0}
+    - target: {fileID: 6419090187987541464, guid: b16a11ece81782e47929d6a7151293be, type: 3}
+      propertyPath: m_text
+      value: 'Minions in the top lane gain +1 Attack
+
+        Minions in the bottom
+        lane gain +1 Defend'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6419090187987541464, guid: b16a11ece81782e47929d6a7151293be, type: 3}
+      propertyPath: m_fontSize
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 6873613418286348982, guid: b16a11ece81782e47929d6a7151293be, type: 3}
+      propertyPath: <IsFriendly>k__BackingField
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8117167913547570132, guid: b16a11ece81782e47929d6a7151293be, type: 3}
       propertyPath: m_Materials.Array.data[0]

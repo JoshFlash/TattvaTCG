@@ -57,7 +57,7 @@ public class BattleDeck
             }
         }
         
-        // await one additional 'deal' a both a pacing and a logic update buffer
+        // await one additional 'dealt' as both a pacing and a logic update buffer
         await UniTask.Delay(TimeSpan.FromSeconds(CardMovementConfig.DealtSpeed));
     }
 
@@ -91,16 +91,24 @@ public class BattleDeck
 
         if (card.PlayCard(target))
         {
-            await handInputHandler.DiscardCard(card, handAnchor);
-            manaSpent = card.ManaCost;
+            if (card.Type.Equals(CardType.Summon))
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(CardMovementConfig.SummonSpeed));
+            }
+            else 
+            {
+                await handInputHandler.DiscardCard(card, handAnchor);
+                discardPile.Push(card);
+            }
             
-            discardPile.Push(card);
+            manaSpent = card.ManaCost;
+            PlayerHand.Remove(card);
         }
 
         return manaSpent;
     }
 
-    public void DiscardHand(HandInputHandler handInputHandler)
+    public async UniTask DiscardHand(HandInputHandler handInputHandler)
     {
         foreach (var playerCard in PlayerHand)
         {
@@ -108,5 +116,7 @@ public class BattleDeck
         }
 
         handInputHandler.ClearAllCards();
+
+        await UniTask.Yield();
     }
 }

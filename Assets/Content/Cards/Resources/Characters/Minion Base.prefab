@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 833332928909623099, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: <Type>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2031795177834758944, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -54,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031795177834758959, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_Name
-      value: Kibbleshanks
+      value: Minion Base
       objectReference: {fileID: 0}
     - target: {fileID: 4390624706233325540, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_text
@@ -71,14 +75,17 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2031795177834758959, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6632441180841527383}
+      addedObject: {fileID: 9152550730513889570}
+    - targetCorrespondingSourceObject: {fileID: 2031795177834758959, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4509911386993050895}
   m_SourcePrefab: {fileID: 100100000, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
 --- !u!1 &2534103459143695035 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2031795177834758959, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
   m_PrefabInstance: {fileID: 4546545832100919700}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6632441180841527383
+--- !u!114 &9152550730513889570
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -87,7 +94,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 2534103459143695035}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99d73ebcd9c74ba8b588e703f28e4447, type: 3}
+  m_Script: {fileID: 11500000, guid: 480133622b494c168a5779a92432fdb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modifier: 1
+  <PowerText>k__BackingField: {fileID: 0}
+  <HealthText>k__BackingField: {fileID: 0}
+  <MaxHealth>k__BackingField: 10
+  <MaxMana>k__BackingField: 1
+  <BasePower>k__BackingField: 1
+  <IsFriendly>k__BackingField: 1
+  OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnManaChanged:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4509911386993050895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2534103459143695035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec44d61457254461b6b1c221e4fbda31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modifier: 0
+  targeting: 2

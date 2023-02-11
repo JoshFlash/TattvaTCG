@@ -16,7 +16,14 @@ public class OpponentController : MonoBehaviour, IPlayerController
         Log.NotImplemented();
     }
 
-    public async UniTask<bool> ActivateTurn()
+    public async UniTask<bool> HandleTurn(Phase phase)
+    {
+        Log.NotImplemented();
+        await UniTask.Yield();
+        return false;
+    }
+
+    public async UniTask<bool> ActivateTurn(Phase phase)
     {
         Log.NotImplemented();
         await UniTask.Yield();
@@ -30,13 +37,21 @@ public class OpponentController : MonoBehaviour, IPlayerController
         return false;
     }
 
-    public void RestoreAllMana()
+    public async UniTask OnBattleStart()
     {
+        await UniTask.Yield();
         Log.NotImplemented();
     }
 
-    public async UniTask OnBattleStart()
+    public async UniTask OnRoundStart()
     {
+        await UniTask.Yield();
+        Log.NotImplemented();
+    }
+    
+    public async UniTask OnRoundEnd()
+    {
+        await UniTask.Yield();
         Log.NotImplemented();
     }
 }
