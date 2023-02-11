@@ -14,8 +14,11 @@ public class HandInputHandler
     private readonly int handLayer = default;
     private readonly PlayerHand playerHand;
     
+    // selected card is viewed up close near screen center with extra details shown
     private PlayerCard selectedCard = default;
+    //examined card is raised slightly from the hand to get a better quick look
     private PlayerCard examinedCard = default;
+    // mouseover card is to track which card the mouse is highlighting and does not have a specific view
     private PlayerCard mouseOverCard = default;
     
     private bool abeyInput = false;
@@ -108,6 +111,8 @@ public class HandInputHandler
 
     public async UniTask DiscardCard(PlayerCard playerCard, Transform handAnchor)
     {
+        abeyInput = true;
+
         playerCard.TweenToPosition(handAnchor.position + CardDefaultPosition(playerHand.kMaxHandSize, -1), CardMovementConfig.DealtSpeed);
         playerCard.Lock();
         playerHand.Remove(playerCard);
@@ -115,7 +120,9 @@ public class HandInputHandler
         AdjustPositions(handAnchor.position);
 
         await UniTask.Delay(TimeSpan.FromSeconds(CardMovementConfig.DealtSpeed));
-        GameObject.Destroy(playerCard.gameObject);
+        playerCard.Deactivate();
+        
+        abeyInput = false;
     }
 
     private void AdjustPositions(Vector3 handAnchorPosition)
@@ -176,7 +183,7 @@ public class HandInputHandler
     {
         ClearExaminedCard();
         ClearSelectedCard();
-        DestroyAllCards();
+        DiscardAllCards();
     }
 
     public void UnlockAllCards()
@@ -219,36 +226,32 @@ public class HandInputHandler
         }
     }
 
-    private void DestroyAllCards()
+    private void DiscardAllCards()
     {
-        foreach (PlayerCard card in playerHand)
+        foreach (PlayerCard playerCard in playerHand)
         {
-            GameObject.Destroy(card.gameObject);
+            playerCard.Deactivate();
         }
 
         playerHand.Clear();
     }
 
-    public async UniTask<int> PlaySelectedCard(ICharacter target, Transform handAnchor)
+    public bool TryPlayCard(int championMana, out PlayerCard playedCard)
     {
-        abeyInput = true;
-        int manaSpent = 0;
-
-        if (selectedCard.PlayCard(target))
+        playedCard = null;
+        if (mouseOverCard is null)
         {
-            await DiscardCard(selectedCard, handAnchor);
-            manaSpent = selectedCard.ManaCost;
+            if (selectedCard?.ManaCost <= championMana)
+            {
+                playedCard = selectedCard;
+                selectedCard.SetState(CardState.Target);
+                return true;
+            }
         }
-
-        abeyInput = false;
-        return manaSpent;
-    }
-
-    public bool TryPlaySelectedCard(int championMana)
-    {
-        if (selectedCard?.ManaCost <= championMana)
+        else if (mouseOverCard.ManaCost <= championMana)
         {
-            selectedCard.SetState(CardState.Target);
+            playedCard = mouseOverCard;
+            mouseOverCard.SetState(CardState.Target);
             return true;
         }
         

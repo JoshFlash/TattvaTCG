@@ -35,7 +35,7 @@ public class OpponentController : MonoBehaviour, IPlayerController
         Log.NotImplemented();
     }
 
-    public void OnBattleStart()
+    public async UniTask OnBattleStart()
     {
         Log.NotImplemented();
     }

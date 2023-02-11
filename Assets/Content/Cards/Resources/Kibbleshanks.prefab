@@ -56,6 +56,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Kibbleshanks
       objectReference: {fileID: 0}
+    - target: {fileID: 4390624706233325540, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_text
+      value: Kibbleshanks
+      objectReference: {fileID: 0}
+    - target: {fileID: 7946850076298599912, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_text
+      value: The dog of the railway train.
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -3474074277642028090, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
     m_RemovedGameObjects: []

@@ -56,6 +56,31 @@ PrefabInstance:
       propertyPath: m_Name
       value: Primeval Presage
       objectReference: {fileID: 0}
+    - target: {fileID: 4390624706233325540, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_text
+      value: Dark Omen
+      objectReference: {fileID: 0}
+    - target: {fileID: 5185943055627361252, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4a17d5e35f9961c4393ad63223e198d3, type: 2}
+    - target: {fileID: 7946850076298599912, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_text
+      value: Deal 2 damage to a friendly minion. Next turn, all enemy minions take
+        7 damage.
+      objectReference: {fileID: 0}
+    - target: {fileID: 7946850076298599912, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_fontSize
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 7946850076298599912, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_margin.w
+      value: -2.8503034
+      objectReference: {fileID: 0}
+    - target: {fileID: 7946850076298599912, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -3474074277642028090, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
     m_RemovedGameObjects: []

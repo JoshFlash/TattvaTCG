@@ -20,8 +20,8 @@ public class BattleGameService : IGameService
         await SummonChampion(battleDebugData.PlayerChampionPrefab, playerChampParent, player);
         await SummonChampion(battleDebugData.EnemyChampionPrefab, opponentChampParent, opponent);
 
-        player.OnBattleStart();
-        opponent.OnBattleStart();
+        await player.OnBattleStart();
+        await opponent.OnBattleStart();
 
         StartRound(player, opponent);
     }
@@ -41,7 +41,7 @@ public class BattleGameService : IGameService
     private void StartRound(IPlayerController player, IPlayerController opponent)
     {
         ++round;
-        Log.Info($"starting round: {round:00}");
+        Log.Info($"starting round: {round:00}", "[BATTLE]");
 
         ProgressPhase(player, opponent);
     }
@@ -49,7 +49,7 @@ public class BattleGameService : IGameService
     private void ProgressPhase(IPlayerController player, IPlayerController opponent)
     {
         currentPhase = currentPhase.Next();
-        Log.Info($"phase progressed, phase is {currentPhase}");
+        Log.Info($"phase progressed, phase is {currentPhase}", "[BATTLE]");
 
         CommencePhase(player, opponent).Forget();
     }
@@ -73,7 +73,7 @@ public class BattleGameService : IGameService
 
     private async UniTask HandleStartOfPhase(IPlayerController player)
     {
-        Log.Info($"phase start: {currentPhase}");
+        Log.Info($"phase start: {currentPhase}", "[BATTLE]");
 
         player.RestoreAllMana();
 
@@ -82,7 +82,7 @@ public class BattleGameService : IGameService
 
     private async UniTask HandlePlayerTurn(IPlayerController player)
     {
-        Log.Info($"{player} turn started, awaiting input");
+        Log.Info($"{player} turn started, awaiting input", "[BATTLE]");
 
         bool active = await player.ActivateTurn();
         while (active)
@@ -93,13 +93,13 @@ public class BattleGameService : IGameService
 
     private async UniTask HandleEndOfPhase()
     {
-        Log.Info("awaiting end of phase");
+        Log.Info("awaiting end of phase", "[BATTLE]");
         await UniTask.Yield();
     }
 
     private async UniTask EndRound(IPlayerController player, IPlayerController opponent)
     {
-        Log.Info("awaiting end of round");
+        Log.Info("awaiting end of round", "[BATTLE]");
         await UniTask.Yield();
 
         StartRound(player, opponent);

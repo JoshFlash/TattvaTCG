@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
         if (isTurnActive)
         {
             endTurnButton.onClick.RemoveListener(EndTurn);
-            handInputHandler.ClearAllCards();
+            battleDeck.DiscardHand(handInputHandler);
             isTurnActive = false;
         }
     }
@@ -100,17 +100,17 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
             if (Input.GetMouseButtonUp(1))
             {
-                if (handInputHandler.TryPlaySelectedCard(champion.Mana))
+                if (handInputHandler.TryPlayCard(champion.Mana, out PlayerCard card))
                 {
                     var target = await SelectTarget();
-                    if (target is null)
+                    if (card.CanPlayOnTarget(target))
                     {
-                        handInputHandler.ClearSelectedCard();
+                        int manaSpent = await battleDeck.PlayCardOnTarget(card, target, handInputHandler, handAnchor);
+                        champion.SpendMana(manaSpent);
                     }
                     else
                     {
-                        int manaSpent = await handInputHandler.PlaySelectedCard(target, handAnchor);
-                        champion.SpendMana(manaSpent);
+                        handInputHandler.ClearSelectedCard();
                     }
                 }
 
@@ -146,8 +146,8 @@ public class PlayerController : MonoBehaviour, IPlayerController
         champion.RestoreAllMana();
     }
 
-    public void OnBattleStart()
+    public async UniTask OnBattleStart()
     {
-        battleDeck.ShuffleDeckIntoDrawPile();
+        await battleDeck.ShuffleDeckIntoDrawPile();
     }
 }

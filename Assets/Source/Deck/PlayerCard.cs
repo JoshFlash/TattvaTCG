@@ -127,9 +127,26 @@ public class PlayerCard : MonoBehaviour
 
         return false;
     }
+    
+    public bool CanPlayOnTarget(ICharacter target)
+    {
+        return cardAction.CanTarget(target);
+    }
 
     public Vector3 GetStablePosition()
     {
         return state.Equals(CardState.ClearFocus) ? DefaultPosition : targetPositionRequested;
+    }
+
+    public void Deactivate()
+    {
+        transform.parent = null;
+        transform.rotation = Quaternion.identity;
+        gameObject.SetActive(false);
+    }
+
+    public void Activate()
+    {
+        gameObject.SetActive(true);
     }
 }
