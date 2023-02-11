@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
 {
     [SerializeField] private Button endTurnButton = default;
     [SerializeField] private Transform handAnchor = default;
+    [SerializeField] private Transform drawAnchor = default;
     
     private HandInputHandler handInputHandler = default; 
     private BattleDeck battleDeck = default;
@@ -53,14 +54,15 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     public async UniTask<bool> ActivateTurn()
     {
-        endTurnButton.onClick.AddListener(EndTurn);
-
-        // this will later be leveraged to skip turns where no actions are available to the player
-        isTurnActive = true;
                     
-        await battleDeck.DrawCards(GetCardDrawCount(), handInputHandler, handAnchor);
+        await battleDeck.DrawCards(GetCardDrawCount(), handInputHandler, handAnchor, drawAnchor);
         handInputHandler.UnlockAllCards();
         
+        endTurnButton.onClick.AddListener(EndTurn);
+
+        await UniTask.Yield();
+        
+        isTurnActive = true;
         return isTurnActive;
     }
 

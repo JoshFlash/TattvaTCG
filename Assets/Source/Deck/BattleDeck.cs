@@ -27,13 +27,13 @@ public class BattleDeck
     private Stack<PlayerCard> discardPile = new();
     private List<PlayerCard> banishedCards = new();
 
-    private async UniTask<bool> AddCardToHand(HandInputHandler handInputHandler, Transform handAnchor)
+    private async UniTask<bool> AddCardToHand(HandInputHandler handInputHandler, Transform handAnchor, Transform drawAnchor)
     {
         if (PlayerHand.IsFull) return false;
 
         if (drawPile.Count == 0)
         {
-            // TODO - let player know when their discard and draw piles are both empty
+            Log.NotImplemented("TODO - alert player when their discard and draw piles are both empty");
             await ShuffleDiscardIntoDrawPile();
         }
         
@@ -41,21 +41,24 @@ public class BattleDeck
         playerCard.Activate();
         
         PlayerHand.Add(playerCard);
-        await handInputHandler.AddAndAdjust(playerCard, handAnchor);
+        await handInputHandler.AddAndAdjust(playerCard, handAnchor, drawAnchor);
         
         return true;
     }
 
-    public async UniTask DrawCards(int drawCount, HandInputHandler handInputHandler, Transform handAnchor)
+    public async UniTask DrawCards(int drawCount, HandInputHandler handInputHandler, Transform handAnchor, Transform drawAnchor)
     {
         for (int i = 0; i < drawCount; i++)
         {
-            bool didAdd = await AddCardToHand(handInputHandler, handAnchor);
+            bool didAdd = await AddCardToHand(handInputHandler, handAnchor, drawAnchor);
             if (!didAdd)
             {
-                Log.NotImplemented("TODO: implement logic for alerting the player when the hand is full");
+                Log.NotImplemented("TODO - implement logic for alerting the player when the hand is full");
             }
         }
+        
+        // await one additional 'deal' a both a pacing and a logic update buffer
+        await UniTask.Delay(TimeSpan.FromSeconds(CardMovementConfig.DealtSpeed));
     }
 
     public async UniTask ShuffleDeckIntoDrawPile()

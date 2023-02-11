@@ -94,7 +94,7 @@ public class BattleGameService : IGameService
     private async UniTask HandleEndOfPhase()
     {
         Log.Info("awaiting end of phase", "[BATTLE]");
-        await UniTask.Yield();
+        await UniTask.Delay(1000);
     }
 
     private async UniTask EndRound(IPlayerController player, IPlayerController opponent)

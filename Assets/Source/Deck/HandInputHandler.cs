@@ -91,15 +91,16 @@ public class HandInputHandler
         }
     }
 
-    public async UniTask AddAndAdjust(PlayerCard card, Transform handAnchor)
+    public async UniTask AddAndAdjust(PlayerCard card, Transform handAnchor, Transform drawAnchor)
     {
         abeyInput = true;
+        card.transform.position = drawAnchor.position;
         card.transform.SetParent(handAnchor);
-        card.transform.TweenByRotation(Quaternion.AngleAxis(180, -card.transform.up), 0.5f);
 
         var startPosition = CardDefaultPosition(0, 0) + handAnchor.position + card.transform.rotation * CardState.Select.Offset;
         card.TweenToPosition(startPosition, CardMovementConfig.DealtSpeed);
-        
+        card.transform.TweenByRotation(Quaternion.AngleAxis(180, -card.transform.up), 0.5f);
+
         await UniTask.Delay(TimeSpan.FromSeconds(CardMovementConfig.DealtSpeed));
         
         AdjustPositions(handAnchor.position);
