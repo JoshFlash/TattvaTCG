@@ -108,7 +108,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     private async UniTask<bool> SelectTargetAndPlay(PlayerCard card)
     {
-        ICharacter target = null;
+        ITarget target = null;
         bool shouldCast = false;
         while (true)
         {

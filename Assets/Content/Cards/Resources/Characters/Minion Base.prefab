@@ -122,4 +122,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   modifier: 0
-  targeting: 2
+  faction: 1
+  targetType: 2

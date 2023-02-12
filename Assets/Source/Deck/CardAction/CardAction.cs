@@ -3,38 +3,67 @@ using UnityEngine;
 
 public interface ICardAction
 {
-    void Invoke(ICharacter target);
-    bool CanTarget(ICharacter target);
+    void Invoke(ITarget target);
+    bool CanTarget(ITarget target);
 }
 
 public abstract class CardAction<TModifier> : MonoBehaviour, ICardAction
 {
-    public enum TargetType { Enemy, Friendly, Any, None }
+    [Flags]
+    protected enum Faction
+    {
+        Friendly = 1,
+        Enemy = 2,
+    }
+    
+    [Flags]
+    protected enum TargetType
+    {
+        Champion = 1,
+        Minion = 2,
+        Lane = 4,
+    }
     
     [SerializeField] protected TModifier modifier;
-    [SerializeField] protected TargetType targeting  = TargetType.Enemy;
+    [SerializeField] protected Faction target  = Faction.Enemy;
+    [SerializeField] protected TargetType targetType  = TargetType.Minion;
 
-    protected abstract void InvokeOnTarget(in ICharacter target, in TModifier modifier);
+    protected abstract void InvokeOnTarget(in ITarget target, in TModifier modifier);
 
-    public void Invoke(ICharacter target)
+    public void Invoke(ITarget target)
     {
         InvokeOnTarget(target, modifier);
     }
 
-    public bool CanTarget(ICharacter target)
+    public bool CanTarget(ITarget target)
     {
-        switch (targeting)
-        {
-            case TargetType.Enemy:
-                return target != null && !target.IsFriendly();
-            case TargetType.Friendly:
-                return target != null && target.IsFriendly();
-            case TargetType.Any:
-                return true;
-            case TargetType.None:
-                return false;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+        if (target is null) return false;
+        
+        return CanTargetFaction(target) && CanTargetType(target);
+    }
+
+    private bool CanTargetFaction(ITarget target)
+    {
+        if ((this.target & Faction.Friendly) != 0 && target.IsFriendly())
+            return true;
+        
+        if ((this.target & Faction.Enemy) != 0 && !target.IsFriendly())
+            return true;
+
+        return false;
+    }
+
+    private bool CanTargetType(ITarget target)
+    {
+        if ((targetType & TargetType.Champion) != 0 && target.GetCharacter() is Champion)
+            return true;
+
+        if ((targetType & TargetType.Minion) != 0 && target.GetCharacter() is Minion)
+            return true;
+
+        if ((targetType & TargetType.Lane) != 0 && target.GetLane() is not null)
+            return true;
+        
+        return false;
     }
 }

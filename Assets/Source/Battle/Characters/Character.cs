@@ -2,19 +2,15 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-public interface ICharacter
+public interface ITarget
 {
-    void TakeDamage(int damage);
-    void RestoreHealth(int healing);
-    void SpendMana(int cost);
-    void RestoreMana(int regen);
-    void AssignCombatAction(CombatAction action);
-    void AssignTarget(ICharacter character);
     bool IsFriendly();
+    Character GetCharacter();
+    Lane GetLane();
 }
 
 public enum CombatAction { None, Attack, Defend, Cast }
-public abstract class Character : MonoBehaviour, ICharacter
+public abstract class Character : MonoBehaviour, ITarget
 {
     [field: SerializeField] public GameObject PowerText { get; private set; } 
     [field: SerializeField] public GameObject HealthText { get; private set; } 
@@ -31,8 +27,9 @@ public abstract class Character : MonoBehaviour, ICharacter
     public int Mana { get; private set; } = 1;
     public int Power { get; private set; } = 1;
 
-    public CombatAction SelectedAction { get; private set; } = CombatAction.None;
-    public ICharacter Target { get; private set; } = default;
+    public Lane Lane { get; set; } = default;
+    public CombatAction SelectedAction { get; set; } = CombatAction.None;
+    public ITarget Target { get; set; } = default;
 
     private void LogStats()
     {
@@ -94,26 +91,26 @@ public abstract class Character : MonoBehaviour, ICharacter
         
         LogStats();
     }
-
-    public void AssignCombatAction(CombatAction action)
-    {
-        SelectedAction = action;
-    }
-
-    public void AssignTarget(ICharacter character)
-    {
-        Target = character;
-    }
-
-    bool ICharacter.IsFriendly()
-    {
-        return this.IsFriendly;
-    }
-
+    
     public void RestoreAllMana()
     {
         RestoreMana(MaxMana);
         
         LogStats();
+    }
+    
+    bool ITarget.IsFriendly()
+    {
+        return this.IsFriendly;
+    }
+
+    public Character GetCharacter()
+    {
+        return this;
+    }
+
+    public Lane GetLane()
+    {
+        return this.Lane;
     }
 }

@@ -3,6 +3,9 @@ public delegate void BattleAction<in TTarget, in TModifier>(TTarget target, TMod
 
 public static class BattleActions
 {
-    public static BattleAction<ICharacter, int> DamageCharacter => (character, damage) => character.TakeDamage(damage);
-    public static BattleAction<ICharacter, int> HealCharacter => (character, healing) => character.RestoreHealth(healing);
+    public static BattleAction<ITarget, int> DamageCharacter => 
+        (target, damage) => target.GetCharacter()?.TakeDamage(damage);
+    
+    public static BattleAction<ITarget, int> HealCharacter => 
+        (target, healing) => target.GetCharacter()?.RestoreHealth(healing);
 }

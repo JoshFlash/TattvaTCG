@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UnplayableCardAction : CardAction<int>
 {
-    protected override void InvokeOnTarget(in ICharacter target, in int damage)
+    protected override void InvokeOnTarget(in ITarget target, in int damage)
     {
         // do nothing
     }

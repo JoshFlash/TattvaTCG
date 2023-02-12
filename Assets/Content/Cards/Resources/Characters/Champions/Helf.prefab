@@ -60,6 +60,10 @@ PrefabInstance:
       propertyPath: <IsFriendly>k__BackingField
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8688650222218394614, guid: b16a11ece81782e47929d6a7151293be, type: 3}
+      propertyPath: faction
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
