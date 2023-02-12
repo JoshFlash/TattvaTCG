@@ -25,7 +25,7 @@ public abstract class CardAction<TModifier> : MonoBehaviour, ICardAction
     }
     
     [SerializeField] protected TModifier modifier;
-    [SerializeField] protected Faction target  = Faction.Enemy;
+    [SerializeField] protected Faction targetFaction  = Faction.Enemy;
     [SerializeField] protected TargetType targetType  = TargetType.Minion;
 
     protected abstract void InvokeOnTarget(in ITarget target, in TModifier modifier);
@@ -44,10 +44,10 @@ public abstract class CardAction<TModifier> : MonoBehaviour, ICardAction
 
     private bool CanTargetFaction(ITarget target)
     {
-        if ((this.target & Faction.Friendly) != 0 && target.IsFriendly())
+        if ((targetFaction & Faction.Friendly) != 0 && target.IsFriendly())
             return true;
         
-        if ((this.target & Faction.Enemy) != 0 && !target.IsFriendly())
+        if ((targetFaction & Faction.Enemy) != 0 && !target.IsFriendly())
             return true;
 
         return false;
