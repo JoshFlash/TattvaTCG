@@ -5,7 +5,6 @@ using UnityEngine.Events;
 public interface ITarget
 {
     bool IsFriendly();
-    Character GetCharacter();
     Lane GetLane();
 }
 
@@ -41,6 +40,13 @@ public abstract class Character : MonoBehaviour, ITarget
         Health = MaxHealth;
         Mana = MaxMana;
         Power = BasePower;
+    }
+
+    public void SetStatsOnSummon(int power, int health, int mana)
+    {
+        Power = power;
+        Health = health;
+        Mana = mana;
         
         LogStats();
     }
@@ -61,7 +67,6 @@ public abstract class Character : MonoBehaviour, ITarget
             Health = MaxHealth;
         }
         OnHealthChanged.Invoke(Health);
-        
         LogStats();
     }
 
@@ -71,9 +76,8 @@ public abstract class Character : MonoBehaviour, ITarget
         {
             Mana -= cost;
             OnManaChanged.Invoke(Mana);
+            LogStats();
         }
-        
-        LogStats();
     }
 
     public void RestoreMana(int regen)
@@ -87,16 +91,13 @@ public abstract class Character : MonoBehaviour, ITarget
             }
 
             OnManaChanged.Invoke(Mana);
+            LogStats();
         }
-        
-        LogStats();
     }
     
     public void RestoreAllMana()
     {
         RestoreMana(MaxMana);
-        
-        LogStats();
     }
     
     bool ITarget.IsFriendly()

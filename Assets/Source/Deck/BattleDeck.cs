@@ -93,7 +93,7 @@ public class BattleDeck
         {
             if (card.Type.Equals(CardType.Summon))
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(CardMovementConfig.SummonSpeed));
+                await handInputHandler.RemoveSummonCard(card, handAnchor);
             }
             else 
             {

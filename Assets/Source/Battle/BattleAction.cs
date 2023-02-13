@@ -1,11 +1,11 @@
 
-public delegate void BattleAction<in TTarget, in TModifier>(TTarget target, TModifier modifier);
+public delegate void BattleAction<in TModifier>(ITarget target, TModifier modifier);
 
 public static class BattleActions
 {
-    public static BattleAction<ITarget, int> DamageCharacter => 
-        (target, damage) => target.GetCharacter()?.TakeDamage(damage);
+    public static BattleAction<int> DamageCharacter =>
+        (target, damage) => (target as Character)!.TakeDamage(damage);
     
-    public static BattleAction<ITarget, int> HealCharacter => 
-        (target, healing) => target.GetCharacter()?.RestoreHealth(healing);
+    public static BattleAction<int> HealCharacter => 
+        (target, healing) => (target as Character)!.RestoreHealth(healing);
 }

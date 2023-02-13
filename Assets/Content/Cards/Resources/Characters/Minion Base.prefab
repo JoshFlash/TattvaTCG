@@ -62,11 +62,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4390624706233325540, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_text
-      value: Kibbleshanks
+      value: Minion
       objectReference: {fileID: 0}
+    - target: {fileID: 5185943055627361252, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f8cbce46583fec643b49dbef533eda0c, type: 2}
     - target: {fileID: 7946850076298599912, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_text
-      value: The dog of the railway train.
+      value: Useless bad-deed-doer
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -3474074277642028090, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
@@ -121,6 +125,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec44d61457254461b6b1c221e4fbda31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modifier: 0
-  faction: 1
-  targetType: 2
+  targetFaction: 2
+  targetType: 4

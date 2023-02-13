@@ -55,10 +55,10 @@ public abstract class CardAction<TModifier> : MonoBehaviour, ICardAction
 
     private bool CanTargetType(ITarget target)
     {
-        if ((targetType & TargetType.Champion) != 0 && target.GetCharacter() is Champion)
+        if ((targetType & TargetType.Champion) != 0 && target is Champion)
             return true;
 
-        if ((targetType & TargetType.Minion) != 0 && target.GetCharacter() is Minion)
+        if ((targetType & TargetType.Minion) != 0 && target is Minion)
             return true;
 
         if ((targetType & TargetType.Lane) != 0 && target.GetLane() is not null)

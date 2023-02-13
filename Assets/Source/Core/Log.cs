@@ -11,6 +11,12 @@ public class Log
     }
 
     [Conditional("GAME_LOGGER")]
+    public static void Error(object obj, string label = "[ERROR] ")
+    {
+        UnityEngine.Debug.unityLogger.Log(UnityEngine.LogType.Error, label + obj);
+    }
+
+    [Conditional("GAME_LOGGER")]
     public static void NotImplemented(string todo = "")
     {
         string message = "[ALERT] Method not yet implemented! " + todo;

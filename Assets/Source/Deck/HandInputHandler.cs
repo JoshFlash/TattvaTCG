@@ -125,6 +125,19 @@ public class HandInputHandler
         
         abeyInput = false;
     }
+    
+    public async UniTask RemoveSummonCard(PlayerCard playerCard, Transform handAnchor)
+    {
+        abeyInput = true;
+
+        playerHand.Remove(playerCard);
+        
+        AdjustPositions(handAnchor.position);
+
+        await UniTask.Delay(TimeSpan.FromSeconds(CardMovementConfig.SummonSpeed));
+        
+        abeyInput = false;
+    }
 
     private void AdjustPositions(Vector3 handAnchorPosition)
     {
