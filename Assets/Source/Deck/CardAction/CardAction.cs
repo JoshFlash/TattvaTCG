@@ -61,7 +61,7 @@ public abstract class CardAction<TModifier> : MonoBehaviour, ICardAction
         if ((targetType & TargetType.Minion) != 0 && target is Minion)
             return true;
 
-        if ((targetType & TargetType.Lane) != 0 && target.GetLane() is not null)
+        if ((targetType & TargetType.Lane) != 0 && target.Lane is not null)
             return true;
         
         return false;

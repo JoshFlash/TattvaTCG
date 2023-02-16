@@ -7,7 +7,7 @@ public class SummonMinionAction : CardAction<(int,int)>
     {
         gameObject.layer = LayerMask.NameToLayer("Units");
         var card = GetComponent<PlayerCard>();
-        var lane = target.GetLane();
+        var lane = target.Lane;
         
         var minion = GetComponent<Minion>();
         var power = minion.BasePower + powerHp.Item1;
@@ -19,7 +19,7 @@ public class SummonMinionAction : CardAction<(int,int)>
             card.enabled = false;
 
             minion.enabled = true;
-            minion.SetStatsOnSummon(power, hp, minion.MaxMana);
+            minion.SetStatsOnSummon(power, hp);
             minion.transform.SetParent(lane.transform);
         }
 

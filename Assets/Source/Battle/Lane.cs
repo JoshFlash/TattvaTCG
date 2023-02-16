@@ -7,15 +7,7 @@ public class Lane : MonoBehaviour, ITarget
     [field: SerializeField] public bool IsFriendly { get; private set; }
 
     bool ITarget.IsFriendly() => this.IsFriendly;
+    Lane ITarget.Lane => this;
 
     // todo - implement targeting for all characters in lane
-    public Character GetCharacter()
-    {
-        return null;
-    }
-
-    public Lane GetLane()
-    {
-        return this;
-    }
 }

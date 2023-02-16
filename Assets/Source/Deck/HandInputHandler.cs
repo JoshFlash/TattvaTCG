@@ -155,7 +155,7 @@ public class HandInputHandler
             playerHand.Size < playerHand.kMaxHandSize / 2 ? CardMovementConfig.MaxPadding :
             playerHand.Size >= (int)(playerHand.kMaxHandSize * 0.8f) ? CardMovementConfig.MinPadding :
             (CardMovementConfig.MaxPadding + CardMovementConfig.MinPadding) / 2f;
-        return new((-offset + index + 0.5f) * padding, CardMovementConfig.DepthInterval * 2 * index, CardMovementConfig.DepthInterval * index);
+        return new((-offset + index + 0.5f) * padding, 0, CardMovementConfig.DepthInterval * index);
     }
 
     private void UpdateExaminedCard()
