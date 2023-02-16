@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 847302866883219566, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7f5d3024758a60a4bbed8672d7e53b09, type: 3}
     - target: {fileID: 2031795177834758944, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -71,7 +75,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7946850076298599912, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_fontSize
-      value: 17
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 7946850076298599912, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_margin.w
@@ -108,5 +112,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   modifier: 5
-  faction: 2
+  targetFaction: 2
   targetType: 3

@@ -17,10 +17,11 @@ MonoBehaviour:
   maxPadding: 2.1
   dealtSpeed: 0.21
   sortSpeed: 0.14
+  summonSpeed: 0.21
   selectHeight: 6.4
   selectDepth: -4.2
   examineHeight: 2.5
   examineDepth: -0.7
   dodgeDistance: 0.7
-  depthInterval: -0.01
+  depthInterval: -0.16
   swapTolerance: 0.07

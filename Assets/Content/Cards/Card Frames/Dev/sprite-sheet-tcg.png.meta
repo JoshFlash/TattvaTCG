@@ -107,7 +107,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: sprite-sheet-tcg_0
+      name: sprite-sheet-tcg-sword
       rect:
         serializedVersion: 2
         x: 1
@@ -128,7 +128,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sprite-sheet-tcg_1
+      name: sprite-sheet-tcg-defend
       rect:
         serializedVersion: 2
         x: 709
@@ -136,7 +136,7 @@ TextureImporter:
         width: 314
         height: 298
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -144,6 +144,27 @@ TextureImporter:
       bones: []
       spriteID: 9139fb42bc5be7f479b8b3f6b9f4798d
       internalID: -536142154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite-sheet-tcg-health
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 725
+        width: 359
+        height: 299
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e3b222aaeed341409f60d3ac923f47e
+      internalID: 1443832924
       vertices: []
       indices: 
       edges: []
@@ -159,8 +180,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      sprite-sheet-tcg_0: 1228755867
-      sprite-sheet-tcg_1: -536142154
+      sprite-sheet-tcg-health: 1443832924
+      sprite-sheet-tcg-sword: 1646554415
+      sprite-sheet-tcg-defend: -536142154
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
