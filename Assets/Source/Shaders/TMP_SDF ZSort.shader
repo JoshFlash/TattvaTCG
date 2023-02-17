@@ -1,4 +1,4 @@
-Shader "TextMeshPro/Distance Field" {
+Shader "TextMeshPro/Distance Field Z-Sort" {
 
 Properties {
 	_FaceTex			("Face Texture", 2D) = "white" {}
@@ -88,7 +88,7 @@ SubShader {
 
 	Tags
 	{
-		"Queue"="Transparent"
+		"Queue"="Transparent+1"
 		"IgnoreProjector"="True"
 		"RenderType"="Transparent"
 	}
@@ -106,7 +106,7 @@ SubShader {
 	ZWrite Off
 	Lighting Off
 	Fog { Mode Off }
-	ZTest [unity_GUIZTestMode]
+	ZTest Less 
 	Blend One OneMinusSrcAlpha
 	ColorMask [_ColorMask]
 
