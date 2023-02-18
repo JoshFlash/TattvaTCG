@@ -5,6 +5,7 @@ using UnityEngine;
 public class OpponentController : MonoBehaviour, IPlayerController
 {
     private List<Champion> champions = new();
+    public Champion Champion => champions[0];
 
     public void AssignChampion(Champion champion)
     {

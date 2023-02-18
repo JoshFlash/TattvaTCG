@@ -123,7 +123,7 @@ public class PlayerCard : MonoBehaviour
         }
     }
 
-    public bool PlayCard(ITarget target)
+    public bool PlayCard(ICardTarget target)
     {
         if (!lockInteraction)
         {
@@ -135,7 +135,7 @@ public class PlayerCard : MonoBehaviour
         return false;
     }
     
-    public bool CanPlayOnTarget(ITarget target)
+    public bool CanPlayOnTarget(ICardTarget target)
     {
         return cardAction.CanTarget(target);
     }

@@ -1,9 +1,10 @@
 
 using UnityEngine;
 
-public class SummonMinionAction : CardAction<(int,int)>
+public class SummonMinionAction : CardAction<CombatStats>
 {
-    protected override void InvokeOnTarget(in ITarget target, in (int,int) powerHp)
+    // stat modifiers are added to base stats on summon
+    protected override void InvokeOnTarget(in ICardTarget target, in CombatStats statModifiers)
     {
         gameObject.layer = LayerMask.NameToLayer("Units");
         var card = GetComponent<PlayerCard>();
@@ -12,8 +13,9 @@ public class SummonMinionAction : CardAction<(int,int)>
         var lane = target.Lane;
         
         var minion = GetComponent<Minion>();
-        var power = minion.BasePower + powerHp.Item1;
-        var hp = minion.MaxHealth + powerHp.Item2;
+        var block = minion.BaseBlock + statModifiers.Block;
+        var power = minion.BasePower + statModifiers.Power;
+        var hp = minion.MaxHealth + statModifiers.Health;
 
         void OnPlaced()
         {
@@ -21,7 +23,7 @@ public class SummonMinionAction : CardAction<(int,int)>
             card.enabled = false;
 
             minion.enabled = true;
-            minion.SetStatsOnSummon(power, hp);
+            minion.SetStatsOnSummon(block, power, hp);
             minion.transform.SetParent(lane.transform);
         }
 

@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class UnitInputHandler
@@ -16,12 +15,24 @@ public class UnitInputHandler
     private bool abeyInput = false;
     public bool IsReceivingInput => !abeyInput;
 
-    public void UpdateMouseOverUnit()
+    public async UniTask UpdateUnitActions()
     {
         CheckMouseOverUnit(out mouseOverUnit);
         if (mouseOverUnit != null)
         {
             mouseOverUnit.DisplayActions();
+        }
+        
+        if (Input.GetMouseButtonUp(0))
+        {
+            var results = MainCamera.ScreenCast(unitLayer);
+            foreach (var result in results)
+            {
+                if (result.collider.TryGetComponent(out ActionButton actionButton))
+                {
+                    await actionButton.character.AssignAction(actionButton.CombatAction);
+                }
+            }
         }
     }
 
@@ -37,5 +48,4 @@ public class UnitInputHandler
             }
         }
     }
-    
 }

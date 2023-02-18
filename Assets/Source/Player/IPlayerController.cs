@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 
 public interface IPlayerController
 {
+    Champion Champion { get; }
     void AssignChampion(Champion champion);
     void OnChampionDefeated();
     

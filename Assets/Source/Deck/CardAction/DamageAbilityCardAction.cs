@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class DamageAbilityCardAction : CardAction<int>
 {
-    protected override void InvokeOnTarget(in ITarget target, in int damage)
+    protected override void InvokeOnTarget(in ICardTarget target, in int blockPowerHp)
     {
-        BattleSpells.DamageCharacter.Invoke(target, damage);
+        BattleSpells.DamageCharacter.Invoke(target, blockPowerHp);
     }
 }

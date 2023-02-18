@@ -12,8 +12,10 @@ public class PlayerController : MonoBehaviour, IPlayerController
     private HandInputHandler handInputHandler = default;
     private UnitInputHandler unitInputHandler = default;
     private BattleDeck battleDeck = default;
-    
+
     private Champion champion = default;
+    public Champion Champion => champion;
+    
     private bool isTurnActive = false;
 
     private void Awake()
@@ -51,7 +53,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     public void OnChampionDefeated()
     {
-        Log.Info($"Champion Defeated {champion.name}");
+        Log.Info($"Champion Defeated {Champion.name}");
         champion.OnManaChanged.RemoveAllListeners();
     }
 
@@ -105,10 +107,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
     {
         if (unitInputHandler.IsReceivingInput)
         {
-            unitInputHandler.UpdateMouseOverUnit();
-            if (Input.GetMouseButtonUp(0))
-            {
-            }
+            await unitInputHandler.UpdateUnitActions();
         }
         await UniTask.Yield();
     }
@@ -126,7 +125,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
             if (Input.GetMouseButtonUp(1))
             {
-                if (handInputHandler.TryPlayCard(champion.Mana, out PlayerCard card))
+                if (handInputHandler.TryPlayCard(Champion.Mana, out PlayerCard card))
                 {
                     bool success = await SelectTargetAndPlay(card);
                     if (!success)
@@ -142,7 +141,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     private async UniTask<bool> SelectTargetAndPlay(PlayerCard card)
     {
-        ITarget target = null;
+        ICardTarget target = null;
         bool shouldCast = false;
         while (true)
         {

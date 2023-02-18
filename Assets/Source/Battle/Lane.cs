@@ -1,13 +1,13 @@
 using UnityEngine;
 
-public class Lane : MonoBehaviour, ITarget
+public class Lane : MonoBehaviour, ICardTarget
 {
     public Transform Anchor => this.transform;
     
     [field: SerializeField] public bool IsFriendly { get; private set; }
 
-    bool ITarget.IsFriendly() => this.IsFriendly;
-    Lane ITarget.Lane => this;
+    bool ICardTarget.IsFriendly() => this.IsFriendly;
+    Lane ICardTarget.Lane => this;
 
     // todo - implement targeting for all characters in lane
 }

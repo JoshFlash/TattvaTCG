@@ -1,5 +1,5 @@
 
-public delegate void BattleSpell<in TModifier>(ITarget target, TModifier modifier);
+public delegate void BattleSpell<in TModifier>(ICardTarget target, TModifier modifier);
 
 public static class BattleSpells
 {

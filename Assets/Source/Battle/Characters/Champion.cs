@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -42,5 +43,16 @@ public class Champion : Character
     public void RestoreAllMana()
     {
         RestoreMana(MaxMana);
+    }
+
+    public async UniTask ExecuteAllActions()
+    {
+        await ExecuteAssignedAction();
+        foreach (Minion minion in ControlledMinions)
+        {
+            await minion.ExecuteAssignedAction();
+        }
+
+        await UniTask.Yield();
     }
 }

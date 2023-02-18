@@ -85,7 +85,7 @@ public class BattleDeck
         await UniTask.Yield();
     }
 
-    public async UniTask<int> PlayCardOnTarget(PlayerCard card, ITarget target, HandInputHandler handInputHandler, Transform handAnchor)
+    public async UniTask<int> PlayCardOnTarget(PlayerCard card, ICardTarget target, HandInputHandler handInputHandler, Transform handAnchor)
     {
         int manaSpent = 0;
 

@@ -3,8 +3,8 @@ using UnityEngine;
 
 public interface ICardAction
 {
-    void Invoke(ITarget target);
-    bool CanTarget(ITarget target);
+    void Invoke(ICardTarget target);
+    bool CanTarget(ICardTarget target);
 }
 
 public abstract class CardAction<TModifier> : MonoBehaviour, ICardAction
@@ -28,21 +28,21 @@ public abstract class CardAction<TModifier> : MonoBehaviour, ICardAction
     [SerializeField] protected Faction targetFaction  = Faction.Enemy;
     [SerializeField] protected TargetType targetType  = TargetType.Minion;
 
-    protected abstract void InvokeOnTarget(in ITarget target, in TModifier modifier);
+    protected abstract void InvokeOnTarget(in ICardTarget target, in TModifier modifier);
 
-    public void Invoke(ITarget target)
+    public void Invoke(ICardTarget target)
     {
         InvokeOnTarget(target, modifier);
     }
 
-    public bool CanTarget(ITarget target)
+    public bool CanTarget(ICardTarget target)
     {
         if (target is null) return false;
         
         return CanTargetFaction(target) && CanTargetType(target);
     }
 
-    private bool CanTargetFaction(ITarget target)
+    private bool CanTargetFaction(ICardTarget target)
     {
         if ((targetFaction & Faction.Friendly) != 0 && target.IsFriendly())
             return true;
@@ -53,7 +53,7 @@ public abstract class CardAction<TModifier> : MonoBehaviour, ICardAction
         return false;
     }
 
-    private bool CanTargetType(ITarget target)
+    private bool CanTargetType(ICardTarget target)
     {
         if ((targetType & TargetType.Champion) != 0 && target is Champion)
             return true;

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using TweenKey;
 using UnityEngine;
@@ -71,7 +72,7 @@ public class BattleService : IGameService
         active = await player.ActivateTurn(currentPhase);
         while (active) active = await player.HandleTurn(currentPhase);
         
-        await HandleEndOfPhase();
+        await HandleEndOfPhase(player.Champion, opponent.Champion);
         if (!currentPhase.Equals(Phase.Recovery))
         {
             ProgressPhase(player, opponent);
@@ -82,9 +83,16 @@ public class BattleService : IGameService
         }
     }
 
-    private async UniTask HandleEndOfPhase()
+    private async UniTask HandleEndOfPhase(Champion playerChamp, Champion opponentChamp)
     {
         Log.Info("awaiting end of phase", "[BATTLE] ");
+
+        if (currentPhase.Equals(Phase.Ability))
+        {
+            await playerChamp.ExecuteAllActions();
+            await opponentChamp.ExecuteAllActions();
+        }
+        
         await UniTask.Yield();
     }
 
