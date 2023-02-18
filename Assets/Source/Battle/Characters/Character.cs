@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -18,7 +19,14 @@ public struct CombatStats
         Block = block;
         Power = power;
         Health = health;
+        
     }
+
+    public static CombatStats operator +(CombatStats c, CombatStats d)
+    {
+        return new CombatStats(c.Block + d.Block, c.Power + d.Power, c.Health + d.Health);
+    }
+
 }
 public abstract class Character : MonoBehaviour, ICardTarget
 {
@@ -27,17 +35,13 @@ public abstract class Character : MonoBehaviour, ICardTarget
     [field: SerializeField] public TMP_Text HealthText { get; private set; } 
     
     // The base stats of the Character as defined in their card
-    [field: SerializeField] public int MaxHealth { get; private set; } = 10;
-    [field: SerializeField] public int BasePower { get; private set; } = 1;
-    [field: SerializeField] public int BaseBlock { get; private set; } = 1;
+    [field: SerializeField] public CombatStats BaseStats { get; private set; } = new (1, 1, 10);
     [field: SerializeField] public bool IsFriendly { get; private set; } = false;
 
     [HideInInspector] public UnityEvent<CombatStats> OnStatsChanged = new ();
-    [HideInInspector] public UnityEvent<int> OnPowerChanged = new ();
-    [HideInInspector] public UnityEvent<int> OnBlockChanged = new ();
     
     // Tthe current stat values as determined by base stats and any additional modifiers
-    private CombatStats stats = new CombatStats();
+    private CombatStats currentStats = new CombatStats();
 
     public Lane Lane { get; set; } = default;
     public CombatAction SelectedAction { get; private set; } = CombatAction.None;
@@ -45,60 +49,77 @@ public abstract class Character : MonoBehaviour, ICardTarget
 
     private void LogStats()
     {
-        Log.Info($"({name} stats) health: {stats.Health}, power: {stats.Power}, block: {stats.Block}");
-    }
-    
-    protected void Start()
-    {
-        stats = new(BaseBlock, BasePower, MaxHealth);
-        
-        UpdateStatusText();
+        Log.Info($"({name} stats) health: {currentStats.Health}, power: {currentStats.Power}, block: {currentStats.Block}");
     }
 
-    private void UpdateStatusText()
+    private void Awake()
+    {
+        OnStatsChanged.AddListener(UpdateStatusText);
+    }
+
+    protected virtual void Start()
+    {
+        currentStats = new (0, BaseStats.Power, BaseStats.Health);
+        
+        OnStatsChanged.Invoke(currentStats);
+    }
+
+    private void OnDestroy()
+    {
+        OnStatsChanged.RemoveAllListeners();
+    }
+
+    private void UpdateStatusText(CombatStats stats)
     {
         PowerText.text = stats.Power.ToString();
         HealthText.text = stats.Health.ToString();
-        BlockText.text = stats.Block.ToString();
+        if (stats.Block > 0)
+        {
+            HealthText.text += " + " + stats.Block;
+        }
+        
+        BlockText.text = BaseStats.Block.ToString();
         
         LogStats();
     }
 
-    public void SetStatsOnSummon(int block, int power, int health)
+    public void SetStatsOnSummon(CombatStats statModifiers)
     {
-        MaxHealth = health;
-        BasePower = power;
-        BaseBlock = block;
+        BaseStats += statModifiers;
         
-        stats = new(0, power, health);
+        currentStats = BaseStats;
 
-        UpdateStatusText();
     }
 
     public void TakeDamage(int damage)
     {
-        stats.Block -= damage;
+        currentStats.Block -= damage;
 
-        if (stats.Block < 0)
+        if (currentStats.Block < 0)
         {
-            stats.Health += stats.Block;
-            stats.Block = 0;
+            currentStats.Health += currentStats.Block;
+            currentStats.Block = 0;
         }
 
-        OnStatsChanged.Invoke(stats);
-        UpdateStatusText();
+        OnStatsChanged.Invoke(currentStats);
+    }
+
+    public void AddBlock(int block)
+    {
+        currentStats.Block += block;
+        
+        OnStatsChanged.Invoke(currentStats);
     }
 
     public void RestoreHealth(int healing)
     {
-        stats.Health += healing;
-        if (stats.Health > MaxHealth)
+        currentStats.Health += healing;
+        if (currentStats.Health > BaseStats.Health)
         {
-            stats.Health = MaxHealth;
+            currentStats.Health = BaseStats.Health;
         }
         
-        OnStatsChanged.Invoke(stats);
-        UpdateStatusText();
+        OnStatsChanged.Invoke(currentStats);
     }
 
     bool ICardTarget.IsFriendly()
@@ -129,13 +150,17 @@ public abstract class Character : MonoBehaviour, ICardTarget
             case CombatAction.None:
                 break;
             case CombatAction.Attack:
+                // Todo - implement proper targeting
+                var units = new List<Character>(GameObject.FindObjectsOfType<Character>())
+                    .FindAll(character => !character.IsFriendly);
+                CombatTarget = units[0];
                 if (CombatTarget != null)
                 {
-                    CombatTarget.TakeDamage(stats.Power);
+                    CombatTarget.TakeDamage(currentStats.Power);
                 }
                 break;
             case CombatAction.Defend:
-                stats.Block = BaseBlock;
+                AddBlock(BaseStats.Block);
                 break;
             case CombatAction.Cast:
                 break;

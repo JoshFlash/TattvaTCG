@@ -13,9 +13,8 @@ public class SummonMinionAction : CardAction<CombatStats>
         var lane = target.Lane;
         
         var minion = GetComponent<Minion>();
-        var block = minion.BaseBlock + statModifiers.Block;
-        var power = minion.BasePower + statModifiers.Power;
-        var hp = minion.MaxHealth + statModifiers.Health;
+
+        var modifiers = statModifiers;
 
         void OnPlaced()
         {
@@ -23,7 +22,7 @@ public class SummonMinionAction : CardAction<CombatStats>
             card.enabled = false;
 
             minion.enabled = true;
-            minion.SetStatsOnSummon(block, power, hp);
+            minion.SetStatsOnSummon(modifiers);
             minion.transform.SetParent(lane.transform);
         }
 

@@ -153,15 +153,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dbd775223ea4cbcaa99fa3d82d3a5fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <BlockText>k__BackingField: {fileID: 5543619512731150822}
   <PowerText>k__BackingField: {fileID: 4275852895730538092}
   <HealthText>k__BackingField: {fileID: 2613999386688371155}
   <MaxHealth>k__BackingField: 10
   <BasePower>k__BackingField: 1
+  <BaseBlock>k__BackingField: 1
   <IsFriendly>k__BackingField: 0
-  OnHealthChanged:
+  OnStatsChanged:
     m_PersistentCalls:
       m_Calls: []
   OnPowerChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnBlockChanged:
     m_PersistentCalls:
       m_Calls: []
   <MaxMana>k__BackingField: 1
@@ -172,6 +177,17 @@ MonoBehaviour:
 --- !u!114 &4275852895730538092 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 867843443542005340, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+  m_PrefabInstance: {fileID: 3989576354078195760}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5543619512731150822 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8913527586741725654, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
   m_PrefabInstance: {fileID: 3989576354078195760}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

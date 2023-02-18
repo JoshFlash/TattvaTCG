@@ -12,9 +12,11 @@ public class Champion : Character
 
     [HideInInspector] public UnityEvent<int> OnManaChanged = new ();
 
-    private void Awake()
+    protected override void Start()
     {
         Mana = MaxMana;
+
+        base.Start();
     }
     
     public void RestoreMana(int regen)
