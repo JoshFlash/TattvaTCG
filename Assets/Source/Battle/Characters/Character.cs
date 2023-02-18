@@ -4,12 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
-public interface ITarget
-{
-    bool IsFriendly();
-    Lane Lane { get; }
-}
-
 public enum CombatAction { None, Attack, Defend, Cast }
 public abstract class Character : MonoBehaviour, ITarget
 {
@@ -82,5 +76,10 @@ public abstract class Character : MonoBehaviour, ITarget
     bool ITarget.IsFriendly()
     {
         return this.IsFriendly;
+    }
+
+    public void DisplayActions()
+    {
+        throw new NotImplementedException();
     }
 }

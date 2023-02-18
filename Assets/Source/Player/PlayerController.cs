@@ -9,7 +9,8 @@ public class PlayerController : MonoBehaviour, IPlayerController
     [SerializeField] private Transform handAnchor = default;
     [SerializeField] private Transform drawAnchor = default;
     
-    private HandInputHandler handInputHandler = default; 
+    private HandInputHandler handInputHandler = default;
+    private UnitInputHandler unitInputHandler = default;
     private BattleDeck battleDeck = default;
     
     private Champion champion = default;
@@ -20,6 +21,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
         var debugDeck = new SavedDeck(GameServices.Get<DebugService>().DebugStarterDeck);
         battleDeck = new BattleDeck(debugDeck);
         handInputHandler = new HandInputHandler(battleDeck.PlayerHand);
+        unitInputHandler = new UnitInputHandler();
     }
 
     private void Update()
@@ -74,13 +76,44 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     public async UniTask<bool> HandleTurn(Phase phase)
     {
-        await HandleInput();
+        if (phase.Equals(Phase.Prep))
+        {
+            Log.NotImplemented("TODO - Implement Prep phase logic");
+            // activate passives for player champ and minions
+            isTurnActive = false;
+            await UniTask.Delay(1000);
+        }
+        if (phase.Equals(Phase.Spell))
+        {
+            await HandleSpellPhaseInput();
+        }
+        else if (phase.Equals(Phase.Ability))
+        {
+            await HandleAbilityPhaseInput();
+        }
+        else
+        {
+            Log.NotImplemented($"TODO - Implement ${phase.Name} phase logic");
+            isTurnActive = false;
+        }
 
         await UniTask.Yield();
         return isTurnActive;
     }
 
-    private async UniTask HandleInput()
+    private async UniTask HandleAbilityPhaseInput()
+    {
+        if (unitInputHandler.IsReceivingInput)
+        {
+            unitInputHandler.UpdateMouseOverUnit();
+            if (Input.GetMouseButtonUp(0))
+            {
+            }
+        }
+        await UniTask.Yield();
+    }
+
+    private async UniTask HandleSpellPhaseInput()
     {
         if (handInputHandler.IsReceivingInput)
         {
