@@ -7,18 +7,22 @@ public class BattleService : IGameService
     private Phase currentPhase;
     private int round = 0;
     private BattleDebugData battleDebugData = default;
-    public PlayField PlayField { get; private set; }= default;
+    
+    public PlayField PlayField { get; private set; } = default;
 
     public async UniTask BeginBattle(
         IPlayerController player, 
         IPlayerController opponent, 
-        PlayField playField
+        PlayField playField,
+        UnityEngine.UI.Text manaText
     )
     {
         battleDebugData = GameServices.Get<DebugService>().BattleDebugData;
         PlayField = playField;
 
-        await SummonChampion(battleDebugData.PlayerChampionPrefab, PlayField.PlayerAnchor, player);
+        var playerChamp = await SummonChampion(battleDebugData.PlayerChampionPrefab, PlayField.PlayerAnchor, player);
+        playerChamp.OnManaChanged.AddListener((mana) => manaText.text = "Mana: " + mana.ToString());
+        
         await SummonChampion(battleDebugData.EnemyChampionPrefab, PlayField.OpponentAnchor, opponent);
 
         await player.OnBattleStart();
@@ -27,7 +31,7 @@ public class BattleService : IGameService
         await StartRound(player, opponent);
     }
 
-    private async UniTask SummonChampion(GameObject championPrefab, Transform championContainer, IPlayerController owner)
+    private async UniTask<Champion> SummonChampion(GameObject championPrefab, Transform championContainer, IPlayerController owner)
     {
         var champObject = GameObject.Instantiate(championPrefab, championContainer, false);
         var champion = champObject.GetComponent<Champion>();
@@ -37,6 +41,7 @@ public class BattleService : IGameService
         owner.AssignChampion(champion);
 
         await UniTask.Delay(1000);
+        return champion;
     }
 
     private async UniTask StartRound(IPlayerController player, IPlayerController opponent)

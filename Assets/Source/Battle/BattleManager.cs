@@ -1,6 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
@@ -11,9 +12,11 @@ public class BattleManager : MonoBehaviour
 
     [SerializeField] private PlayField playField = default;
     
+    [SerializeField] private Text manaText = default;
+    
     private void Start()
     {
         battleService = GameServices.Get<BattleService>();
-        battleService.BeginBattle(player, opponent, playField).Forget();
+        battleService.BeginBattle(player, opponent, playField, manaText).Forget();
     }
 }

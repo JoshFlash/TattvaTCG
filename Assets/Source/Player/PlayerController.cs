@@ -49,7 +49,8 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     public void OnChampionDefeated()
     {
-        Log.NotImplemented();
+        Log.Info($"Champion Defeated {champion.name}");
+        champion.OnManaChanged.RemoveAllListeners();
     }
 
     public async UniTask<bool> ActivateTurn(Phase phase)
