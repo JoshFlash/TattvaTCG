@@ -7,6 +7,8 @@ public class SummonMinionAction : CardAction<(int,int)>
     {
         gameObject.layer = LayerMask.NameToLayer("Units");
         var card = GetComponent<PlayerCard>();
+        card.ManaCostIcon.SetActive(false);
+
         var lane = target.Lane;
         
         var minion = GetComponent<Minion>();

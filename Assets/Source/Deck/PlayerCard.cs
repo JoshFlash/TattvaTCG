@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using TweenKey;
 using TweenKey.Interpolation;
 using UnityEngine;
@@ -12,6 +13,9 @@ public class PlayerCard : MonoBehaviour
     [field: SerializeField] public CardType Type { get; private set; } = CardType.Spell;
     [field: SerializeField] public CardRarity Rarity { get; private set; } = CardRarity.Common;
     [field: SerializeField] public int ManaCost { get; private set; } = 1;
+    
+    [field: SerializeField] public GameObject ManaCostIcon { get; private set; }
+    [field: SerializeField] public TMP_Text ManaCostText { get; private set; }
 
     public Vector3 DefaultPosition { get; private set; }
     public bool BlockMouseover { get; private set; } = false;
@@ -42,6 +46,7 @@ public class PlayerCard : MonoBehaviour
     private void Start()
     {
         cardAction = GetComponent<ICardAction>();
+        ManaCostText.text = ManaCost.ToString();
     }
 
     // This is for edge cases where cards can fight for focus. 

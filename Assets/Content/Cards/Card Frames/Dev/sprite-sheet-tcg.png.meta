@@ -169,6 +169,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: sprite-sheet-tcg-mana
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 36
+        width: 288
+        height: 423
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 16c715404eb6e984ea71a465a36b8092
+      internalID: -1415991387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -183,6 +204,7 @@ TextureImporter:
       sprite-sheet-tcg-health: 1443832924
       sprite-sheet-tcg-sword: 1646554415
       sprite-sheet-tcg-defend: -536142154
+      sprite-sheet-tcg-mana: -1415991387
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

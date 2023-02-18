@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &3989576354078195760
+--- !u!1001 &2849762324336679268
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -8,26 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: -3474074277642028090, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-      propertyPath: faction
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: -3474074277642028090, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-      propertyPath: targetType
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 847302866883219566, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: d7dbd5677658fff419201bc26180844c, type: 3}
-    - target: {fileID: 1127704616465254216, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 1599488015252115839, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 21300000, guid: 7f5d3024758a60a4bbed8672d7e53b09, type: 3}
     - target: {fileID: 2031795177834758944, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -74,109 +58,80 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031795177834758959, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_Name
-      value: Champion Base
+      value: Spell Base
       objectReference: {fileID: 0}
-    - target: {fileID: 2031795177834758959, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 3176772028061215937, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4055526203720937831, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4260265996555542233, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-      propertyPath: m_Layer
-      value: 6
+    - target: {fileID: 3139785909917305969, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4390624706233325540, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_text
-      value: Alithea
+      value: 'Spell Base
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4390624706233325540, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_fontSize
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 5185943055627361252, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 13a8e6e15d95a994cb50e3722f9a555c, type: 2}
-    - target: {fileID: 6445584993358135472, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-      propertyPath: m_text
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7840350676635358894, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2100000, guid: 4a17d5e35f9961c4393ad63223e198d3, type: 2}
     - target: {fileID: 7946850076298599912, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_text
-      value: At the end of your turn apply 3 ignite to ALL summoned units
+      value: Spell Description
       objectReference: {fileID: 0}
-    - target: {fileID: 8072310489580287927, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-      propertyPath: m_Layer
-      value: 6
+    - target: {fileID: 7946850076298599912, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_fontSize
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 7946850076298599912, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_margin.w
+      value: -2.8503034
+      objectReference: {fileID: 0}
+    - target: {fileID: 7946850076298599912, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8131118262329214559, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8965310579394017178, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9179752534573938553, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 833332928909623099, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+    - {fileID: -3474074277642028090, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2031795177834758959, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6873613418286348982}
+      addedObject: {fileID: -7739756747566640547}
   m_SourcePrefab: {fileID: 100100000, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
---- !u!114 &2613999386688371155 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1376720610428140003, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-  m_PrefabInstance: {fileID: 3989576354078195760}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &3129914318742635295 stripped
+--- !u!1 &4304879733621938763 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2031795177834758959, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-  m_PrefabInstance: {fileID: 3989576354078195760}
+  m_PrefabInstance: {fileID: 2849762324336679268}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6873613418286348982
+--- !u!114 &-7739756747566640547
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3129914318742635295}
+  m_GameObject: {fileID: 4304879733621938763}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1dbd775223ea4cbcaa99fa3d82d3a5fa, type: 3}
+  m_Script: {fileID: 11500000, guid: 99d73ebcd9c74ba8b588e703f28e4447, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <PowerText>k__BackingField: {fileID: 4275852895730538092}
-  <HealthText>k__BackingField: {fileID: 2613999386688371155}
-  <MaxHealth>k__BackingField: 10
-  <BasePower>k__BackingField: 1
-  <IsFriendly>k__BackingField: 0
-  OnHealthChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnPowerChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  <MaxMana>k__BackingField: 1
-  ControlledMinions: []
-  OnManaChanged:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &4275852895730538092 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 867843443542005340, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
-  m_PrefabInstance: {fileID: 3989576354078195760}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  modifier: 5
+  targetFaction: 2
+  targetType: 3
