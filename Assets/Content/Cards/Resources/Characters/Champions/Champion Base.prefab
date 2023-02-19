@@ -156,21 +156,15 @@ MonoBehaviour:
   <BlockText>k__BackingField: {fileID: 5543619512731150822}
   <PowerText>k__BackingField: {fileID: 4275852895730538092}
   <HealthText>k__BackingField: {fileID: 2613999386688371155}
-  <MaxHealth>k__BackingField: 10
-  <BasePower>k__BackingField: 1
-  <BaseBlock>k__BackingField: 1
+  <BaseStats>k__BackingField:
+    Block: 1
+    Power: 1
+    Health: 10
   <IsFriendly>k__BackingField: 0
   OnStatsChanged:
     m_PersistentCalls:
       m_Calls: []
-  OnPowerChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnBlockChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  <MaxMana>k__BackingField: 1
-  ControlledMinions: []
+  <MaxMana>k__BackingField: 5
   OnManaChanged:
     m_PersistentCalls:
       m_Calls: []

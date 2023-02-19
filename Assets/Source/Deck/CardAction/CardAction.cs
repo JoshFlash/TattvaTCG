@@ -35,7 +35,7 @@ public abstract class CardAction<TModifier> : MonoBehaviour, ICardAction
         InvokeOnTarget(target, modifier);
     }
 
-    public bool CanTarget(ICardTarget target)
+    public virtual bool CanTarget(ICardTarget target)
     {
         if (target is null) return false;
         

@@ -9,7 +9,7 @@ public class BattleService : IGameService
     private int round = 0;
     private BattleDebugData battleDebugData = default;
     
-    public PlayField PlayField { get; private set; } = default;
+    private PlayField playField = default;
 
     public async UniTask BeginBattle(
         IPlayerController player, 
@@ -19,12 +19,12 @@ public class BattleService : IGameService
     )
     {
         battleDebugData = GameServices.Get<DebugService>().BattleDebugData;
-        PlayField = playField;
+        this.playField = playField;
 
-        var playerChamp = await SummonChampion(battleDebugData.PlayerChampionPrefab, PlayField.PlayerAnchor, player);
+        var playerChamp = await SummonChampion(battleDebugData.PlayerChampionPrefab, this.playField.PlayerAnchor, player);
         playerChamp.OnManaChanged.AddListener((mana) => manaText.text = "Mana: " + mana.ToString());
         
-        await SummonChampion(battleDebugData.EnemyChampionPrefab, PlayField.OpponentAnchor, opponent);
+        await SummonChampion(battleDebugData.EnemyChampionPrefab, this.playField.OpponentAnchor, opponent);
 
         await player.OnBattleStart();
         await opponent.OnBattleStart();
@@ -72,7 +72,7 @@ public class BattleService : IGameService
         active = await player.ActivateTurn(currentPhase);
         while (active) active = await player.HandleTurn(currentPhase);
         
-        await HandleEndOfPhase(player.Champion, opponent.Champion);
+        await HandleEndOfPhase(player, opponent);
         if (!currentPhase.Equals(Phase.Recovery))
         {
             ProgressPhase(player, opponent);
@@ -83,16 +83,13 @@ public class BattleService : IGameService
         }
     }
 
-    private async UniTask HandleEndOfPhase(Champion playerChamp, Champion opponentChamp)
+    private async UniTask HandleEndOfPhase(IPlayerController player, IPlayerController opponent)
     {
         Log.Info("awaiting end of phase", "[BATTLE] ");
 
-        if (currentPhase.Equals(Phase.Ability))
-        {
-            await playerChamp.ExecuteAllActions();
-            await opponentChamp.ExecuteAllActions();
-        }
-        
+        await player.HandleEndOfPhase(currentPhase, playField);
+        await opponent.HandleEndOfPhase(currentPhase, playField);
+
         await UniTask.Yield();
     }
 

@@ -8,6 +8,7 @@ public interface IPlayerController
     
     UniTask<bool> ActivateTurn(Phase phase);
     UniTask<bool> HandleTurn(Phase phase);
+    UniTask<bool> HandleEndOfPhase(Phase phase, PlayField playField);
     
     UniTask OnBattleStart();
     UniTask OnRoundStart();

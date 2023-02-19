@@ -24,6 +24,25 @@ public class OpponentController : MonoBehaviour, IPlayerController
         return false;
     }
 
+    public async UniTask<bool> HandleEndOfPhase(Phase phase, PlayField playField)
+    {
+        if (phase.Equals(Phase.Ability))
+        {
+            await Champion.ExecuteAction();
+            await playField.OpponentTopLane.ExecuteMinionActions();
+            await playField.OpponentBottomLane.ExecuteMinionActions();
+        }
+
+        if (phase.Equals(Phase.Recovery))
+        {
+            Champion.ClearBlock();
+            await playField.OpponentTopLane.ClearBlock();
+            await playField.OpponentBottomLane.ClearBlock();
+        }
+
+        return true;
+    }
+
     public async UniTask<bool> ActivateTurn(Phase phase)
     {
         Log.NotImplemented();

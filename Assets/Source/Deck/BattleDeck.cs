@@ -36,6 +36,8 @@ public class BattleDeck
             Log.NotImplemented("TODO - alert player when their discard and draw piles are both empty");
             await ShuffleDiscardIntoDrawPile();
         }
+
+        if (drawPile.Count == 0) return false;
         
         PlayerCard playerCard = drawPile.Dequeue();
         playerCard.Activate();

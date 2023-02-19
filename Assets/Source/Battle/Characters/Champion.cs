@@ -7,8 +7,6 @@ public class Champion : Character
 {
     [field: SerializeField] public int MaxMana { get; private set; } = 1;
     public int Mana { get; private set; } = 1;
-    
-    public List<Minion> ControlledMinions = new ();
 
     [HideInInspector] public UnityEvent<int> OnManaChanged = new ();
 
@@ -47,13 +45,9 @@ public class Champion : Character
         RestoreMana(MaxMana);
     }
 
-    public async UniTask ExecuteAllActions()
+    public async UniTask ExecuteAction()
     {
         await ExecuteAssignedAction();
-        foreach (Minion minion in ControlledMinions)
-        {
-            await minion.ExecuteAssignedAction();
-        }
 
         await UniTask.Yield();
     }

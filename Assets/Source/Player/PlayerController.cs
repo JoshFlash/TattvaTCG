@@ -103,6 +103,30 @@ public class PlayerController : MonoBehaviour, IPlayerController
         return isTurnActive;
     }
 
+    public async UniTask<bool> HandleEndOfPhase(Phase phase, PlayField playField)
+    {
+        if (phase.Equals(Phase.Spell))
+        {
+            await battleDeck.DiscardHand(handInputHandler);
+        }
+
+        if (phase.Equals(Phase.Ability))
+        {
+            await Champion.ExecuteAction();
+            await playField.PlayerTopLane.ExecuteMinionActions();
+            await playField.PlayerBottomLane.ExecuteMinionActions();
+        }
+
+        if (phase.Equals(Phase.Recovery))
+        {
+            Champion.ClearBlock();
+            await playField.PlayerTopLane.ClearBlock();
+            await playField.PlayerBottomLane.ClearBlock();
+        }
+
+        return true;
+    }
+
     private async UniTask HandleAbilityPhaseInput()
     {
         if (unitInputHandler.IsReceivingInput)

@@ -19,14 +19,12 @@ public struct CombatStats
         Block = block;
         Power = power;
         Health = health;
-        
     }
 
     public static CombatStats operator +(CombatStats c, CombatStats d)
     {
         return new CombatStats(c.Block + d.Block, c.Power + d.Power, c.Health + d.Health);
     }
-
 }
 public abstract class Character : MonoBehaviour, ICardTarget
 {
@@ -40,8 +38,8 @@ public abstract class Character : MonoBehaviour, ICardTarget
 
     [HideInInspector] public UnityEvent<CombatStats> OnStatsChanged = new ();
     
-    // Tthe current stat values as determined by base stats and any additional modifiers
-    private CombatStats currentStats = new CombatStats();
+    // The current stat values as determined by base stats and any additional modifiers
+    private CombatStats currentStats = default;
 
     public Lane Lane { get; set; } = default;
     public CombatAction SelectedAction { get; private set; } = CombatAction.None;
@@ -86,9 +84,16 @@ public abstract class Character : MonoBehaviour, ICardTarget
     public void SetStatsOnSummon(CombatStats statModifiers)
     {
         BaseStats += statModifiers;
-        
-        currentStats = BaseStats;
 
+        currentStats = BaseStats;
+        ClearBlock();
+    }
+
+    public void ClearBlock()
+    {
+        currentStats.Block = 0;
+        
+        OnStatsChanged.Invoke(currentStats);
     }
 
     public void TakeDamage(int damage)
@@ -169,5 +174,7 @@ public abstract class Character : MonoBehaviour, ICardTarget
         }
         
         await UniTask.Yield();
+        
+        SelectedAction = CombatAction.None;
     }
 }
