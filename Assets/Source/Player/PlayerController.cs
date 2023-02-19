@@ -109,7 +109,6 @@ public class PlayerController : MonoBehaviour, IPlayerController
         {
             await unitInputHandler.UpdateUnitActions();
         }
-        await UniTask.Yield();
     }
 
     private async UniTask HandleSpellPhaseInput()
@@ -120,7 +119,6 @@ public class PlayerController : MonoBehaviour, IPlayerController
             if (Input.GetMouseButtonUp(0))
             {
                 handInputHandler.UpdateSelectedCard();
-                await UniTask.Yield();
             }
 
             if (Input.GetMouseButtonUp(1))
@@ -133,8 +131,6 @@ public class PlayerController : MonoBehaviour, IPlayerController
                         handInputHandler.ClearSelectedCard();
                     }
                 }
-
-                await UniTask.Yield();
             }
         }
     }

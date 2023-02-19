@@ -23,7 +23,7 @@ public class UnitInputHandler
             mouseOverUnit.DisplayActions();
         }
         
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonDown(0))
         {
             var results = MainCamera.ScreenCast(unitLayer);
             foreach (var result in results)
