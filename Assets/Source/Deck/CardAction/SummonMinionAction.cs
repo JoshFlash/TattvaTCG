@@ -24,6 +24,7 @@ public class SummonMinionAction : CardAction<CombatStats>
             minion.enabled = true;
             minion.SetStatsOnSummon(modifiers);
             minion.transform.SetParent(lane.transform);
+            minion.OnSummon();
             
             lane.Minions.Add(minion);
         }

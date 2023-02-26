@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -27,7 +26,7 @@ public class BattleDeck
     private Stack<PlayerCard> discardPile = new();
     private List<PlayerCard> banishedCards = new();
 
-    private async UniTask<bool> AddCardToHand(HandInputHandler handInputHandler, Transform handAnchor, Transform drawAnchor)
+    private async UniTask<bool> AddCardToHand(InputHandler inputHandler, Transform handAnchor, Transform drawAnchor)
     {
         if (PlayerHand.IsFull) return false;
 
@@ -43,16 +42,16 @@ public class BattleDeck
         playerCard.Activate();
         
         PlayerHand.Add(playerCard);
-        await handInputHandler.AddAndAdjust(playerCard, handAnchor, drawAnchor);
+        await inputHandler.AddAndAdjust(playerCard, handAnchor, drawAnchor);
         
         return true;
     }
 
-    public async UniTask DrawCards(int drawCount, HandInputHandler handInputHandler, Transform handAnchor, Transform drawAnchor)
+    public async UniTask DrawCards(int drawCount, InputHandler inputHandler, Transform handAnchor, Transform drawAnchor)
     {
         for (int i = 0; i < drawCount; i++)
         {
-            bool didAdd = await AddCardToHand(handInputHandler, handAnchor, drawAnchor);
+            bool didAdd = await AddCardToHand(inputHandler, handAnchor, drawAnchor);
             if (!didAdd)
             {
                 Log.NotImplemented("TODO - implement logic for alerting the player when the hand is full");
@@ -87,7 +86,7 @@ public class BattleDeck
         await UniTask.Yield();
     }
 
-    public async UniTask<int> PlayCardOnTarget(PlayerCard card, ICardTarget target, HandInputHandler handInputHandler, Transform handAnchor)
+    public async UniTask<int> PlayCardOnTarget(PlayerCard card, ICardTarget target, InputHandler inputHandler, Transform handAnchor)
     {
         int manaSpent = 0;
 
@@ -95,11 +94,11 @@ public class BattleDeck
         {
             if (card.Type.Equals(CardType.Summon))
             {
-                await handInputHandler.RemoveSummonCard(card, handAnchor);
+                await inputHandler.RemoveSummonCard(card, handAnchor);
             }
             else 
             {
-                await handInputHandler.DiscardCard(card, handAnchor);
+                await inputHandler.DiscardCard(card, handAnchor);
                 discardPile.Push(card);
             }
             
@@ -110,14 +109,14 @@ public class BattleDeck
         return manaSpent;
     }
 
-    public async UniTask DiscardHand(HandInputHandler handInputHandler)
+    public async UniTask DiscardHand(InputHandler inputHandler)
     {
         foreach (var playerCard in PlayerHand)
         {
             discardPile.Push(playerCard);
         }
 
-        handInputHandler.ClearAllCards();
+        inputHandler.ClearAllCards();
 
         await UniTask.Yield();
     }

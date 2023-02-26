@@ -53,6 +53,7 @@ public abstract class Character : MonoBehaviour, ICardTarget
     private void Awake()
     {
         OnStatsChanged.AddListener(UpdateStatusText);
+        OnSummon();
     }
 
     protected virtual void Start()
@@ -176,5 +177,10 @@ public abstract class Character : MonoBehaviour, ICardTarget
         await UniTask.Yield();
         
         SelectedAction = CombatAction.None;
+    }
+
+    public void OnSummon()
+    {
+        GetComponent<PlayerCard>().CachePosition();
     }
 }

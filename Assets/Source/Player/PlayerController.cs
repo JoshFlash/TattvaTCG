@@ -5,25 +5,24 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour, IPlayerController
 {
+    public Champion Champion => champion;
+    private Champion champion = default;
+    
+    [SerializeField] private PlayField playField = default;
     [SerializeField] private Button endTurnButton = default;
     [SerializeField] private Transform handAnchor = default;
     [SerializeField] private Transform drawAnchor = default;
     
-    private HandInputHandler handInputHandler = default;
-    private UnitInputHandler unitInputHandler = default;
+    private InputHandler inputHandler = default;
     private BattleDeck battleDeck = default;
 
-    private Champion champion = default;
-    public Champion Champion => champion;
-    
     private bool isTurnActive = false;
 
     private void Awake()
     {
         var debugDeck = new SavedDeck(GameServices.Get<DebugService>().DebugStarterDeck);
         battleDeck = new BattleDeck(debugDeck);
-        handInputHandler = new HandInputHandler(battleDeck.PlayerHand);
-        unitInputHandler = new UnitInputHandler();
+        inputHandler = new InputHandler(battleDeck.PlayerHand);
     }
 
     private void Update()
@@ -44,11 +43,21 @@ public class PlayerController : MonoBehaviour, IPlayerController
         {
             card.MoveToRequestedPosition(CardMovementConfig.MoveSpeed);
         }
+
+        foreach (var unit in playField.GetAllFriendlyUnits())
+        {
+            var unitCard = unit.GetComponent<PlayerCard>();
+            if (unitCard && unitCard.ShouldMove())
+            {
+                unitCard.MoveToRequestedPosition(CardMovementConfig.MoveSpeed);
+            }
+        }
     }
 
     public void AssignChampion(Champion champion)
     {
         this.champion = champion;
+        playField.PlayerChampion = champion;
     }
 
     public void OnChampionDefeated()
@@ -62,6 +71,8 @@ public class PlayerController : MonoBehaviour, IPlayerController
         endTurnButton.onClick.AddListener(EndTurn);
 
         await UniTask.Yield();
+
+        inputHandler.SetPhase(phase);
         
         isTurnActive = true;
         return isTurnActive;
@@ -103,11 +114,11 @@ public class PlayerController : MonoBehaviour, IPlayerController
         return isTurnActive;
     }
 
-    public async UniTask<bool> HandleEndOfPhase(Phase phase, PlayField playField)
+    public async UniTask<bool> HandleEndOfPhase(Phase phase)
     {
         if (phase.Equals(Phase.Spell))
         {
-            await battleDeck.DiscardHand(handInputHandler);
+            await battleDeck.DiscardHand(inputHandler);
         }
 
         if (phase.Equals(Phase.Ability))
@@ -129,30 +140,35 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     private async UniTask HandleAbilityPhaseInput()
     {
-        if (unitInputHandler.IsReceivingInput)
+        if (inputHandler.IsReceivingInput(Phase.Ability))
         {
-            await unitInputHandler.UpdateUnitActions();
+            inputHandler.UpdateUnitFocus();
+            
+            if (Input.GetMouseButtonDown(0))
+            {
+                await inputHandler.TryAssignActions();
+            }
         }
     }
 
     private async UniTask HandleSpellPhaseInput()
     {
-        if (handInputHandler.IsReceivingInput)
+        if (inputHandler.IsReceivingInput(Phase.Spell))
         {
-            handInputHandler.UpdateCardFocus();
+            inputHandler.UpdateCardFocus();
             if (Input.GetMouseButtonUp(0))
             {
-                handInputHandler.UpdateSelectedCard();
+                inputHandler.UpdateSelectedCard();
             }
 
             if (Input.GetMouseButtonUp(1))
             {
-                if (handInputHandler.TryPlayCard(Champion.Mana, out PlayerCard card))
+                if (inputHandler.TryPlayCard(Champion.Mana, out PlayerCard card))
                 {
                     bool success = await SelectTargetAndPlay(card);
                     if (!success)
                     {
-                        handInputHandler.ClearSelectedCard();
+                        inputHandler.ClearSelectedCard();
                     }
                 }
             }
@@ -183,7 +199,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
         
         if (card.CanPlayOnTarget(target) && shouldCast)
         {
-            int manaSpent = await battleDeck.PlayCardOnTarget(card, target, handInputHandler, handAnchor);
+            int manaSpent = await battleDeck.PlayCardOnTarget(card, target, inputHandler, handAnchor);
             champion.SpendMana(manaSpent);
 
             return true;
@@ -199,13 +215,13 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     public async UniTask OnRoundStart()
     {
-        await battleDeck.DrawCards(GetCardDrawCount(), handInputHandler, handAnchor, drawAnchor);
-        handInputHandler.UnlockAllCards();
+        await battleDeck.DrawCards(GetCardDrawCount(), inputHandler, handAnchor, drawAnchor);
+        inputHandler.UnlockAllCardsInHand();
     }
 
     public async UniTask OnRoundEnd()
     {
-        await battleDeck.DiscardHand(handInputHandler);
+        await battleDeck.DiscardHand(inputHandler);
     }
 
     private int GetCardDrawCount()

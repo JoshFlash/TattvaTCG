@@ -6,10 +6,14 @@ public class OpponentController : MonoBehaviour, IPlayerController
 {
     private List<Champion> champions = new();
     public Champion Champion => champions[0];
+    
+    [SerializeField] private PlayField playField = default;
+    public PlayField PlayField => playField;
 
     public void AssignChampion(Champion champion)
     {
         champions.Add(champion);
+        playField.OpponentChampion = champion;
     }
 
     public void OnChampionDefeated()
@@ -24,7 +28,7 @@ public class OpponentController : MonoBehaviour, IPlayerController
         return false;
     }
 
-    public async UniTask<bool> HandleEndOfPhase(Phase phase, PlayField playField)
+    public async UniTask<bool> HandleEndOfPhase(Phase phase)
     {
         if (phase.Equals(Phase.Ability))
         {
@@ -44,13 +48,6 @@ public class OpponentController : MonoBehaviour, IPlayerController
     }
 
     public async UniTask<bool> ActivateTurn(Phase phase)
-    {
-        Log.NotImplemented();
-        await UniTask.Yield();
-        return false;
-    }
-
-    public async UniTask<bool> HandleTurn()
     {
         Log.NotImplemented();
         await UniTask.Yield();

@@ -3,27 +3,37 @@ using Cysharp.Threading.Tasks;
 using TweenKey;
 using UnityEngine;
 
-public class HandInputHandler
+public class InputHandler
 {
-    public HandInputHandler(PlayerHand playerHand)
+    public InputHandler(PlayerHand playerHand)
     {
         this.playerHand = playerHand;
         handLayer = LayerMask.GetMask("Cards");
+        characterLayer = LayerMask.GetMask("Units");
     }
-    
+
+    private readonly int characterLayer = default;
     private readonly int handLayer = default;
     private readonly PlayerHand playerHand;
     
     // selected card is viewed up close near screen center with extra details shown
     private PlayerCard selectedCard = default;
-    //examined card is raised slightly from the hand to get a better quick look
-    private PlayerCard examinedCard = default;
+    // examined card is raised slightly from the hand to get a better quick look
+    private PlayerCard  examinedCard = default;
     // mouseover card is to track which card the mouse is highlighting and does not have a specific view
     private PlayerCard mouseOverCard = default;
-    
+
     private bool abeyInput = false;
-    
-    public bool IsReceivingInput => !(playerHand.IsEmpty || abeyInput);
+    private int inputLayer = -1;
+
+    public bool IsReceivingInput(Phase phase)
+    {
+        bool receiveInput = !abeyInput;
+        if (phase.Equals(Phase.Spell))
+            receiveInput &= !playerHand.IsEmpty;
+        
+        return receiveInput;
+    }
 
     public void UpdateCardFocus()
     {
@@ -35,6 +45,15 @@ public class HandInputHandler
         else if (ShouldClearExaminedCard())
         {
             ClearExaminedCard();
+        }
+    }
+
+    public void UpdateUnitFocus()
+    {
+        CheckMouseOverCard(out mouseOverCard);
+        if (mouseOverCard != null)
+        {
+            UpdateExaminedCharacter();
         }
     }
 
@@ -54,7 +73,7 @@ public class HandInputHandler
         mouseOver = null;
         var minSqrDistance = float.MaxValue;
 
-        var results = MainCamera.ScreenCast(handLayer);
+        var results = MainCamera.ScreenCast(inputLayer);
         foreach (var result in results)
         {
             if (result.collider.TryGetComponent(out PlayerCard hitCard))
@@ -170,6 +189,19 @@ public class HandInputHandler
         }
     }
 
+    private void UpdateExaminedCharacter()
+    {
+        var mouseOverUnit = mouseOverCard.GetComponent<Character>(); 
+        if (mouseOverUnit && mouseOverUnit.IsFriendly && mouseOverCard != examinedCard)
+        {
+            ClearExaminedCard();
+            examinedCard = mouseOverCard;
+            examinedCard.SetState(CardState.Examine);
+            
+            examinedCard.Unlock();
+        }
+    }
+
     private void ClearExaminedCard()
     {
         if (examinedCard != null && examinedCard != selectedCard)
@@ -200,7 +232,7 @@ public class HandInputHandler
         DiscardAllCards();
     }
 
-    public void UnlockAllCards()
+    public void UnlockAllCardsInHand()
     {
         foreach (var card in playerHand)
         {
@@ -269,6 +301,37 @@ public class HandInputHandler
             return true;
         }
         
+        return false;
+    }
+
+    public void SetPhase(Phase phase)
+    {
+        if (phase.Equals(Phase.Spell))
+        {
+            inputLayer = handLayer;
+        }
+        else if (phase.Equals(Phase.Ability))
+        {
+            inputLayer = characterLayer;
+        }
+        else
+        {
+            inputLayer = -1;
+        }
+    }
+
+    public async UniTask<bool> TryAssignActions()
+    {
+        var results = MainCamera.ScreenCast(inputLayer);
+        foreach (var result in results)
+        {
+            if (result.collider.TryGetComponent(out ActionButton actionButton))
+            {
+                await actionButton.character.AssignAction(actionButton.CombatAction);
+                return true;
+            }
+        }
+
         return false;
     }
 }

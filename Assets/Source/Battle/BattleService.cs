@@ -9,23 +9,20 @@ public class BattleService : IGameService
     private int round = 0;
     private BattleDebugData battleDebugData = default;
     
-    private PlayField playField = default;
-
     public async UniTask BeginBattle(
         IPlayerController player, 
         IPlayerController opponent, 
-        PlayField playField,
+        PlayField field,
         UnityEngine.UI.Text manaText
     )
     {
         battleDebugData = GameServices.Get<DebugService>().BattleDebugData;
-        this.playField = playField;
 
-        var playerChamp = await SummonChampion(battleDebugData.PlayerChampionPrefab, this.playField.PlayerAnchor, player);
+        var playerChamp = await SummonChampion(battleDebugData.PlayerChampionPrefab, field.PlayerAnchor, player);
         playerChamp.OnManaChanged.AddListener((mana) => manaText.text = "Mana: " + mana.ToString());
-        
-        await SummonChampion(battleDebugData.EnemyChampionPrefab, this.playField.OpponentAnchor, opponent);
 
+        var  opponentChamp = await SummonChampion(battleDebugData.EnemyChampionPrefab, field.OpponentAnchor, opponent);
+        
         await player.OnBattleStart();
         await opponent.OnBattleStart();
 
@@ -87,8 +84,8 @@ public class BattleService : IGameService
     {
         Log.Info("awaiting end of phase", "[BATTLE] ");
 
-        await player.HandleEndOfPhase(currentPhase, playField);
-        await opponent.HandleEndOfPhase(currentPhase, playField);
+        await player.HandleEndOfPhase(currentPhase);
+        await opponent.HandleEndOfPhase(currentPhase);
 
         await UniTask.Yield();
     }
