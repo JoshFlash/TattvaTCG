@@ -19,8 +19,11 @@ public class CardMovementConfig : ScriptableObject
     [SerializeField] private float examineHeight = 2.5f;
     [SerializeField] private float examineDepth  = -0.7f;
     [SerializeField] private float dodgeDistance = 0.7f;
-    [SerializeField] private float depthInterval = -0.01f;
+    [SerializeField] private float depthInterval = -0.16f;
     [SerializeField] private float swapTolerance = 0.07f;
+    
+    [SerializeField] private float highlightDepth = -2.1f;
+    [SerializeField] private float highlightHeight = -0.7f;
 
     public static float MoveSpeed { get; private set; }
     public static float MinPadding { get; private set; }
@@ -37,6 +40,8 @@ public class CardMovementConfig : ScriptableObject
     public static float DepthInterval { get; private set; }
     
     public static float SwapTolerance { get; private set; }
+    public static float HighlightDepth { get; private set; }
+    public static float HighlightHeight { get; private set; }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void Init()
@@ -55,6 +60,8 @@ public class CardMovementConfig : ScriptableObject
         DodgeDistance   = config.dodgeDistance;
         DepthInterval   = config.depthInterval;
         SwapTolerance   = config.swapTolerance;
-        SummonSpeed = config.summonSpeed;
+        SummonSpeed     = config.summonSpeed;
+        HighlightDepth  = config.highlightDepth;
+        HighlightHeight = config.highlightHeight;
     }
 }

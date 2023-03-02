@@ -8,6 +8,7 @@ public struct CardState : IEquatable<CardState>
     private static Vector3 kClearOffset         => new(0, CardMovementConfig.ExamineHeight / 2, 0);
     private static Vector3 kSelectOffset        => new(0, CardMovementConfig.SelectHeight, CardMovementConfig.SelectDepth);
     private static Vector3 kTargetOffset        => new(0, CardMovementConfig.ExamineHeight, CardMovementConfig.SelectDepth);
+    private static Vector3 kHighlightOffset     => new(0, CardMovementConfig.HighlightHeight, CardMovementConfig.HighlightDepth);
     private static Vector3 kDodgeOffsetRight    => new(-CardMovementConfig.DodgeDistance, 0, 0);
     private static Vector3 kDodgeOffsetLeft     => new(CardMovementConfig.DodgeDistance, 0, 0);
     
@@ -41,6 +42,14 @@ public struct CardState : IEquatable<CardState>
     
     private static readonly Lazy<CardState> kTarget = new(() => new() { Offset = kTargetOffset, Id = 6 } );
     public static CardState Target => kTarget.Value;
+    
+    
+    private static readonly Lazy<CardState> kHighlight = new(() => new() { Offset = kHighlightOffset, Id = 7 } );
+    public static CardState Highlight => kHighlight.Value;
+    
+    
+    private static readonly Lazy<CardState> kClearHighlight = new(() => new() { Offset = kDefaultOffset, Id = 8 } );
+    public static CardState ClearHighlight => kClearHighlight.Value;
 
 
     public bool Equals(CardState other)

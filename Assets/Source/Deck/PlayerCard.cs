@@ -98,15 +98,15 @@ public class PlayerCard : MonoBehaviour
     public void MoveToRequestedPosition(float duration)
     {
 
-        if (state.Equals(CardState.Examine))
+        if (state.Equals(CardState.Examine) || state.Equals(CardState.Highlight))
         {
-            StartCoroutine(BlockMouseoverForDuration(duration));
             SetPosition(targetPositionRequested);
             return;
         }
-        
-        if (state.Equals(CardState.ClearFocus))
+
+        if (state.Equals(CardState.ClearFocus) || state.Equals(CardState.ClearHighlight))
         {
+            StartCoroutine(BlockMouseoverForDuration(duration));
             targetPositionRequested = DefaultPosition;
         }
         

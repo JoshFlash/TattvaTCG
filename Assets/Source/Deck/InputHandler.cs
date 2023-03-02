@@ -12,6 +12,8 @@ public class InputHandler
         characterLayer = LayerMask.GetMask("Units");
     }
 
+    private const float kClearDistance = 280f;
+
     private readonly int characterLayer = default;
     private readonly int handLayer = default;
     private readonly PlayerHand playerHand;
@@ -53,16 +55,32 @@ public class InputHandler
         CheckMouseOverCard(out mouseOverCard);
         if (mouseOverCard != null)
         {
-            UpdateExaminedCharacter();
+            UpdateHighlightedCharacter();
+        }
+        else if (ShouldClearHighlightedCharacter())
+        {
+            ClearHighlightedCard();
         }
     }
 
     private bool ShouldClearExaminedCard()
     {
-        var mousePos = Input.mousePosition;
         if (examinedCard != null && examinedCard != selectedCard)
         {
-            return mousePos.y > examinedCard.transform.position.WorldToScreenPoint().y;
+            return 
+                Input.mousePosition.y > examinedCard.transform.position.WorldToScreenPoint().y
+                || Vector2.Distance(Input.mousePosition, examinedCard.transform.position.WorldToScreenPoint()) > kClearDistance;
+        }
+
+        return false;
+    }
+
+    private bool ShouldClearHighlightedCharacter()
+    {
+        if (examinedCard != null && examinedCard != selectedCard)
+        {
+            return 
+                Vector2.Distance(Input.mousePosition, examinedCard.transform.position.WorldToScreenPoint()) > kClearDistance;
         }
 
         return false;
@@ -189,14 +207,14 @@ public class InputHandler
         }
     }
 
-    private void UpdateExaminedCharacter()
+    private void UpdateHighlightedCharacter()
     {
         var mouseOverUnit = mouseOverCard.GetComponent<Character>(); 
         if (mouseOverUnit && mouseOverUnit.IsFriendly && mouseOverCard != examinedCard)
         {
-            ClearExaminedCard();
+            ClearHighlightedCard();
             examinedCard = mouseOverCard;
-            examinedCard.SetState(CardState.Examine);
+            examinedCard.SetState(CardState.Highlight);
             
             examinedCard.Unlock();
         }
@@ -209,6 +227,15 @@ public class InputHandler
             ClearAdjacentCards(examinedCard, selectedCard);
 
             examinedCard.SetState(CardState.ClearFocus);
+            examinedCard = null;
+        }
+    }
+
+    private void ClearHighlightedCard()
+    {
+        if (examinedCard != null && examinedCard != selectedCard)
+        {
+            examinedCard.SetState(CardState.ClearHighlight);
             examinedCard = null;
         }
     }
