@@ -415,6 +415,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 994e48bf84114a6bb54427bc16404e64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playField: {fileID: 1762301628}
   endTurnButton: {fileID: 484658210}
   handAnchor: {fileID: 1041369576}
   drawAnchor: {fileID: 146027166}
@@ -1212,6 +1213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30ea9a41c9914f7b9ad7521741c91e46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playField: {fileID: 1762301628}
 --- !u!1 &264646443388683601
 GameObject:
   m_ObjectHideFlags: 0
