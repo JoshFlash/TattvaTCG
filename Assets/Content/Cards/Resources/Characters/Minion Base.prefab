@@ -92,6 +92,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4509911386993050895}
   m_SourcePrefab: {fileID: 100100000, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+--- !u!4 &2092492532524101652 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2455189155218049408, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+  m_PrefabInstance: {fileID: 4546545832100919700}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2534103459143695035 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2031795177834758959, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
@@ -112,17 +117,13 @@ MonoBehaviour:
   <BlockText>k__BackingField: {fileID: 4948230332475953218}
   <PowerText>k__BackingField: {fileID: 3680461637247135688}
   <HealthText>k__BackingField: {fileID: 3171531676688793719}
-  <MaxHealth>k__BackingField: 10
-  <BasePower>k__BackingField: 1
-  <BaseBlock>k__BackingField: 1
+  statsParent: {fileID: 2092492532524101652}
+  <BaseStats>k__BackingField:
+    Block: 1
+    Power: 1
+    Health: 10
   <IsFriendly>k__BackingField: 1
   OnStatsChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnPowerChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnBlockChanged:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &4509911386993050895

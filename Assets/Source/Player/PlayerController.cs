@@ -44,9 +44,9 @@ public class PlayerController : MonoBehaviour, IPlayerController
             card.MoveToRequestedPosition(CardMovementConfig.MoveSpeed);
         }
 
-        foreach (var unit in playField.GetAllFriendlyUnits())
+        foreach (var unit in playField.GetAllUnits())
         {
-            var unitCard = unit.GetComponent<PlayerCard>();
+            var unitCard = unit.Card;
             if (unitCard && unitCard.ShouldMove())
             {
                 unitCard.MoveToRequestedPosition(CardMovementConfig.MoveSpeed);
@@ -140,22 +140,23 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     private async UniTask HandleAbilityPhaseInput()
     {
-        if (inputHandler.IsReceivingInput(Phase.Ability))
+        if (inputHandler.IsReceivingInput())
         {
-            inputHandler.UpdateUnitFocus();
+            inputHandler.UpdateCardFocus();
             
             if (Input.GetMouseButtonDown(0))
             {
-                await inputHandler.TryAssignActions();
+                await inputHandler.AssignActions();
             }
         }
     }
 
     private async UniTask HandleSpellPhaseInput()
     {
-        if (inputHandler.IsReceivingInput(Phase.Spell))
+        if (inputHandler.IsReceivingInput())
         {
             inputHandler.UpdateCardFocus();
+            
             if (Input.GetMouseButtonUp(0))
             {
                 inputHandler.UpdateSelectedCard();

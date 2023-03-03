@@ -49,21 +49,6 @@ public class PlayerCard : MonoBehaviour
         ManaCostText.text = ManaCost.ToString();
     }
 
-    // This is for edge cases where cards can fight for focus. 
-    private IEnumerator BlockMouseoverForDuration(float duration)
-    {
-        BlockMouseover = true;
-        
-        float t = 0;
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            yield return null;
-        }
-        
-        BlockMouseover = false;
-    }
-
     public void Lock()
     {
         lockInteraction = true;
@@ -97,7 +82,6 @@ public class PlayerCard : MonoBehaviour
 
     public void MoveToRequestedPosition(float duration)
     {
-
         if (state.Equals(CardState.Examine) || state.Equals(CardState.Highlight))
         {
             SetPosition(targetPositionRequested);
@@ -106,7 +90,6 @@ public class PlayerCard : MonoBehaviour
 
         if (state.Equals(CardState.ClearFocus) || state.Equals(CardState.ClearHighlight))
         {
-            StartCoroutine(BlockMouseoverForDuration(duration));
             targetPositionRequested = DefaultPosition;
         }
         

@@ -25,3 +25,5 @@ MonoBehaviour:
   dodgeDistance: 0.7
   depthInterval: -0.16
   swapTolerance: 0.07
+  highlightDepth: -2.1
+  highlightHeight: -0.28

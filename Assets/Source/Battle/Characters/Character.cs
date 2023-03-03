@@ -30,7 +30,9 @@ public abstract class Character : MonoBehaviour, ICardTarget
 {
     [field: SerializeField] public TMP_Text BlockText { get; private set; }
     [field: SerializeField] public TMP_Text PowerText { get; private set; } 
-    [field: SerializeField] public TMP_Text HealthText { get; private set; } 
+    [field: SerializeField] public TMP_Text HealthText { get; private set; }
+
+    [SerializeField] private Transform statsParent = default; 
     
     // The base stats of the Character as defined in their card
     [field: SerializeField] public CombatStats BaseStats { get; private set; } = new (1, 1, 10);
@@ -44,6 +46,7 @@ public abstract class Character : MonoBehaviour, ICardTarget
     public Lane Lane { get; set; } = default;
     public CombatAction SelectedAction { get; private set; } = CombatAction.None;
     public Character CombatTarget { get; private set; }
+    public PlayerCard Card { get; private set; } = default;
 
     private void LogStats()
     {
@@ -52,6 +55,7 @@ public abstract class Character : MonoBehaviour, ICardTarget
 
     private void Awake()
     {
+        Card = GetComponent<PlayerCard>();
         OnStatsChanged.AddListener(UpdateStatusText);
         OnSummon();
     }
@@ -181,6 +185,19 @@ public abstract class Character : MonoBehaviour, ICardTarget
 
     public void OnSummon()
     {
-        GetComponent<PlayerCard>().CachePosition();
+        Card.CachePosition();
+    }
+
+    public void OnHighlight(CardState highlightState)
+    {
+        statsParent.gameObject.SetActive(true);
+        Card.Unlock();
+        Card.SetState(highlightState);
+    }
+
+    public void OnClearHighlight(CardState clearState)
+    {
+        statsParent.gameObject.SetActive(false);
+        Card.SetState(clearState);
     }
 }

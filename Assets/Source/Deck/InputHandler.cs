@@ -22,50 +22,43 @@ public class InputHandler
     private PlayerCard selectedCard = default;
     // examined card is raised slightly from the hand to get a better quick look
     private PlayerCard  examinedCard = default;
-    // mouseover card is to track which card the mouse is highlighting and does not have a specific view
+    // highlighted character is for characters in play to be raised slightly from their location
+    private Character highlightedCharacter = default;
+    // mouseover card is to track which card the mouse is hovering over
     private PlayerCard mouseOverCard = default;
 
     private bool abeyInput = false;
-    private int inputLayer = -1;
 
-    public bool IsReceivingInput(Phase phase)
+    public bool IsReceivingInput()
     {
-        bool receiveInput = !abeyInput;
-        if (phase.Equals(Phase.Spell))
-            receiveInput &= !playerHand.IsEmpty;
-        
-        return receiveInput;
+        return !abeyInput;
     }
 
     public void UpdateCardFocus()
     {
-        CheckMouseOverCard(out mouseOverCard);
-        if (mouseOverCard != null)
+        mouseOverCard = null;
+        
+        if (!playerHand.IsEmpty && CheckMouseOverCard(out mouseOverCard, handLayer))
         {
             UpdateExaminedCard();
         }
-        else if (ShouldClearExaminedCard())
+        if (mouseOverCard is null && CheckMouseOverCard(out mouseOverCard, characterLayer))
+        {
+            UpdateHighlightedCharacter();
+        }
+        
+        if (mouseOverCard is null && ShouldClearExaminedCard())
         {
             ClearExaminedCard();
         }
     }
 
-    public void UpdateUnitFocus()
-    {
-        CheckMouseOverCard(out mouseOverCard);
-        if (mouseOverCard != null)
-        {
-            UpdateHighlightedCharacter();
-        }
-        else if (ShouldClearHighlightedCharacter())
-        {
-            ClearHighlightedCard();
-        }
-    }
-
     private bool ShouldClearExaminedCard()
     {
-        if (examinedCard != null && examinedCard != selectedCard)
+        if (examinedCard is null || examinedCard == selectedCard)
+            return false;
+        
+        if (highlightedCharacter is null || examinedCard == highlightedCharacter.Card)
         {
             return 
                 Input.mousePosition.y > examinedCard.transform.position.WorldToScreenPoint().y
@@ -75,21 +68,10 @@ public class InputHandler
         return false;
     }
 
-    private bool ShouldClearHighlightedCharacter()
-    {
-        if (examinedCard != null && examinedCard != selectedCard)
-        {
-            return 
-                Vector2.Distance(Input.mousePosition, examinedCard.transform.position.WorldToScreenPoint()) > kClearDistance;
-        }
-
-        return false;
-    }
-
-    private void CheckMouseOverCard(out PlayerCard mouseOver)
+    private bool CheckMouseOverCard(out PlayerCard mouseOver, int inputLayer)
     {
         mouseOver = null;
-        var minSqrDistance = float.MaxValue;
+        var minDistance = float.MaxValue;
 
         var results = MainCamera.ScreenCast(inputLayer);
         foreach (var result in results)
@@ -97,23 +79,24 @@ public class InputHandler
             if (result.collider.TryGetComponent(out PlayerCard hitCard))
             {
                 if (hitCard.BlockMouseover) continue;
-                
-                var examinedDistance = GetExaminedCardSqrDistance(result.point);
-                var distance = Vector3.SqrMagnitude(result.point - hitCard.GetStablePosition());
-                if (distance < minSqrDistance && distance < examinedDistance - CardMovementConfig.SwapTolerance)
+                if (hitCard == examinedCard)
                 {
-                    minSqrDistance = distance;
+                    mouseOver = hitCard;
+                    break;
+                }
+
+                var distance = Vector3.Distance(result.point, hitCard.GetStablePosition());
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
                     mouseOver = hitCard;
                 }
             }
         }
-    }
 
-    private float GetExaminedCardSqrDistance(Vector3 point)
-    {
-        return examinedCard != null ? Vector3.SqrMagnitude(point - examinedCard.DefaultPosition) : float.MaxValue;
+        return mouseOver is not null;
     }
-
+    
     public void UpdateSelectedCard()
     {
         if (playerHand.Contains(mouseOverCard))
@@ -131,6 +114,7 @@ public class InputHandler
     public async UniTask AddAndAdjust(PlayerCard card, Transform handAnchor, Transform drawAnchor)
     {
         abeyInput = true;
+        
         card.transform.position = drawAnchor.position;
         card.transform.SetParent(handAnchor);
 
@@ -201,6 +185,7 @@ public class InputHandler
         {
             ClearExaminedCard();
             examinedCard = mouseOverCard;
+            examinedCard.GetComponent<Character>()?.OnHighlight(CardState.Examine);
             examinedCard.SetState(CardState.Examine);
 
             UpdateAdjacentCards(examinedCard, selectedCard);
@@ -209,33 +194,32 @@ public class InputHandler
 
     private void UpdateHighlightedCharacter()
     {
-        var mouseOverUnit = mouseOverCard.GetComponent<Character>(); 
-        if (mouseOverUnit && mouseOverUnit.IsFriendly && mouseOverCard != examinedCard)
+        if (mouseOverCard != examinedCard 
+            && mouseOverCard.TryGetComponent(out Character mouseOverUnit))
         {
-            ClearHighlightedCard();
+            ClearExaminedCard();
             examinedCard = mouseOverCard;
-            examinedCard.SetState(CardState.Highlight);
             
-            examinedCard.Unlock();
+            highlightedCharacter = mouseOverUnit;
+            highlightedCharacter.OnHighlight(CardState.Highlight);
         }
     }
 
     private void ClearExaminedCard()
     {
+        if (highlightedCharacter != null)
+        {
+            highlightedCharacter.OnClearHighlight(CardState.ClearHighlight);
+            highlightedCharacter = null;
+            examinedCard = null;
+        }
+        
         if (examinedCard != null && examinedCard != selectedCard)
         {
             ClearAdjacentCards(examinedCard, selectedCard);
-
+            
+            examinedCard.GetComponent<Character>()?.OnClearHighlight(CardState.ClearFocus);
             examinedCard.SetState(CardState.ClearFocus);
-            examinedCard = null;
-        }
-    }
-
-    private void ClearHighlightedCard()
-    {
-        if (examinedCard != null && examinedCard != selectedCard)
-        {
-            examinedCard.SetState(CardState.ClearHighlight);
             examinedCard = null;
         }
     }
@@ -333,32 +317,18 @@ public class InputHandler
 
     public void SetPhase(Phase phase)
     {
-        if (phase.Equals(Phase.Spell))
-        {
-            inputLayer = handLayer;
-        }
-        else if (phase.Equals(Phase.Ability))
-        {
-            inputLayer = characterLayer;
-        }
-        else
-        {
-            inputLayer = -1;
-        }
+        Log.NotImplemented(" This may no longer be necessary to implement");
     }
 
-    public async UniTask<bool> TryAssignActions()
+    public async UniTask AssignActions()
     {
-        var results = MainCamera.ScreenCast(inputLayer);
+        var results = MainCamera.ScreenCast(characterLayer);
         foreach (var result in results)
         {
             if (result.collider.TryGetComponent(out ActionButton actionButton))
             {
                 await actionButton.character.AssignAction(actionButton.CombatAction);
-                return true;
             }
         }
-
-        return false;
     }
 }

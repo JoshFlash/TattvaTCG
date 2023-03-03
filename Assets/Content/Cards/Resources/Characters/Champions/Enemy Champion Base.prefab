@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 843144437310052308, guid: b16a11ece81782e47929d6a7151293be, type: 3}
       propertyPath: m_text
-      value: Jimp
+      value: Enemy Name
       objectReference: {fileID: 0}
     - target: {fileID: 3129914318742635280, guid: b16a11ece81782e47929d6a7151293be, type: 3}
       propertyPath: m_RootOrder
@@ -58,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3129914318742635295, guid: b16a11ece81782e47929d6a7151293be, type: 3}
       propertyPath: m_Name
-      value: Jimp
+      value: Enemy Champion Base
       objectReference: {fileID: 0}
     - target: {fileID: 4368469621215301726, guid: b16a11ece81782e47929d6a7151293be, type: 3}
       propertyPath: m_Sprite
@@ -66,7 +66,11 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: d00de15c90862994d891e34c3bfd8666, type: 3}
     - target: {fileID: 6419090187987541464, guid: b16a11ece81782e47929d6a7151293be, type: 3}
       propertyPath: m_text
-      value: The Giant Imp... but don't call him Gimp
+      value: Enemy Description
+      objectReference: {fileID: 0}
+    - target: {fileID: 6873613418286348982, guid: b16a11ece81782e47929d6a7151293be, type: 3}
+      propertyPath: <IsFriendly>k__BackingField
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8117167913547570132, guid: b16a11ece81782e47929d6a7151293be, type: 3}
       propertyPath: m_Materials.Array.data[0]

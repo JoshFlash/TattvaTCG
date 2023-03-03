@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayField : MonoBehaviour
@@ -22,6 +23,20 @@ public class PlayField : MonoBehaviour
         friendlyUnits.Add(PlayerChampion);
 
         return friendlyUnits;
+    }
+
+    public List<Character> GetAllEnemyUnits()
+    {
+        var enemyUnits = new List<Character>(OpponentTopLane.Minions);
+        enemyUnits.AddRange(OpponentBottomLane.Minions);
+        enemyUnits.Add(OpponentChampion);
+
+        return enemyUnits;
+    }
+
+    public List<Character> GetAllUnits()
+    {
+        return new List<Character>(GetAllFriendlyUnits().Concat(GetAllEnemyUnits()));
     }
 }
 

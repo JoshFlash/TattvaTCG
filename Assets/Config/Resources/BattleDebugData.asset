@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: BattleDebugData
   m_EditorClassIdentifier: 
   PlayerChampionPrefab: {fileID: 4534072030300617398, guid: a6fd14cee99d1cb4ca508c129e3f0e9f, type: 3}
-  EnemyChampionPrefab: {fileID: 4378970505562136944, guid: 2edbd8a33e6402c4c82ce05e077ee135, type: 3}
+  EnemyChampionPrefab: {fileID: 7999932891451199413, guid: 41ef7cd4b4ab9e14daa62e794d4281f5, type: 3}
   PlayerDefaultCardInDeck: {fileID: 2534103459143695035, guid: 83696ee62e7ed0641bd01fd187d67e55, type: 3}
+  ChampionCardRotation: 160
+  CardDrawPerTurn: 6

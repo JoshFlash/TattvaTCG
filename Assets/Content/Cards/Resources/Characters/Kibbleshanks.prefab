@@ -72,10 +72,6 @@ PrefabInstance:
       propertyPath: m_text
       value: The Dog of the Railway Train
       objectReference: {fileID: 0}
-    - target: {fileID: 8710164968281662064, guid: 83696ee62e7ed0641bd01fd187d67e55, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: f4d5559e6f593d1459ea79d72efdd5a3, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

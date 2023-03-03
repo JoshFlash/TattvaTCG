@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: targetType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -3474074277642028090, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+      propertyPath: targetFaction
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 847302866883219566, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -124,6 +128,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 6873613418286348982}
   m_SourcePrefab: {fileID: 100100000, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+--- !u!4 &1535524102474353072 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2455189155218049408, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
+  m_PrefabInstance: {fileID: 3989576354078195760}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2613999386688371155 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1376720610428140003, guid: 05cb388ce7288f14fbc8916044d8f36c, type: 3}
@@ -155,11 +164,12 @@ MonoBehaviour:
   <BlockText>k__BackingField: {fileID: 5543619512731150822}
   <PowerText>k__BackingField: {fileID: 4275852895730538092}
   <HealthText>k__BackingField: {fileID: 2613999386688371155}
+  statsParent: {fileID: 1535524102474353072}
   <BaseStats>k__BackingField:
     Block: 1
     Power: 1
     Health: 10
-  <IsFriendly>k__BackingField: 0
+  <IsFriendly>k__BackingField: 1
   OnStatsChanged:
     m_PersistentCalls:
       m_Calls: []
