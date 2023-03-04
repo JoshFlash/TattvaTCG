@@ -82,13 +82,13 @@ public class PlayerCard : MonoBehaviour
 
     public void MoveToRequestedPosition(float duration)
     {
-        if (state.Equals(CardState.Examine) || state.Equals(CardState.Highlight))
+        if (state.Equals(CardState.Examine) || state.Equals(CardState.ClearHighlight))
         {
             SetPosition(targetPositionRequested);
             return;
         }
 
-        if (state.Equals(CardState.ClearFocus) || state.Equals(CardState.ClearHighlight))
+        if (state.Equals(CardState.ClearFocus))
         {
             targetPositionRequested = DefaultPosition;
         }

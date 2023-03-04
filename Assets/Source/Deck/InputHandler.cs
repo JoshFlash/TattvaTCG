@@ -92,6 +92,11 @@ public class InputHandler
                     mouseOver = hitCard;
                 }
             }
+            else if (result.transform.parent.name.Equals("Stats"))
+            {
+                Log.NotImplemented("TODO - update the result name comparison to component check for Stats Widget");
+                mouseOver = result.transform.gameObject.GetComponentInParent<PlayerCard>();
+            }
         }
 
         return mouseOver is not null;

@@ -8,9 +8,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2024923707785852347, guid: 2edbd8a33e6402c4c82ce05e077ee135, type: 3}
+      propertyPath: m_text
+      value: Gimp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2024923707785852347, guid: 2edbd8a33e6402c4c82ce05e077ee135, type: 3}
+      propertyPath: m_fontSize
+      value: 17
+      objectReference: {fileID: 0}
     - target: {fileID: 4378970505562136944, guid: 2edbd8a33e6402c4c82ce05e077ee135, type: 3}
       propertyPath: m_Name
-      value: Jimp
+      value: Enemy Jimp
       objectReference: {fileID: 0}
     - target: {fileID: 4378970505562136959, guid: 2edbd8a33e6402c4c82ce05e077ee135, type: 3}
       propertyPath: m_RootOrder
@@ -55,6 +63,10 @@ PrefabInstance:
     - target: {fileID: 4378970505562136959, guid: 2edbd8a33e6402c4c82ce05e077ee135, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5674459114828251063, guid: 2edbd8a33e6402c4c82ce05e077ee135, type: 3}
+      propertyPath: m_text
+      value: The Giant Imp... it's pronounced "jimp"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
