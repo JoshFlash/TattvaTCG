@@ -27,14 +27,21 @@ Material:
         m_Texture: {fileID: 2800000, guid: e744fd3c22795a940b5d282529cb18fe, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SecondTex:
+        m_Texture: {fileID: 2800000, guid: f93154254110ed84aa630b5c46b2b32e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _DarknessCutoff: 0.008
-    - _Distortion: 0.151
-    - _FadeStrength: 1.5
-    - _FadeThreshold: 0.26
-    - _Intensity: 1.45
-    - _Speed: 0.27
+    - _Blending: 0.59
+    - _DarknessCutoff: 0.66
+    - _Distortion: 0.061
+    - _FadeStrength: 1.82
+    - _FadeThreshold: 1.08
+    - _Intensity: 2.62
+    - _Speed: 0.42
+    - _TexScale: 1.88
+    - _TexTravel: 17.18
     m_Colors:
-    - _Color: {r: 0, g: 0.87456703, b: 1, a: 0.35686275}
+    - _Color: {r: 0, g: 1, b: 0.77824616, a: 0.78039217}
   m_BuildTextureStacks: []

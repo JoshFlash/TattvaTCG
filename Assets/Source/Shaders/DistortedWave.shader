@@ -1,12 +1,15 @@
 Shader "TattvaGames/DistortedWave" {
     Properties {
         _MainTex ("Texture", 2D) = "white" {}
+        _SecondTex ("BG Texture", 2D) = "white" {}
+        _Blending ("Blending", Range(0,1)) = 0
         _Distortion ("Distortion", Range(0,1)) = 0.1
+        _TexScale ("Texture Scale", Float) = 1
         _Speed ("Speed", Range(0,3)) = 0.5
         _Color ("Color", Color) = (1,1,1,1)
-        _DarknessCutoff ("DarknessCutoff", Range(0,1)) = 0.1
+        _DarknessCutoff ("DarknessCutoff", Range(0,2)) = 0.1
         _FadeThreshold ("FadeThreshold", Range(0,3)) = 0.5
-        _FadeStrength ("FadeStrength", Range(1,10)) = 2
+        _FadeStrength ("FadeStrength", Range(0.5,10)) = 2
         _Intensity ("Intensity", Range(1,10)) = 2
     }
     
@@ -32,6 +35,8 @@ Shader "TattvaGames/DistortedWave" {
             };
             
             sampler2D _MainTex;
+            sampler2D _SecondTex;
+            float _Blending;
             float _Distortion;
             float _Speed;
             float4 _Color;
@@ -40,6 +45,7 @@ Shader "TattvaGames/DistortedWave" {
             float _FadeThreshold;
             float _FadeStrength;
             float _Intensity;
+            float _TexScale;
             
             v2f vert (appdata v) {
                 v2f o;
@@ -48,30 +54,32 @@ Shader "TattvaGames/DistortedWave" {
                 return o;
             }
             
-            float2 scrollSinUV(float2 uv, float time) {
-                float speed = _Speed * 0.1;
-                float offset = time * speed + 0.01;
-                offset *= offset;
-                return uv + float2(offset, offset);
+            float2 scrollPosUV(float2 uv, float2 time, float timeOffset) {
+                float speed = _Speed * 0.01;
+                float2 offset = (time + timeOffset) * speed;
+                return (uv  + offset) * _TexScale;
             }
             
-            float2 scrollCosUV(float2 uv, float time) {
-                float speed = -_Speed * 0.1;
-                float offset = time * speed - 0.01;
-                offset *= offset;
-                return uv + float2(-offset, offset);
-            }
             
             float4 frag (v2f i) : SV_Target {
-                float4 tex = tex2D(_MainTex, scrollSinUV(i.uv, _Time.y) + scrollCosUV(i.uv, _Time.y));
-                float2 distortion = (tex.rg - 0.5) * _Distortion * _Distortion;
-                float4 distortedTex = tex2D(_MainTex, scrollCosUV(i.uv + distortion, -_Time.y));
-                float4 col = _Color * distortedTex;
 
-                float4 tex2 = tex2D(_MainTex, scrollSinUV(i.uv, _Time.y) + scrollCosUV(i.uv, -_Time.y));
+                float2 timeNorm = float2(-_SinTime.w, _CosTime.w);
+                float4 tex = tex2D(_MainTex, scrollPosUV(i.uv, timeNorm, _SinTime.z));
+                float2 distortion = (tex.rg - 0.5) * _Distortion * _Distortion;
+                float4 distortedTex = tex2D(_MainTex, scrollPosUV(i.uv + distortion, timeNorm, _SinTime.z));
+
+                float2 timeNorm2 = float2(-_Time.y, _Time.z);
+                float4 tex2 = tex2D(_SecondTex, scrollPosUV(i.uv, timeNorm2, 0));
                 float2 distortion2 = (tex2.rg - 0.5) * _Distortion * _Distortion;
-                float4 distortedTex2 = tex2D(_MainTex, scrollSinUV(i.uv + distortion2, _Time.y));
-                col *= distortedTex2;
+                float4 distortedTex2 = tex2D(_MainTex, scrollPosUV(i.uv + distortion2, timeNorm2, 0));
+
+                float2 timeNorm3 = float2(_Time.z, _Time.y);
+                float4 tex3 = tex2D(_MainTex, scrollPosUV(i.uv, timeNorm3, _SinTime.z));
+                float2 distortion3 = (tex3.rg - 0.5) * _Distortion * _Distortion;
+                float4 distortedTex3 = tex2D(_SecondTex, scrollPosUV(i.uv + distortion3, timeNorm3, _SinTime.z));
+
+                float bgInfluence = _Blending / 2;
+                float4 col = _Color * (distortedTex * (1 - _Blending) + distortedTex2 * bgInfluence + distortedTex3 * bgInfluence);
 
                 float darkness = col.r + col.g + col.b;
                 if (darkness < _DarknessCutoff * _DarknessCutoff) {
@@ -79,11 +87,11 @@ Shader "TattvaGames/DistortedWave" {
                 }
                 if (darkness < _FadeThreshold)
                 {
-                    col.a /= _FadeStrength;
+                    col.a = lerp(col.a, 0, (1 - darkness/_FadeThreshold)) / _FadeStrength;
                 }
                 else
                 {
-                    col.a *= _Intensity;
+                    col.a = lerp (col.a, col.a * _Intensity, 1 - col.a);
                 }
                 
                 col.a *= 1.1;
