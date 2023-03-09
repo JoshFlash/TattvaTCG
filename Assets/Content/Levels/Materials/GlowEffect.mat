@@ -30,11 +30,11 @@ Material:
     m_Ints: []
     m_Floats:
     - _DarknessCutoff: 0.008
-    - _Distortion: 0.21
-    - _FadeStrength: 3.9
-    - _FadeThreshold: 0.34
-    - _Intensity: 1.83
-    - _Speed: 0.17
+    - _Distortion: 0.151
+    - _FadeStrength: 1.5
+    - _FadeThreshold: 0.26
+    - _Intensity: 1.45
+    - _Speed: 0.27
     m_Colors:
-    - _Color: {r: 0, g: 0.87456703, b: 1, a: 0.4392157}
+    - _Color: {r: 0, g: 0.87456703, b: 1, a: 0.35686275}
   m_BuildTextureStacks: []
